@@ -1,0 +1,9 @@
+BIPADOR UNIVERSAL V33 — MODO SIMPLES
+
+Atualize no GitHub Pages a mesma pasta do aplicativo web, substituindo index.html, sw.js, manifest.webmanifest, icon.svg e logo-multiplo-mix.png.
+
+Mudanças: tela principal simplificada com leitura por etapa; contador e últimos pedidos; painel, histórico completo, cadastro EAN e backups em opções recolhidas.
+
+O catalogo EAN, a lista e o historico permanecem no armazenamento local do navegador. Faca um backup antes de atualizar. Nao limpe os dados do Safari ou Chrome.
+
+Arquivo modelo_cadastro_ean.csv é opcional e não precisa subir ao GitHub.
