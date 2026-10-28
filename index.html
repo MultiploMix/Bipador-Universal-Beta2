@@ -200,7 +200,7 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
 #sessionSettings button{font-size:14px!important}
 #scanVisual{z-index:99999!important}
 @media(max-width:370px){.operator-card .stage-title{font-size:20px!important}.section-mini-head h2{font-size:15px!important}.recent-row small{font-size:10px}}
-</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V33</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
+</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V34 TESTE</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
 <div class="operator-kicker"><span class="live-dot"></span><span id="miniSession">Conferência em andamento</span></div>
 <h2 class="stage-title" id="stageTitle">Leia a etiqueta do pedido</h2>
 <p class="stage-help" id="stageHelp">Aponte a câmera para o QR Code da etiqueta.</p>
@@ -276,8 +276,8 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
     <p class="catalog-note">O EAN identifica o produto-base. A cor e o tamanho selecionados são informados visualmente pelo funcionário; o código de barras não comprova esses atributos.</p>
   </div>
 </section>
-<div id="finalDialog" class="dialog-back hidden" role="dialog" aria-modal="true"><div class="dialog-card"><h2>Finalizar conferência?</h2><p id="finalSummary"></p><button id="saveShare">📲 Salvar e compartilhar no WhatsApp</button><button id="saveOnly" class="secondary">💾 Salvar relatório no celular</button><button id="cancelFinal" class="secondary">Voltar para conferência</button></div></div><script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script><script>
-const $=id=>document.getElementById(id);let order=null,scanning=null,busy=false;let masterParts=null;const STORE='shopee_history_v4';const LIST_STORE='shopee_active_list_v15';let listRecords=[],scanEvents=[],expectedOrders=[],errorCount=0,outsideCount=0;const SESSION_STORE='shopee_session_v8';let session=null;const norm=s=>String(s||'').normalize('NFC').trim().replace(/\\n/g,' ').replace(/\s+/g,' ').toUpperCase();const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+<div id="finalDialog" class="dialog-back hidden" role="dialog" aria-modal="true"><div class="dialog-card"><h2>Finalizar conferência?</h2><p id="finalSummary"></p><button id="saveShare">📲 Salvar e compartilhar no WhatsApp</button><button id="saveOnly" class="secondary">💾 Salvar relatório no celular</button><button id="cancelFinal" class="secondary">Voltar para conferência</button></div></div><!-- ZXing WASM experimental; o leitor V33 permanece como alternativa de seguranca. --><script src="https://cdn.jsdelivr.net/npm/barcode-detector@3.2.2/dist/iife/ponyfill.min.js"></script><script src="./leitor-wasm.js"></script><script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script><script>
+const $=id=>document.getElementById(id);let order=null,scanning=null,busy=false;let masterParts=null;const STORE='shopee_history_v34_teste';const LIST_STORE='shopee_active_list_v34_teste';let listRecords=[],scanEvents=[],expectedOrders=[],errorCount=0,outsideCount=0;const SESSION_STORE='shopee_session_v34_teste';let session=null;const norm=s=>String(s||'').normalize('NFC').trim().replace(/\\n/g,' ').replace(/\s+/g,' ').toUpperCase();const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function parseOrder(raw){
  const s=String(raw||'').replace(/\\r\\n|\\n|\\r/g,'\n').replace(/\r\n|\r/g,'\n').trim();
  // Aceita etiqueta compacta P:... Sku:...;Q:1 e antiga PEDIDO:... RASTREIO:... SKU:...;QTD:1.
@@ -562,11 +562,12 @@ async function closeScan(){
  if(obj){try{await obj.stop()}catch(e){}try{obj.clear()}catch(e){}}
  $('reader').innerHTML='';resetCameraControls();busy=false;if(wasCatalog)openCatalog();
 }
-async function scan(type){
+let wasmDisabledForSession=false;
+async function scan(type,usarLeitorPadrao=false){
  unlockAudio();
  if(!window.isSecureContext){showMessage('Abra o aplicativo por HTTPS no Safari.','danger');return}
  if(type==='product'&&await resumeProductReader())return;
- if(!window.Html5Qrcode){showMessage('Leitor indisponível. Verifique a internet e atualize a página.','danger');return}
+ if(!window.Html5Qrcode&&!window.BarcodeDetectionAPI?.BarcodeDetector){showMessage('Nenhum leitor disponível. Verifique a internet e atualize a página.','danger');return}
  await closeScan();
  const token=++scanGeneration;
  activeScanType=type;
@@ -578,8 +579,23 @@ async function scan(type){
   // A API videoConstraints é experimental na biblioteca e sobrepõe facingMode.
   // Não utilizar getCameras() aqui: alguns iPhones perdem a prévia ao abrir outro stream.
   const formats=(type==='order'||type==='list')?[Html5QrcodeSupportedFormats.QR_CODE]:[Html5QrcodeSupportedFormats.QR_CODE,Html5QrcodeSupportedFormats.EAN_13,Html5QrcodeSupportedFormats.EAN_8,Html5QrcodeSupportedFormats.UPC_A,Html5QrcodeSupportedFormats.CODE_128];
-  const reader=new Html5Qrcode('reader',{formatsToSupport:formats,useBarCodeDetectorIfSupported:false,verbose:false});
+  // V34 experimental: decodifica com ZXing WASM; falha => leitor tradicional da V33.
+  const preferirWasm=!usarLeitorPadrao&&!wasmDisabledForSession&&new URLSearchParams(location.search).get('leitor')!=='padrao'
+   &&!!window.BarcodeDetectionAPI?.BarcodeDetector&&!!window.LeitorWasmBipador;
+  if(!preferirWasm&&!window.Html5Qrcode){showMessage('Leitor padrão indisponível. Verifique a conexão.','danger');await closeScan();return}
+  const reader=preferirWasm?new LeitorWasmBipador('reader',{mode:type})
+   :new Html5Qrcode('reader',{formatsToSupport:formats,useBarCodeDetectorIfSupported:false,verbose:false});
   scanning=reader;busy=false;
+  if(reader.isWasm){
+   reader.onRuntimeError=err=>{
+    if(token!==scanGeneration||reader!==scanning)return;
+    console.warn('Bipador V34: WASM falhou, restaurando leitor padrão',err);
+    wasmDisabledForSession=true;
+    cameraStatus('Retomando leitor padrão…');
+    void scan(type,true);
+   };
+  }
+
   await reader.start({facingMode:'environment'}, {
    // Evita resoluções/foco forçados: no Safari isso já causou tela preta.
    fps:type==='product'?15:12,disableFlip:true,
@@ -631,12 +647,19 @@ async function scan(type){
    }
   },2200);
  }catch(e){
-  if(token===scanGeneration){await closeScan();const msg='Não foi possível iniciar a câmera: '+(e?.message||e);if(type==='ean-catalog'){openCatalog();alert(msg)}else showMessage(msg,'danger')}
+  if(token===scanGeneration){
+   if(!usarLeitorPadrao&&scanning?.isWasm){
+    console.warn('Bipador V34: falha ao abrir motor experimental; usando V33',e);
+    wasmDisabledForSession=true;
+    await scan(type,true);return;
+   }
+   await closeScan();const msg='Não foi possível iniciar a câmera: '+(e?.message||e);if(type==='ean-catalog'){openCatalog();alert(msg)}else showMessage(msg,'danger')
+  }
  }
 }
 
 // === V24 CATÁLOGO EAN ↔ SKU ===
-const CATALOG_STORE='mm_bipador_catalog_v24';const CATALOG_LIMIT=15000;
+const CATALOG_STORE='mm_bipador_catalog_v34_teste';const CATALOG_LIMIT=15000;
 let catalog=[],eanPending=null,editingCatalogIndex=null,catalogCorrections=0;
 function cleanEAN(v){return String(v??'').trim().replace(/\s+/g,'')}
 function checkEAN(v){return /^(?:\d{8}|\d{12}|\d{13})$/.test(cleanEAN(v))}
@@ -747,6 +770,7 @@ function readCatalog(){
   return clean;
  }catch(e){console.warn('Catálogo local indisponível',e);return []}
 }
+try{if(localStorage.getItem(CATALOG_STORE)===null){const anterior=localStorage.getItem('mm_bipador_catalog_v24');if(anterior)localStorage.setItem(CATALOG_STORE,anterior)}}catch(e){}
 catalog=readCatalog();
 function openCatalog(){ $('catalogPanel').classList.remove('hidden');renderCatalog() }
 function closeCatalog(){ $('catalogPanel').classList.add('hidden') }
@@ -1160,5 +1184,7 @@ const _previousUpdateFlow=updateFlow;
 updateFlow=function(){_previousUpdateFlow();refreshSimpleUI()};
 
 renderListHistory();renderDashboard();
+// Pre-aquece o modulo WebAssembly sem interromper a primeira bipagem.
+try{const prepare=window.BarcodeDetectionAPI?.prepareZXingModule;if(typeof prepare==='function')Promise.resolve(prepare()).catch(e=>console.warn('ZXing WASM indisponível, leitor padrão será usado',e))}catch(e){}
 renderHistory();render();if(session){const saved=$('saveIndicator');if(saved)saved.textContent='● Sessão restaurada neste iPhone'}if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
 </script></body></html>
