@@ -1,7 +1,7 @@
 // Configuracao publica do aplicativo web BipaMix (Firebase).
 // Nao incluir senhas, tokens pessoais ou chaves privadas neste arquivo.
 window.BIPADOR_FIREBASE_CONFIG = {
-  apiKey: 'AIzaSyB7wz0kL7atYhw4cyZpxw4k2VnAIyVnBsA',
+  apiKey: 'AIzaSyB7wzOkL7atYhw4cyZpxw4k2VnAIyVnBsA',
   authDomain: 'bipamix.firebaseapp.com',
   projectId: 'bipamix',
   storageBucket: 'bipamix.firebasestorage.app',
