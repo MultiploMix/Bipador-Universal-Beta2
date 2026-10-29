@@ -132,6 +132,15 @@ button:focus-visible{outline:3px solid #234;outline-offset:2px}
 .ean-size-confirm input{flex:none;width:24px;height:24px;min-width:24px;margin:0;accent-color:#15804c}
 .ean-size-confirm small{display:block;margin:8px 0 0 34px;color:#705425;font-size:12px;line-height:1.4}
 .ean-size-confirm.hidden{display:none}
+/* V40: tratamento assistido de etiquetas antigas sem variação no QR */
+.legacy-variants{background:#fff5e9;border:1px solid #ebb670;border-radius:13px;padding:13px;margin:12px 0;color:#50391d}
+.legacy-variants strong{display:block;font-size:15px}.legacy-variants p,.legacy-variants small{font-size:12px;line-height:1.5}
+.legacy-variants label{display:block;font-size:13px;font-weight:700;margin-top:10px}
+.legacy-variants textarea{width:100%;min-height:96px;background:#fff;margin:8px 0;border-radius:10px;border:1px solid #d1b78c}
+.legacy-variants button{background:#264e78}
+.catalog-random-row{display:flex!important;gap:10px;align-items:center;margin-top:10px;font-size:14px!important}
+.catalog-random-row input{width:20px!important;height:20px!important;margin:0!important;accent-color:#16804d}
+.catalog-random-row span{flex:1}
 /* Enquadramento visual acompanha a prioridade do código, sem cobrir a imagem. */
 body.scanning-product #cameraPanel .camera-reticle{width:min(91vw,420px);aspect-ratio:1.35/1;top:47%}
 body.scanning-product #cameraPanel .camera-reticle i{width:29px;height:29px}
@@ -223,7 +232,7 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
 #operatorCard .manual-entry-row input{flex:1;min-width:0;width:auto;height:46px;margin:0;padding:10px 12px;background:white;border:1px solid #cbd5e1;border-radius:10px;font-size:16px}
 #operatorCard .manual-entry-row button{flex:none;width:auto;min-height:46px;margin:0;padding:10px 14px;background:#24354c;color:white;border-radius:10px;font-size:14px;font-weight:800}
 @media(max-width:375px){#operatorCard .discard-quick{font-size:11px;padding:8px 9px}.operator-topbar .operator-kicker{font-size:11px}}
-</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V39 KITS AUTOMÁTICOS</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
+</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V40 VARIAÇÕES E CORES ALEATÓRIAS</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
 <div class="operator-topbar"><div class="operator-kicker"><span class="live-dot"></span><span id="miniSession">Conferência em andamento</span></div><button id="discardQuick" class="discard-quick hidden" type="button" aria-label="Descartar pedido atual">✕ Descartar pedido</button></div>
 <h2 class="stage-title" id="stageTitle">Leia a etiqueta do pedido</h2>
 <p class="stage-help" id="stageHelp">Aponte a câmera para o QR Code da etiqueta.</p>
@@ -233,7 +242,15 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
 <label for="quickCode">Código do produto</label>
 <div class="manual-entry-row"><input id="quickCode" type="text" placeholder="Digite o EAN ou SKU" spellcheck="false" autocapitalize="characters" enterkeyhint="done" required maxlength="140"><button type="submit">Conferir</button></div>
 </form>
-<div class="order-area" id="orderArea"><div class="notice" id="orderInfo">Aguardando leitura da etiqueta.</div><div class="order-progress hidden" id="orderProgress"><div class="order-progress-top"><strong id="orderProgressText">0 de 0 itens</strong><span id="orderProgressPercent">0%</span></div><div class="progress-track"><div class="progress-fill" id="orderProgressFill"></div></div></div><div id="items"></div></div>
+<div class="order-area" id="orderArea"><div class="notice" id="orderInfo">Aguardando leitura da etiqueta.</div>
+<div id="legacyVariantPanel" class="legacy-variants hidden" role="group" aria-label="Informar variações da etiqueta antiga">
+<strong>⚠ Etiqueta sem cores no QR Code</strong>
+<p id="legacyVariantHelp">O código contém itens repetidos, mas não informa as cores. Digite as variações impressas na etiqueta para conferir cada uma separadamente.</p>
+<label for="legacyVariantInput">Uma cor/variação por linha, na ordem da etiqueta</label>
+<textarea id="legacyVariantInput" rows="3" placeholder="VERDE&#10;ROSA&#10;AZUL" spellcheck="false"></textarea>
+<button type="button" id="applyLegacyVariants">Aplicar variações da etiqueta</button>
+<small>Leia e confirme o texto impresso: o QR antigo não transmite essas cores.</small>
+</div><div class="order-progress hidden" id="orderProgress"><div class="order-progress-top"><strong id="orderProgressText">0 de 0 itens</strong><span id="orderProgressPercent">0%</span></div><div class="progress-track"><div class="progress-fill" id="orderProgressFill"></div></div></div><div id="items"></div></div>
 <div aria-live="polite" class="notice" id="feedback" role="status">Primeiro leia a etiqueta do pedido.</div><button class="hidden" id="nextOrder" type="button">✓ Próximo pedido</button></section><section class="card recent-card">
 <div class="section-mini-head"><h2>Pedidos concluídos</h2><span id="recentCount">0 pedidos</span></div>
 <div id="recentList"><p class="muted">Nenhum pedido concluído ainda.</p></div>
@@ -271,11 +288,13 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
         <label for="catalogSKU">SKU do produto (família ou SKU completo)</label><input id="catalogSKU" placeholder="Ex.: WJ-2670" maxlength="100" required><p class="catalog-note">EAN exclusivo por cor: cadastre o SKU completo para conferência automática. Se cadastrar apenas o SKU base, o aplicativo pedirá confirmação visual da variação do pedido, sem exigir cadastro de cores.</p>
         <label for="catalogName">Produto (opcional)</label><input id="catalogName" placeholder="Ex.: Meia feminina" maxlength="120">
         <div class="catalog-pair"><div><label for="catalogColor">Cor principal (também entra nas opções)</label><input id="catalogColor" placeholder="Ex.: Preto" maxlength="60"></div><div><label for="catalogSize">Tamanho (se aplicável)</label><input id="catalogSize" placeholder="Ex.: Adulto" maxlength="50"></div></div>
-        <label for="catalogVariants">Outras cores deste EAN (separadas por vírgula)</label><input id="catalogVariants" placeholder="Preto, Vermelho, Prata" maxlength="500"><p class="catalog-note">Preencha essas cores somente quando o mesmo EAN aparecer em várias variações. Se cada cor tiver EAN próprio, não precisa preencher estas opções: use o SKU completo para aprovação automática ou somente o SKU base para confirmação visual simples.</p>
+        <label class="catalog-random-row" for="catalogRandom"><input type="checkbox" id="catalogRandom"> <span>Permite venda com <b>cor aleatória</b></span></label>
+<p class="catalog-note">Esta opção só funciona quando a etiqueta do pedido indicar explicitamente COR ALEATÓRIA. Não altera a cor dos pedidos específicos.</p>
+<label for="catalogVariants">Outras cores deste EAN (separadas por vírgula)</label><input id="catalogVariants" placeholder="Preto, Vermelho, Prata" maxlength="500"><p class="catalog-note">Preencha essas cores somente quando o mesmo EAN aparecer em várias variações. Se cada cor tiver EAN próprio, não precisa preencher estas opções: use o SKU completo para aprovação automática ou somente o SKU base para confirmação visual simples.</p>
         <div class="catalog-pair"><button id="catalogSubmit" type="submit">＋ Salvar associação</button><button id="catalogCancelEdit" type="button" class="secondary hidden">Cancelar edição</button></div>
       </form>
       <h3>Importar / Exportar</h3>
-      <p class="catalog-note">CSV UTF-8 com colunas <strong>EAN, SKU, Produto, Cor, Tamanho, Variacoes</strong>. Para várias cores no mesmo EAN, use SKU base e informe as cores em Variacoes, ou cadastre uma linha por cor/tamanho.</p>
+      <p class="catalog-note">CSV UTF-8 com colunas <strong>EAN, SKU, Produto, Cor, Tamanho, Variacoes, CorAleatoria</strong>. Para várias cores no mesmo EAN, use SKU base e informe as cores em Variacoes, ou cadastre uma linha por cor/tamanho.</p>
       <label class="catalog-file" for="catalogFile">📄 Importar CSV do Excel<input type="file" id="catalogFile" accept=".csv,text/csv,text/plain"></label>
       <div class="catalog-pair"><button type="button" class="secondary" id="catalogTemplate">Modelo CSV</button><button type="button" class="secondary" id="catalogExport">Exportar CSV</button></div>
       <button type="button" class="secondary" id="catalogBackup">⬇ Backup completo JSON</button>
@@ -283,7 +302,7 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
       <h3>Associações cadastradas</h3>
       <input type="search" id="catalogSearch" placeholder="Buscar EAN, SKU, produto ou cor">
       <div id="catalogList" class="catalog-list"></div>
-      <p class="catalog-note">EAN único com SKU completo: aprovação automática. EAN apenas com SKU base: confirmação visual simples da variação esperada, sem exigir cadastro de cores. EAN compartilhado: escolha da variação. QR Code do produto continua com SKU completo. Os dados ficam neste navegador: faça backups.</p>
+      <p class="catalog-note">Cor aleatória: habilite no cadastro e use V:ALEATORIA no QR do pedido. EAN único com SKU completo: aprovação automática. EAN apenas com SKU base: confirmação visual simples da variação esperada, sem exigir cadastro de cores. EAN compartilhado: escolha da variação. QR Code do produto continua com SKU completo. Os dados ficam neste navegador: faça backups.</p>
     </div>
   </div>
 </section>
@@ -305,7 +324,7 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
   </div>
 </section>
 <div id="finalDialog" class="dialog-back hidden" role="dialog" aria-modal="true"><div class="dialog-card"><h2>Finalizar conferência?</h2><p id="finalSummary"></p><button id="saveShare">📲 Salvar e compartilhar no WhatsApp</button><button id="saveOnly" class="secondary">💾 Salvar relatório no celular</button><button id="cancelFinal" class="secondary">Voltar para conferência</button></div></div><!-- ZXing WASM experimental; o leitor V33 permanece como alternativa de seguranca. --><script src="https://cdn.jsdelivr.net/npm/barcode-detector@3.2.2/dist/iife/ponyfill.min.js"></script><script src="./leitor-wasm.js"></script><script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script><script>
-const $=id=>document.getElementById(id);let order=null,scanning=null,busy=false;let masterParts=null;const STORE='shopee_history_v35_kits_teste';const LIST_STORE='shopee_active_list_v35_kits_teste';let listRecords=[],scanEvents=[],expectedOrders=[],errorCount=0,outsideCount=0;const SESSION_STORE='shopee_session_v35_kits_teste';let session=null;const norm=s=>String(s||'').normalize('NFC').trim().replace(/\\n/g,' ').replace(/\s+/g,' ').toUpperCase();const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $=id=>document.getElementById(id);let order=null,scanning=null,busy=false;let masterParts=null;const STORE='shopee_history_v40_variacoes_teste';const LIST_STORE='shopee_active_list_v40_variacoes_teste';let listRecords=[],scanEvents=[],expectedOrders=[],errorCount=0,outsideCount=0;const SESSION_STORE='shopee_session_v40_variacoes_teste';let session=null;const norm=s=>String(s||'').normalize('NFC').trim().replace(/\\n/g,' ').replace(/\s+/g,' ').toUpperCase();const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 // V39: kits identificados PELO CAMPO SKU da etiqueta, sem catálogo de kits.
 // Suporta +, /, " E " e & para componentes SKU distintos.
 // Barras internas de um SKU, como "WJ 211- BR/1", NÃO significam kit.
@@ -339,36 +358,61 @@ function splitKitComponents(sku){
   throw Error('SKU de kit inválido. Confira os códigos dos componentes na etiqueta.');
  return components;
 }
+// V40: pedido com cor definida: SKU:MC40876;V:VERDE;Q:5
+// Pedido vendido como cor aleatória: SKU:MC40876;V:ALEATORIA;Q:5
+// Etiquetas antigas sem V: continuam aceitas, EXCETO SKU repetido em várias linhas
+// (pois nesse caso cores diferentes podem ter sido omitidas pelo gerador).
+function randomVariation(value){
+ const v=norm(value).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[\s_-]+/g,' ').trim();
+ return ['ALEATORIA','ALEATORIO','COR ALEATORIA','CORES ALEATORIAS','SORTIDA','SORTIDO','CORES SORTIDAS','SORTIDAS','SORTIDOS'].includes(v);
+}
 function parseOrder(raw){
  const s=String(raw||'').replace(/\\r\\n|\\n|\\r/g,'\n').replace(/\r\n|\r/g,'\n').trim();
- // Aceita etiqueta compacta P:... Sku:...;Q:1 e antiga PEDIDO:... RASTREIO:... SKU:...;QTD:1.
  const idMatch=s.match(/(?:^|[\s;])(?:PEDIDO|P)\s*:\s*(.*?)(?=\s*(?:RASTREIO|SKU)\s*:|$)/i);
  if(!idMatch||!idMatch[1].trim())throw Error('Não encontrei o pedido (P: ou PEDIDO:) no QR Code.');
  const id=idMatch[1].trim();
  const trackMatch=s.match(/(?:^|[\s;])RASTREIO\s*:\s*(.*?)(?=\s*SKU\s*:|$)/i);
  const tracking=trackMatch?trackMatch[1].trim():'';
- const rx=/SKU\s*:\s*([\s\S]*?)\s*;\s*(?:QTD|Q)\s*:\s*(\d+)(?=\s*(?:SKU\s*:|$|;))/gi;
- let m;const entries=new Map(),kits=[],originalLines=[];
+ const rx=/SKU\s*:\s*([\s\S]*?)\s*;\s*(?:(?:V|VAR|VARIACAO|VARIAÇÃO|COR)\s*:\s*([\s\S]*?)\s*;\s*)?(?:QTD|Q)\s*:\s*(\d+)(?=\s*(?:SKU\s*:|$|;))/gi;
+ let m;const entries=new Map(),kits=[],originalLines=[],unqualified=new Map();
  while((m=rx.exec(s))!==null){
-  const sku=norm(m[1]),q=Number(m[2]);
+  let sku=norm(m[1]).replace(/^#+/,'');let variation=norm(m[2]||'');const q=Number(m[3]);
   if(!sku||!Number.isSafeInteger(q)||q<1||q>9999)throw Error('SKU ou quantidade inválida.');
-  const components=splitKitComponents(sku);
-  originalLines.push({sku,qtd:q});
+  // Também permite variantes ALEATORIA embutidas no SKU da etiqueta.
+  if(!variation){const trailing=sku.match(/^(.*?)\s*[-_]\s*(ALEATORI[AO]|COR\s+ALEATORIA|SORTID[AO])$/i);
+   if(trailing){sku=norm(trailing[1]);variation=norm(trailing[2]);}
+  }
+  const components=splitKitComponents(sku),randomColor=randomVariation(variation);
+  const fixedVariation=variation&&!randomColor?variation:'';
+  originalLines.push({sku,qtd:q,variacao:variation,aleatoria:randomColor});
   if(components.length>1)kits.push({sku,qtd:q,componentes:components});
   for(const component of components){
-   const next=(entries.get(component)||0)+q;
-   if(next>9999)throw Error('Quantidade de componente acima do limite permitido.');
-   entries.set(component,next);
+   const base=norm(component).replace(/^#+/,'');
+   if(!variation){
+    const list=unqualified.get(base)||[];list.push(q);unqualified.set(base,list);
+   }
+   const suffix=fixedVariation.replace(/[\s_]+/g,'-');
+   const full=suffix&&!skuKey(base).endsWith('-'+skuKey(suffix))?base+'-'+suffix:base;
+   const key=skuKey(full)+'|'+(randomColor?'ALEATORIA':'FIXA');
+   const item=entries.get(key);
+   if(item){item.qtd+=q;if(item.qtd>9999)throw Error('Quantidade acima do limite.');}
+   else entries.set(key,{sku:full,baseSku:base,variacao:fixedVariation,randomColor,qtd:q,read:0});
   }
  }
  if(!entries.size)throw Error('Não encontrei SKU e quantidade (Sku:...;Q:1) na etiqueta.');
- const items=[...entries].map(([sku,qtd])=>({sku,qtd,read:0}));
+ const repeated=[...unqualified].filter(([,qs])=>qs.length>1);
+ if(repeated.length){
+  const err=new Error('O QR contém SKU repetido, mas NÃO informa as cores. Veja a etiqueta impressa e digite cada variação, ou atualize o gerador para incluir V:COR.');
+  if(repeated.length===1)err.legacy={raw:s,sku:repeated[0][0],qtds:repeated[0][1]};
+  throw err;
+ }
+ const items=[...entries.values()];
  validateSkuAmbiguity(items);
  return{id,tracking,items,kitGroups:kits,originalLines,raw:s};
 }
 // Comparação segura: modelo obrigatório na primeira posição; atributos seguintes em qualquer ordem.
 function skuParts(value){
- const cleaned=norm(value).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[–—_]+/g,'-').replace(/\s*-\s*/g,'-').replace(/\s+/g,' ').trim();
+ const cleaned=norm(value).replace(/^#+/,'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[–—_]+/g,'-').replace(/\s*-\s*/g,'-').replace(/\s+/g,' ').trim();
  const sections=cleaned.split('-').map(x=>x.trim()).filter(Boolean);
  if(sections.length<2)return null;
  // O mesmo modelo pode ser impresso com hífen: WJ-2673 = WJ2673; MC-40876 = MC40876.
@@ -391,7 +435,7 @@ function skuParts(value){
  return {model,attrs:filtered.sort(),canonical:cleaned};
 }
 function equivalentSku(a,b){
- if(norm(a)===norm(b))return true;
+ if(norm(a)===norm(b)||skuKey(a)===skuKey(b))return true;
  // AB-168 e XFP-3370 são exatamente o mesmo produto; a regra não se aplica a nenhum outro modelo.
  // Se houver sufixos (cor/tamanho), eles ainda precisam coincidir.
  if(skuKey(a)==='AB-168'&&skuKey(b)==='AB-168')return true;
@@ -415,7 +459,7 @@ function render(){
  const kits=order.kitGroups||[];
  const kitQty=kits.reduce((n,k)=>n+k.qtd,0);
  const kitHeader=kits.length?'<div class="kit-info"><span>📦 '+kitQty+' kit'+(kitQty===1?'':'s')+' · confira cada componente</span><strong>'+kits.reduce((n,k)=>n+k.qtd*k.componentes.length,0)+' leitura(s) necessárias</strong></div>':'';
- $('items').innerHTML=kitHeader+order.items.map(i=>'<div class="line kit-line"><span class="kit-mark '+(i.read>=i.qtd?'done':'')+'">'+(i.read>=i.qtd?'✓':'•')+'</span><div class="kit-sku"><b>'+escapeHtml(i.sku)+'</b>'+(kits.some(k=>k.componentes.includes(i.sku))?'<small>Produto '+(kits.flatMap(k=>k.componentes).indexOf(i.sku)+1)+' do kit</small>':'')+'</div><span>'+i.read+' / '+i.qtd+'</span></div>').join('');
+ $('items').innerHTML=kitHeader+order.items.map(i=>'<div class="line kit-line"><span class="kit-mark '+(i.read>=i.qtd?'done':'')+'">'+(i.read>=i.qtd?'✓':'•')+'</span><div class="kit-sku"><b>'+escapeHtml(i.sku)+(i.randomColor?' · COR ALEATÓRIA':'')+'</b>'+(kits.some(k=>k.componentes.includes(i.sku))?'<small>Produto '+(kits.flatMap(k=>k.componentes).indexOf(i.sku)+1)+' do kit</small>':'')+'</div><span>'+i.read+' / '+i.qtd+'</span></div>').join('');
  $('orderProgress').classList.remove('hidden');$('orderProgressText').textContent=read+' de '+total+(order.kitGroups?.length?' componentes':' itens')+' conferidos';
  $('orderProgressPercent').textContent=percent+'%';$('orderProgressFill').style.width=percent+'%';
  $('scanProduct').disabled=read===total;$('nextOrder').classList.toggle('hidden',read!==total);updateFlow();
@@ -432,6 +476,7 @@ function updateFlow(){
  const active=order?(' · Pedido '+order.id+' ('+order.items.reduce((n,i)=>n+i.read,0)+'/'+order.items.reduce((n,i)=>n+i.qtd,0)+' itens)'):'';
  $('quickStatus').textContent=txt+active;
 }
+let legacyVariantRepair=null;
 function load(raw){
  try{
   const o=parseOrder(raw);
@@ -451,10 +496,32 @@ function load(raw){
     showMessage('Pedido '+order.id+' mantido.','success');return;
    }
   }
+  legacyVariantRepair=null;$('legacyVariantPanel').classList.add('hidden');
   order=o;logScan('ETIQUETA',o.id,'LIDA');persistList();render();
   showMessage(o.kitGroups.length?'📦 Kit detectado automaticamente: confira cada componente separadamente. Só será concluído após todas as leituras.':'Pedido carregado. Escaneie os produtos.','success');$('rawOrder').value='';
- }catch(e){showMessage(e.message,'danger');}
+ }catch(e){
+  legacyVariantRepair=e.legacy||null;
+  $('legacyVariantPanel').classList.toggle('hidden',!legacyVariantRepair);
+  if(legacyVariantRepair){$('legacyVariantHelp').textContent='SKU '+legacyVariantRepair.sku+' aparece '+legacyVariantRepair.qtds.length+' vezes, em quantidades '+legacyVariantRepair.qtds.join(', ')+'. Digite uma variação para cada linha impressa, na mesma ordem.';}
+  showMessage(e.message,'danger');
+ }
 }
+$('applyLegacyVariants').onclick=()=>{
+ const legacy=legacyVariantRepair;if(!legacy)return;
+ const values=$('legacyVariantInput').value.split(/[\r\n,;]+/).map(norm).filter(Boolean);
+ if(values.length!==legacy.qtds.length||values.some(v=>!/^[-\w\u00C0-\u024F ]{2,48}$/.test(v)||v.includes(':'))){
+  alert('Informe exatamente '+legacy.qtds.length+' variações válidas, uma por linha, na ordem da etiqueta.');return;
+ }
+ if(new Set(values.map(skuKey)).size!==values.length){alert('As cores digitadas estão repetidas. Confira as variações impressas.');return;}
+ let count=0;
+ const fixed=legacy.raw.replace(/SKU\s*:\s*([\s\S]*?)\s*;\s*(?:QTD|Q)\s*:\s*(\d+)(?=\s*(?:SKU\s*:|$|;))/gi,(whole,sku,q)=>{
+  if(skuKey(sku)!==skuKey(legacy.sku))return whole;
+  const v=values[count++];return 'SKU:'+sku+';V:'+v+';Q:'+q;
+ });
+ if(count!==values.length){alert('Não foi possível localizar todas as linhas da etiqueta.');return;}
+ load(fixed);
+ if(!legacyVariantRepair){$('legacyVariantInput').value='';}
+};
 let audioCtx=null,visualTimer=null,scanGeneration=0;
 function unlockAudio(){try{const A=window.AudioContext||window.webkitAudioContext;if(!A)return;if(!audioCtx)audioCtx=new A();if(audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});}catch(e){}}
 function playTone(freq,start,duration,type='sine',volume=.22){if(!audioCtx||audioCtx.state!=='running')return;try{const t=audioCtx.currentTime+start;const osc=audioCtx.createOscillator(),gain=audioCtx.createGain();osc.type=type;osc.frequency.setValueAtTime(freq,t);gain.gain.setValueAtTime(.001,t);gain.gain.exponentialRampToValueAtTime(volume,t+.012);gain.gain.exponentialRampToValueAtTime(.001,t+duration);osc.connect(gain);gain.connect(audioCtx.destination);osc.start(t);osc.stop(t+duration+.015)}catch(e){}}
@@ -497,17 +564,28 @@ function check(raw,method='qr'){
  if(/(?:^|[\s;])(?:P|PEDIDO|RASTREIO|SKU)\s*:|;\s*(?:Q|QTD)\s*:/i.test(sku)){
   showMessage('⛔ Este é um código de etiqueta, não um SKU individual.','danger');logScan('PRODUTO',sku,'ERRO');signal(false,'Código incorreto');return false;
  }
- const matches=order.items.filter(i=>equivalentSku(i.sku,sku));
+ const matches=order.items.filter(i=>equivalentSku(i.sku,sku)||
+  (i.randomColor&&hasSkuPrefix(i.baseSku||i.sku,sku)));
+ // QR com SKU base: não identifica a cor de várias linhas do mesmo produto.
+ // Exige que o funcionário escolha a cor real, como ocorre no EAN de família.
+ if(!matches.length){
+  const candidateItems=order.items.filter(i=>!i.randomColor&&i.variacao&&
+   skuKey(i.baseSku)===skuKey(sku)&&i.read<i.qtd);
+  if(candidateItems.length){
+   const opts=candidateItems.map(i=>({sku:i.sku,title:i.variacao,produto:'',source:'pedido-visual',registeredSize:false}));
+   openEANReview(sku,opts,candidateItems,[sku],'QR do produto');return false;
+  }
+ }
  if(matches.length!==1){showMessage(matches.length?'⛔ SKU ambíguo. Conferência bloqueada.':'⛔ PRODUTO ERRADO — SKU não pertence ao pedido: '+sku,'danger');logScan('PRODUTO',sku,'ERRO');signal(false,'SKU não corresponde');return false}
  const item=matches[0];
  if(item.read>=item.qtd){showMessage('⛔ QUANTIDADE EXCEDIDA — SKU já conferido: '+sku,'danger');logScan('PRODUTO',sku,'ERRO');signal(false,'Quantidade excedida');return false}
  item.read++;
- if(method==='visual')item.visual=(Number(item.visual)||0)+1;
+ if(method==='visual'||method==='visual-qr')item.visual=(Number(item.visual)||0)+1;
  if(method==='ean')item.ean=(Number(item.ean)||0)+1;
- logScan(method==='visual'?'EAN VISUAL':method==='ean'?'EAN':'PRODUTO',sku,method==='visual'?'VISUAL CONFIRMADO':'CORRETO');
+ logScan(method==='visual'?'EAN VISUAL':method==='visual-qr'?'QR VISUAL':method==='ean'?'EAN':'PRODUTO',sku,method.startsWith('visual')?'VISUAL CONFIRMADO':'CORRETO');
  persistList();render();
- showMessage(order.items.every(i=>i.read===i.qtd)?'✅ TODOS OS PRODUTOS CONFERIDOS — pode finalizar.':order.kitGroups?.length?'✅ '+item.sku+' confirmado. Falta conferir o restante do kit.':method==='visual'?'✅ Conferência visual registrada — '+item.sku:'✅ PRODUTO CORRETO — '+item.sku+' ('+item.read+'/'+item.qtd+')','success');
- $('skuInput').value='';signal(true,method==='visual'?'Validação visual · '+item.sku:item.sku+' ('+item.read+'/'+item.qtd+')');
+ showMessage(order.items.every(i=>i.read===i.qtd)?'✅ TODOS OS PRODUTOS CONFERIDOS — pode finalizar.':order.kitGroups?.length?'✅ '+item.sku+' confirmado. Falta conferir o restante do kit.':method.startsWith('visual')?'✅ Conferência visual registrada — '+item.sku:'✅ PRODUTO CORRETO — '+item.sku+' ('+item.read+'/'+item.qtd+')','success');
+ $('skuInput').value='';signal(true,method.startsWith('visual')?'Validação visual · '+item.sku:item.sku+' ('+item.read+'/'+item.qtd+')');
  if(fastPaused&&order.items.every(i=>i.read===i.qtd))void closeScan();
  return true;
 }
@@ -740,7 +818,7 @@ async function scan(type,usarLeitorPadrao=false){
 }
 
 // === V24 CATÁLOGO EAN ↔ SKU ===
-const CATALOG_STORE='mm_bipador_catalog_v35_kits_teste';const CATALOG_LIMIT=15000;
+const CATALOG_STORE='mm_bipador_catalog_v40_variacoes_teste';const CATALOG_LIMIT=15000;
 let catalog=[],eanPending=null,editingCatalogIndex=null,catalogCorrections=0;
 function cleanEAN(v){return String(v??'').trim().replace(/\s+/g,'')}
 function checkEAN(v){return /^(?:\d{8}|\d{12}|\d{13})$/.test(cleanEAN(v))}
@@ -750,12 +828,12 @@ function correctKnownColorTypo(value){return String(value||'').replace(/(^|[,;|]
 function safeCatalogRow(r){
  const ean=cleanEAN(r.ean),sku=norm(r.sku);
  if(!checkEAN(ean)||!sku||sku.length>100)throw Error('EAN deve ter 8, 12 ou 13 dígitos e SKU não pode estar vazio.');
- return {ean,sku,produto:String(r.produto||'').trim().slice(0,120),cor:correctKnownColorTypo(String(r.cor||'').trim().slice(0,60)),tamanho:String(r.tamanho||'').trim().slice(0,50),variacoes:correctKnownColorTypo(String(r.variacoes||'').trim().slice(0,500))};
+ return {ean,sku,aleatoria:r.aleatoria===true||/^(1|SIM|TRUE|YES)$/i.test(String(r.aleatoria||'')),produto:String(r.produto||'').trim().slice(0,120),cor:correctKnownColorTypo(String(r.cor||'').trim().slice(0,60)),tamanho:String(r.tamanho||'').trim().slice(0,50),variacoes:correctKnownColorTypo(String(r.variacoes||'').trim().slice(0,500))};
 }
 function eanVariants(value){const v=cleanEAN(value);return v.length===12?[v,'0'+v]:v.length===13&&v[0]==='0'?[v,v.slice(1)]:[v]}
 function eanMatches(value){const variants=new Set(eanVariants(value));return catalog.filter(r=>variants.has(r.ean))}
 // A família só é usada para EAN. QR Code continua exigindo o SKU completo.
-function skuKey(v){return norm(v).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[–—_\s]+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'').replace(/^(WJ|MC)-?(\d{3,})(?=-|$)/,(_,prefix,n)=>prefix+'-'+n).replace(/^AB-?168(?=-|$)/,'AB-168').replace(/^XFP-?3370(?=-|$)/,'AB-168')}
+function skuKey(v){return norm(v).replace(/^#+/,'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[–—_\s]+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'').replace(/^(WJ|MC)-?(\d{3,})(?=-|$)/,(_,prefix,n)=>prefix+'-'+n).replace(/^AB-?168(?=-|$)/,'AB-168').replace(/^XFP-?3370(?=-|$)/,'AB-168')}
 function hasSkuPrefix(base,full){const a=skuKey(base),b=skuKey(full);return !!a&&(a===b||b.startsWith(a+'-'))}
 function skuFamily(v){
  const a=skuKey(v).split('-').filter(Boolean);
@@ -763,7 +841,7 @@ function skuFamily(v){
  return a.length>1&&/^[A-Z]{1,3}$/.test(a[0])&&/^\d{3,}$/.test(a[1])?a.slice(0,2).join('-'):(a[0]||'');
 }
 function csvVariations(row){return String(row.variacoes||'').split(/[,;|]/).map(x=>x.trim()).filter(Boolean)}
-function catalogIdentity(row){return [row.ean,skuKey(row.sku),norm(row.cor),norm(row.tamanho),norm(row.variacoes)].join('|')}
+function catalogIdentity(row){return [row.ean,skuKey(row.sku),norm(row.cor),norm(row.tamanho),norm(row.variacoes),row.aleatoria?'1':'0'].join('|')}
 // Constrói opções concretas de cor/tamanho a partir do SKU base do cadastro.
 function eanOptionRows(row,family){
  const base=skuKey(family), registered=skuKey(row.sku);
@@ -851,7 +929,7 @@ function readCatalog(){
   return clean;
  }catch(e){console.warn('Catálogo local indisponível',e);return []}
 }
-try{if(localStorage.getItem(CATALOG_STORE)===null){const anterior=localStorage.getItem('mm_bipador_catalog_v34_teste')||localStorage.getItem('mm_bipador_catalog_v24');if(anterior)localStorage.setItem(CATALOG_STORE,anterior)}}catch(e){}
+try{if(localStorage.getItem(CATALOG_STORE)===null){const anterior=localStorage.getItem('mm_bipador_catalog_v35_kits_teste')||localStorage.getItem('mm_bipador_catalog_v34_teste')||localStorage.getItem('mm_bipador_catalog_v24');if(anterior)localStorage.setItem(CATALOG_STORE,anterior)}}catch(e){}
 catalog=readCatalog();
 function openCatalog(){ $('catalogPanel').classList.remove('hidden');renderCatalog() }
 function closeCatalog(){ $('catalogPanel').classList.add('hidden') }
@@ -863,7 +941,7 @@ function renderCatalog(){
  $('catalogStats').textContent=catalog.length+' associações · '+unique.size+' códigos · '+shared.size+' EAN(s) compartilhado(s)';
  const term=norm($('catalogSearch')?.value||'');
  const filtered=catalog.map((r,i)=>({...r,index:i})).filter(r=>[r.ean,r.sku,r.produto,r.cor,r.tamanho,r.variacoes].some(x=>norm(x).includes(term)));
- $('catalogList').innerHTML=filtered.length?filtered.slice(0,120).map(r=>'<div class="catalog-entry"><div><strong>'+escapeHtml(r.ean)+' · '+escapeHtml(r.sku)+'</strong><small>'+escapeHtml([r.produto,r.cor,r.tamanho,r.variacoes?('Cores: '+r.variacoes):''].filter(Boolean).join(' · '))+'</small>'+(shared.has(r.ean)?'<span class="catalog-tag">EAN compartilhado</span>':'')+'</div><div class="catalog-actions"><button type="button" class="btn-edit" data-editcatalog="'+r.index+'" aria-label="Editar associação">Editar</button><button type="button" class="btn-del" data-delcatalog="'+r.index+'" aria-label="Remover associação">Excluir</button></div></div>').join('')+(filtered.length>120?'<div class="catalog-entry">Mais '+(filtered.length-120)+' associações. Refine a busca.</div>':''):'<p class="catalog-note" style="padding:12px">Nenhuma associação encontrada.</p>';
+ $('catalogList').innerHTML=filtered.length?filtered.slice(0,120).map(r=>'<div class="catalog-entry"><div><strong>'+escapeHtml(r.ean)+' · '+escapeHtml(r.sku)+'</strong><small>'+escapeHtml([r.produto,r.cor,r.tamanho,r.variacoes?('Cores: '+r.variacoes):'',r.aleatoria?'Cor aleatória autorizada':''].filter(Boolean).join(' · '))+'</small>'+(shared.has(r.ean)?'<span class="catalog-tag">EAN compartilhado</span>':'')+'</div><div class="catalog-actions"><button type="button" class="btn-edit" data-editcatalog="'+r.index+'" aria-label="Editar associação">Editar</button><button type="button" class="btn-del" data-delcatalog="'+r.index+'" aria-label="Remover associação">Excluir</button></div></div>').join('')+(filtered.length>120?'<div class="catalog-entry">Mais '+(filtered.length-120)+' associações. Refine a busca.</div>':''):'<p class="catalog-note" style="padding:12px">Nenhuma associação encontrada.</p>';
 }
 function upsertCatalog(input){
  const row=safeCatalogRow(input),found=catalog.findIndex(r=>catalogIdentity(r)===catalogIdentity(row));
@@ -900,12 +978,12 @@ function importCatalogCSV(text){
  const col=(names)=>head.findIndex(x=>names.includes(x));
  const ce=col(['EAN','GTIN','CODIGODEBARRAS','CODIGOBARRAS','BARCODE']),cs=col(['SKU','SKUINT','SKUINTERNO','SELLERSKU','SKUVENDEDOR']);
  if(ce<0||cs<0)throw Error('O CSV precisa ter colunas EAN e SKU. Confira o modelo.');
- const cp=col(['PRODUTO','NOME','NOMEDOPRODUTO','DESCRICAO']),cc=col(['COR','COLOUR','COLOR','VARIACAO']),ct=col(['TAMANHO','SIZE']),cv=col(['VARIACOES','VARIACOESDECOR','CORES','VARIANTES','VARIATIONS']);
+ const cp=col(['PRODUTO','NOME','NOMEDOPRODUTO','DESCRICAO']),cc=col(['COR','COLOUR','COLOR','VARIACAO']),ct=col(['TAMANHO','SIZE']),cv=col(['VARIACOES','VARIACOESDECOR','CORES','VARIANTES','VARIATIONS']),ca=col(['CORALEATORIA','ALEATORIA','ALEATORIO','RANDOMCOLOR']);
  let invalid=[],inserted=0,updated=0,identical=0;const next=catalog.slice();
  rows.slice(1).forEach((r,j)=>{
   try{
    const val=i=>i<0?'':(r[i]||'');
-   const item=safeCatalogRow({ean:val(ce),sku:val(cs),produto:val(cp),cor:val(cc),tamanho:val(ct),variacoes:val(cv)});
+   const item=safeCatalogRow({ean:val(ce),sku:val(cs),produto:val(cp),cor:val(cc),tamanho:val(ct),variacoes:val(cv),aleatoria:val(ca)});
    const index=next.findIndex(x=>catalogIdentity(x)===catalogIdentity(item));
    if(index<0){next.push(item);inserted++}
    else if(JSON.stringify(next[index])===JSON.stringify(item))identical++;
@@ -968,9 +1046,9 @@ function choosePendingEAN(index){
  document.querySelectorAll('#eanChoices .ean-choice').forEach((el,i)=>el.classList.toggle('selected',i===index));
  updateEANConfirmation();
 }
-function openEANReview(code,options,matches,families){
- eanPending={code,options,matches,selected:-1,orderId:order?.id};
- $('eanReviewDescription').textContent=options.some(o=>o.source==='pedido-visual')?'EAN '+code+' cadastrado com SKU base '+families.join(' / ')+'. Este código não comprova a cor. Compare fisicamente o produto com a variação do pedido e confirme.':'EAN '+code+' · SKU base '+families.join(' / ')+'. Confira fisicamente a cor e o tamanho antes de selecionar.';
+function openEANReview(code,options,matches,families,sourceKind='EAN'){
+ eanPending={code,options,matches,selected:-1,orderId:order?.id,sourceKind};
+ $('eanReviewDescription').textContent=options.some(o=>o.source==='pedido-visual')?sourceKind+' '+code+' cadastrado com SKU base '+families.join(' / ')+'. Este código não comprova a cor. Compare fisicamente o produto com a variação do pedido e confirme.':sourceKind+' '+code+' · SKU base '+families.join(' / ')+'. Confira fisicamente a cor e o tamanho antes de selecionar.';
  $('eanExpectedSKU').textContent=matches.map(i=>i.sku).join(' ou ');
  const missing=matches.filter(i=>!options.some(o=>eanVisualMatch(o,i)));
  const warning=$('eanExpectedWarning');
@@ -993,6 +1071,17 @@ function processEAN(raw){
   !rows[0].cor&&!rows[0].tamanho&&!rows[0].variacoes&&
   order.items.filter(i=>skuKey(i.sku)==='AB-168');
  if(supplierMatch&&supplierMatch.length===1){check(supplierMatch[0].sku,'ean');return}
+ // Cor aleatória: EAN exclusivo de mesma família pode validar o produto.
+ // Se o cadastro tem apenas SKU base e NÃO está autorizado para aleatória,
+ // mantém inspeção visual obrigatória.
+ const randomCandidates=order.items.filter(i=>i.randomColor&&i.read<i.qtd&&
+  rows.some(r=>hasSkuPrefix(i.baseSku||i.sku,r.sku)));
+ const otherFamilies=rows.some(r=>!randomCandidates.some(i=>hasSkuPrefix(i.baseSku||i.sku,r.sku)));
+ if(randomCandidates.length===1&&!otherFamilies){
+  if(rows.some(r=>r.aleatoria||skuKey(r.sku)!==skuKey(randomCandidates[0].baseSku||randomCandidates[0].sku))){
+   check(randomCandidates[0].sku,'ean');return;
+  }
+ }
  const result=resolveEANOptions(rows,order.items);
  if(!result.matchedFamily){showMessage('⛔ PRODUTO ERRADO — EAN '+code+' não pertence à família de SKU deste pedido.','danger');logScan('EAN',code,'ERRO');signal(false,'EAN de outro produto');return}
  // Sem variações cadastradas: o EAN confirma apenas a família, e a variação
@@ -1036,18 +1125,18 @@ $('eanConfirm').onclick=()=>{
  if(matches.length!==1){showMessage(matches.length?'⛔ VARIAÇÃO AMBÍGUA — cadastre o tamanho específico antes de conferir.':'⛔ VARIAÇÃO ERRADA — '+candidate.title+' não corresponde ao pedido.','danger');logScan('EAN VISUAL',code+' → '+candidate.sku,'ERRO');signal(false,'Variação incorreta');return}
  // Aprova o SKU COMPLETO da etiqueta após confirmação visual da cor e, se
  // ausente no cadastro, confirmação explícita do tamanho físico.
- check(matches[0].item.sku,'visual');
+ check(matches[0].item.sku,pending.sourceKind==='QR do produto'?'visual-qr':'visual');
 };
 $('eanCancel').onclick=()=>{closeEANReview();if(order)showMessage('Conferência visual cancelada. Produto não contabilizado.');};
-function resetCatalogForm(){editingCatalogIndex=null;$('catalogEAN').value='';$('catalogSKU').value='';$('catalogName').value='';$('catalogColor').value='';$('catalogSize').value='';$('catalogVariants').value='';const sub=$('catalogSubmit');if(sub)sub.textContent='＋ Salvar associação';$('catalogCancelEdit')?.classList.add('hidden');}
-function startCatalogEdit(index){const r=catalog[index];if(!r)return;editingCatalogIndex=index;$('catalogEAN').value=r.ean||'';$('catalogSKU').value=r.sku||'';$('catalogName').value=r.produto||'';$('catalogColor').value=r.cor||'';$('catalogSize').value=r.tamanho||'';$('catalogVariants').value=r.variacoes||'';const sub=$('catalogSubmit');if(sub)sub.textContent='💾 Atualizar associação';$('catalogCancelEdit')?.classList.remove('hidden');$('catalogEAN').focus();}
-$('catalogForm').onsubmit=e=>{e.preventDefault();try{const payload={ean:$('catalogEAN').value,sku:$('catalogSKU').value,produto:$('catalogName').value,cor:$('catalogColor').value,tamanho:$('catalogSize').value,variacoes:$('catalogVariants').value};if(editingCatalogIndex===null){upsertCatalog(payload)}else{const row=safeCatalogRow(payload);const next=catalog.slice();next[editingCatalogIndex]=row;saveCatalog(next);resetCatalogForm();$('catalogSKU').focus();}}catch(err){alert('Não foi possível cadastrar: '+err.message)}};
+function resetCatalogForm(){editingCatalogIndex=null;$('catalogEAN').value='';$('catalogSKU').value='';$('catalogName').value='';$('catalogColor').value='';$('catalogSize').value='';$('catalogVariants').value='';$('catalogRandom').checked=false;const sub=$('catalogSubmit');if(sub)sub.textContent='＋ Salvar associação';$('catalogCancelEdit')?.classList.add('hidden');}
+function startCatalogEdit(index){const r=catalog[index];if(!r)return;editingCatalogIndex=index;$('catalogEAN').value=r.ean||'';$('catalogSKU').value=r.sku||'';$('catalogName').value=r.produto||'';$('catalogColor').value=r.cor||'';$('catalogSize').value=r.tamanho||'';$('catalogVariants').value=r.variacoes||'';$('catalogRandom').checked=!!r.aleatoria;const sub=$('catalogSubmit');if(sub)sub.textContent='💾 Atualizar associação';$('catalogCancelEdit')?.classList.remove('hidden');$('catalogEAN').focus();}
+$('catalogForm').onsubmit=e=>{e.preventDefault();try{const payload={ean:$('catalogEAN').value,sku:$('catalogSKU').value,produto:$('catalogName').value,cor:$('catalogColor').value,tamanho:$('catalogSize').value,variacoes:$('catalogVariants').value,aleatoria:$('catalogRandom').checked};if(editingCatalogIndex===null){upsertCatalog(payload)}else{const row=safeCatalogRow(payload);const next=catalog.slice();next[editingCatalogIndex]=row;saveCatalog(next);resetCatalogForm();$('catalogSKU').focus();}}catch(err){alert('Não foi possível cadastrar: '+err.message)}};
 $('openCatalogBefore').onclick=openCatalog;$('openCatalogWork').onclick=openCatalog;$('closeCatalog').onclick=closeCatalog;
 $('scanCatalogEAN').onclick=()=>scan('ean-catalog');
 $('catalogSearch').oninput=renderCatalog;
 $('catalogList').onclick=e=>{const editBtn=e.target.closest?.('[data-editcatalog]');if(editBtn){const index=Number(editBtn.dataset.editcatalog);startCatalogEdit(index);return}const btn=e.target.closest?.('[data-delcatalog]');if(!btn)return;const index=Number(btn.dataset.delcatalog),r=catalog[index];if(!r)return;if(!confirm('Excluir associação '+r.ean+' → '+r.sku+'?'))return;try{saveCatalog(catalog.filter((_,i)=>i!==index));if(editingCatalogIndex===index||editingCatalogIndex!==null&&editingCatalogIndex>index)resetCatalogForm()}catch(err){alert('Falha: '+err.message)}};$('catalogCancelEdit').onclick=()=>resetCatalogForm();
-$('catalogTemplate').onclick=()=>{downloadCatalog('EAN;SKU;Produto;Cor;Tamanho;Variacoes\n', 'modelo_cadastro_ean.csv','text/csv;charset=utf-8')};
-$('catalogExport').onclick=()=>{if(!catalog.length){alert('Nenhum EAN cadastrado para exportar.');return}downloadCatalog('\uFEFF'+['EAN','SKU','Produto','Cor','Tamanho','Variacoes'].join(';')+'\r\n'+catalog.map(r=>[r.ean,r.sku,r.produto,r.cor,r.tamanho,r.variacoes].map(csvValue).join(';')).join('\r\n')+'\r\n','catalogo_ean_sku.csv','text/csv;charset=utf-8')};
+$('catalogTemplate').onclick=()=>{downloadCatalog('EAN;SKU;Produto;Cor;Tamanho;Variacoes;CorAleatoria\n', 'modelo_cadastro_ean.csv','text/csv;charset=utf-8')};
+$('catalogExport').onclick=()=>{if(!catalog.length){alert('Nenhum EAN cadastrado para exportar.');return}downloadCatalog('\uFEFF'+['EAN','SKU','Produto','Cor','Tamanho','Variacoes','CorAleatoria'].join(';')+'\r\n'+catalog.map(r=>[r.ean,r.sku,r.produto,r.cor,r.tamanho,r.variacoes,r.aleatoria?'SIM':'NAO'].map(csvValue).join(';')).join('\r\n')+'\r\n','catalogo_ean_sku.csv','text/csv;charset=utf-8')};
 $('catalogBackup').onclick=()=>downloadCatalog(JSON.stringify({tipo:'MM-EAN-CATALOGO',versao:1,criadoEm:new Date().toISOString(),registros:catalog},null,2),'backup_catalogo_ean.json','application/json;charset=utf-8');
 $('catalogFile').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;try{if(f.size>3000000)throw Error('Arquivo acima de 3 MB.');importCatalogCSV(await f.text())}catch(err){alert('Falha na importação: '+err.message)}finally{e.target.value=''}};
 $('catalogRestore').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;try{if(f.size>3000000)throw Error('Arquivo acima de 3 MB.');const data=JSON.parse(await f.text());if(data.tipo!=='MM-EAN-CATALOGO'||data.versao!==1||!Array.isArray(data.registros))throw Error('Formato de backup inválido.');const rows=data.registros.map(safeCatalogRow);if(rows.length>CATALOG_LIMIT)throw Error('Limite excedido.');if(!confirm('Restaurar '+rows.length+' associações? Isso SUBSTITUI o catálogo atual. Faça backup antes.'))return;saveCatalog(rows);alert('Catálogo restaurado.')}catch(err){alert('Não foi possível restaurar: '+err.message)}finally{e.target.value=''}};

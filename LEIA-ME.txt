@@ -1,32 +1,24 @@
-BIPADOR UNIVERSAL V39 — DETECÇÃO AUTOMÁTICA DE KITS
+BIPADOR UNIVERSAL V40 — VARIAÇÕES E COR ALEATÓRIA (TESTE)
 
-NOVO: não é necessário cadastrar cada kit.
-O aplicativo lê o campo SKU da etiqueta e separa os componentes quando encontra:
- - MAIS (+): WJ-2673-AZULCLARO+MC40876-AZUL
- - BARRA COM ESPAÇOS (/): NS-2580 / A8055
- - BARRA ENTRE CÓDIGOS DE SKU: NS-2580/A8055
- - E ENTRE SKUS: NS-2580 e A8055
- - & ENTRE SKUS: NS-2580 & A8055 ou NS-2580&A8055
+Use em pasta separada no GitHub Pages até validar com etiquetas reais.
 
-Um kit com Q:1 exige 1 leitura por componente; Q:2 exige 2 leituras por componente.
-Cada componente pode ser lido por QR/SKU ou EAN previamente cadastrado.
-SKU individual com barra como WJ 211- BR/1 continua indivisível.
-Os componentes são extraídos automaticamente da etiqueta, não de um cadastro de kits.
-Quando o QR da etiqueta NÃO informa os componentes, não é possível deduzi-los de um SKU único.
+Novo QR recomendado:
+P:261029U318XJFS
+SKU:#MC40876;V:VERDE;Q:5
+SKU:#MC40876;V:ROSA;Q:5
+SKU:#MC40876;V:AZUL;Q:5
 
-IMPORTANTE SOBRE VARIAÇÕES E QUANTIDADE
-O aplicativo confere os SKUs que vêm no QR Code. Se cores/tamanhos ou quantidades
-por componente não estiverem codificados, não podem ser validados automaticamente.
-Verifique visualmente detalhes descritos somente no texto impresso da etiqueta.
+Cor aleatória (quando o próprio pedido autoriza):
+P:EXEMPLO
+SKU:MC40876;V:ALEATORIA;Q:3
 
-MANTIDO: leitor rápido ZXing WASM/fallback, tela simples, digitação manual,
-descartar pedido no topo, EANs, confirmação visual, equivalência AB-168/XFP-3370,
-relatórios e histórico.
+A etiqueta antiga enviada continha apenas:
+SKU:#MC40876;Q:5 (3 vezes), sem nenhuma cor no QR.
+Por segurança, a V40 identifica essas linhas ambíguas e oferece correção
+manual das variações impressas. Atualize o gerador para incluir V:COR.
 
-INSTALAÇÃO
-Enviar os oito arquivos DE DENTRO DESTA PASTA à pasta atual do GitHub Pages.
-Para testar sem arriscar a V37, usar uma pasta separada Bipador_Universal_V39_KITS_E_OU_AMPERSAND.
-Não limpar dados do Safari; exportar backup antes da atualização.
+Cadastro EAN: marque 'Permite venda com cor aleatória' quando aplicável.
+Essa opção NUNCA transforma um pedido com cor definida em aleatório.
 
-OBS: "e" apenas com espaços, e "&" apenas quando ambos os lados parecem SKUs completos.
-Textos descritivos e SKUs com barra interna não são separados.
+Mantenha os oito arquivos juntos. Antes de atualizar, faça backups.
+Leitor WASM e rotinas de câmera preservados da V39.
