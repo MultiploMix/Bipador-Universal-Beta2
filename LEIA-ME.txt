@@ -1,7 +1,18 @@
-BIPADOR UNIVERSAL V43 - Correção de etiquetas com cor aleatoria
+BIPADOR UNIVERSAL V44 — EQUIVALÊNCIA ENTRE FORNECEDORES
 
-Corrige o QR quando SKU inclui ALEATORIA e o campo V: inclui descricao comercial, por exemplo: 1un- T. NATACAO ALEATORIA ADUL.
+Atualização de teste. Preserva a câmera rápida (ZXing/WASM), kits, EANs, cor aleatória, painel e histórico.
 
-Mantem a conferencia visual da cor fisica e do tamanho, com leitor WebAssembly e conferencia de kits.
+Regra única:
+  AB-168 = XFP-3370
+  PRETA = PRETO apenas nessa família de produto, quando indicados no primeiro atributo da variação.
+  As descrições comerciais após a cor não são consideradas como SKUs adicionais.
+  BEGE continua diferente de PRETO.
 
-INSTALACAO: Publique os arquivos desta pasta diretamente numa pasta de teste separada no repositorio Qrcode-Shopee. Nao limpe os dados do Safari.
+Instalação GitHub Pages:
+  Crie uma pasta Bipador_Universal_V44_TESTE no repositório Qrcode-Shopee
+  e envie para essa pasta os 8 arquivos DE DENTRO do ZIP.
+  Não apague dados do navegador. Exportar o catálogo EAN antes da atualização é recomendado.
+
+A leitura por EAN exige que o EAN esteja cadastrado com AB-168 ou XFP-3370.
+A leitura de QR com código individual aceita os dois fornecedores quando a cor corresponde.
+Teste inicialmente com os SKUs e EANs reais da loja.
