@@ -1,28 +1,17 @@
-BIPADOR UNIVERSAL V34 - LEITOR EXPERIMENTAL (ZXing WebAssembly)
+BIPADOR UNIVERSAL V36 — ATALHOS NA BANCADA
 
-IMPORTANTE: nao substitua a V33 estavel da sua equipe.
+Base: V35 Kits, com leitor rapido ZXing WebAssembly preservado.
 
-COMO INSTALAR NO GITHUB PAGES:
-1. No repositorio Qrcode-Shopee, crie uma NOVA pasta chamada Bipador_Universal_V34_TESTE.
-2. Envie para essa pasta os arquivos deste ZIP (index.html, leitor-wasm.js, sw.js, manifest.webmanifest, icon.svg, logo-multiplo-mix.png).
-3. O navegador abrira a pasta pelo GitHub Pages quando a publicacao estiver pronta.
-   Exemplo esperado: https://multiplomix.github.io/Qrcode-Shopee/Bipador_Universal_V34_TESTE/
-4. Confirme o selo V34 TESTE no topo.
+Novidades:
+- Descartar pedido atual no topo da conferencia, com confirmacao de seguranca.
+- Botao Digitar EAN ou SKU acessivel na tela principal quando ha pedido em andamento.
+- A entrada manual usa exatamente a mesma regra de verificacao da camera, incluindo kits, quantidades e EANs.
+- Ao concluir ou descartar o pedido, o formulario manual desaparece automaticamente.
 
-MECANISMO DE LEITURA:
-- Novo leitor usa a biblioteca barcode-detector (ZXing-C++ compilado em WebAssembly) via jsDelivr.
-- O modulo WASM e carregado pelo navegador na primeira utilizacao (requer internet).
-- Se o modulo nao carregar ou falhar, o aplicativo usa automaticamente o leitor anterior (html5-qrcode).
-- Para FORCAR o leitor antigo em uma comparacao, abra o endereco com ?leitor=padrao ao final.
-- A camera continua com tela cheia, zoom e lanterna quando o navegador suportar.
+INSTALACAO NO GITHUB PAGES
+1. Crie uma pasta de teste chamada Bipador_Universal_V36_ACESSO_RAPIDO no repositorio Qrcode-Shopee.
+2. Envie o CONTEUDO desta pasta (8 arquivos) diretamente para ela.
+3. Confirme Commit changes e abra /Qrcode-Shopee/Bipador_Universal_V36_ACESSO_RAPIDO/.
+4. Nao apague os dados do navegador.
 
-DADOS DE TESTE:
-- O historico, a sessao e as listas da V34 sao separados dos da V33.
-- Na primeira abertura, a V34 faz uma copia do catalogo EAN/SKU da V33, caso exista no mesmo navegador. Alteracoes posteriores na V34 nao afetam o cadastro original.
-- Se abrir em outro aparelho, importe seu backup JSON ou CSV normalmente.
-
-TESTE SUGERIDO:
-- Compare V33 e V34 no mesmo aparelho com 5 QRs de pedido, 5 EANs e 5 QRs de SKU.
-- Observe qualidade do reconhecimento e tempo desde a abertura ate a leitura.
-- Sem garantias de desempenho: a V34 ainda precisa ser testada na camera real do iPhone.
-- Nao limpe os dados do Safari; faca um backup do catalogo antes de qualquer manutencao.
+IMPORTANTE: leitura real, audio, permissoes de camera e compartilhamento devem ser testados no iPhone.
