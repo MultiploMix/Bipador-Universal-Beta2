@@ -1,18 +1,9 @@
-BIPADOR UNIVERSAL V44 — EQUIVALÊNCIA ENTRE FORNECEDORES
+BIPADOR UNIVERSAL V46 — CATÁLOGO COMPARTILHADO
 
-Atualização de teste. Preserva a câmera rápida (ZXing/WASM), kits, EANs, cor aleatória, painel e histórico.
-
-Regra única:
-  AB-168 = XFP-3370
-  PRETA = PRETO apenas nessa família de produto, quando indicados no primeiro atributo da variação.
-  As descrições comerciais após a cor não são consideradas como SKUs adicionais.
-  BEGE continua diferente de PRETO.
-
-Instalação GitHub Pages:
-  Crie uma pasta Bipador_Universal_V44_TESTE no repositório Qrcode-Shopee
-  e envie para essa pasta os 8 arquivos DE DENTRO do ZIP.
-  Não apague dados do navegador. Exportar o catálogo EAN antes da atualização é recomendado.
-
-A leitura por EAN exige que o EAN esteja cadastrado com AB-168 ou XFP-3370.
-A leitura de QR com código individual aceita os dois fornecedores quando a cor corresponde.
-Teste inicialmente com os SKUs e EANs reais da loja.
+1. Atualização experimental baseada na V45.
+2. Para ativar a nuvem, leia COMO_ATIVAR_NUVEM.md e configure o Firebase.
+3. Sem configurar, continua funcionando localmente (não compartilha automaticamente).
+4. Envie index.html, leitor-wasm.js, sw.js, logo-multiplo-mix.png, icon.svg, manifest.webmanifest, firebase-config.js, catalog-cloud.js para sua pasta do GitHub Pages.
+5. firestore.rules e COMO_ATIVAR_NUVEM.md são arquivos de instrução e NÃO precisam ir para a pasta pública do site.
+6. Não compartilhe senhas no GitHub. Faça backup dos EANs antes de migrar.
+7. Histórico de conferência continua local; somente EAN/SKU e variações são compartilhados.

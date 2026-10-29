@@ -1,0 +1,22 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function equipe() {
+      // Substitua o e-mail pelo usuário de acesso criado no Firebase Authentication.
+      // Todos que entrarem COM ESSE LOGIN poderão cadastrar, editar e excluir.
+      return request.auth != null && request.auth.token.email == 'EMAIL_DA_EQUIPE@EXEMPLO.COM';
+    }
+    match /catalogo_eans/{registro} {
+      allow read, delete: if equipe();
+      allow create, update: if equipe()
+        && request.resource.data.keys().hasOnly(['ean','sku','produto','cor','tamanho','variacoes','aleatoria','updatedAt','updatedBy'])
+        && request.resource.data.ean is string
+        && request.resource.data.ean.matches('^([0-9]{8}|[0-9]{12}|[0-9]{13})$')
+        && request.resource.data.sku is string
+        && request.resource.data.sku.size() > 0
+        && request.resource.data.sku.size() <= 100
+        && request.resource.data.aleatoria is bool;
+    }
+    match /{document=**} { allow read, write: if false; }
+  }
+}
