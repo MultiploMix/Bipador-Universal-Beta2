@@ -223,7 +223,7 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
 #operatorCard .manual-entry-row input{flex:1;min-width:0;width:auto;height:46px;margin:0;padding:10px 12px;background:white;border:1px solid #cbd5e1;border-radius:10px;font-size:16px}
 #operatorCard .manual-entry-row button{flex:none;width:auto;min-height:46px;margin:0;padding:10px 14px;background:#24354c;color:white;border-radius:10px;font-size:14px;font-weight:800}
 @media(max-width:375px){#operatorCard .discard-quick{font-size:11px;padding:8px 9px}.operator-topbar .operator-kicker{font-size:11px}}
-</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V36 KITS</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
+</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V39 KITS AUTOMÁTICOS</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
 <div class="operator-topbar"><div class="operator-kicker"><span class="live-dot"></span><span id="miniSession">Conferência em andamento</span></div><button id="discardQuick" class="discard-quick hidden" type="button" aria-label="Descartar pedido atual">✕ Descartar pedido</button></div>
 <h2 class="stage-title" id="stageTitle">Leia a etiqueta do pedido</h2>
 <p class="stage-help" id="stageHelp">Aponte a câmera para o QR Code da etiqueta.</p>
@@ -242,7 +242,7 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
 <summary>☷ Painel, histórico e opções <span class="chevron">⌄</span></summary>
 <div class="advanced-inside"><section class="dashboard" id="listDashboard"><h2>Painel da conferência</h2><div class="fine" id="listLabel">Acompanhe sua conferência em tempo real.</div><div class="metric-grid"><div class="metric"><small>Esperados</small><strong id="countExpected">—</strong></div><div class="metric ok"><small>Conferidos</small><strong id="countDone">0</strong></div><div class="metric warn"><small>Pendentes</small><strong id="countPending">—</strong></div><div class="metric danger"><small>Erros detectados</small><strong id="countErrors">0</strong></div></div><div class="fine" id="progressLabel">Importe uma lista para identificar os pedidos faltantes.</div><div class="progress-track"><div class="progress-fill" id="progressFill"></div></div><div class="fine" id="outsideLabel"></div><details><summary>Carregar pedidos esperados (QR ou arquivo)</summary><p class="fine">Para listas grandes, <b>importe o TXT/CSV</b> ou leia os <b>QRs divididos</b> gerados pelo nosso gerador. A cada parte lida, o aplicativo guarda os IDs; o painel só importa a lista completa. Os formatos antigos continuam aceitos.</p><button class="secondary" id="scanMaster" type="button">📷 Ler QR mestre / parte da lista</button><div aria-live="polite" class="master-progress hidden" id="masterStatus" role="status"></div><label class="form-label" for="expectedText">IDs dos pedidos</label><textarea id="expectedText" placeholder="2610216SGWVERA
 2610217ABCDEF
-2610218XYZABC"></textarea><div class="toolbar"><button id="importExpected" type="button">Importar IDs</button><button class="secondary" id="clearExpected" type="button">Limpar lista</button></div><label class="form-label" for="expectedFile">Ou importar arquivo .txt / .csv</label><input accept=".txt,.csv,text/plain,text/csv" id="expectedFile" type="file"/><p class="fine">A conferência continua disponível sem importar a lista, mas o total esperado e os pendentes não poderão ser calculados.</p></details><details><summary>Visualizar pedidos pendentes</summary><input aria-label="Buscar pedido pendente" class="search-field" id="pendingSearch" placeholder="Buscar pedido pendente" type="search"/><div class="pending-list" id="pendingOrders">Carregue uma lista de pedidos esperados.</div></details><details class="backup-block"><summary>Segurança e recuperação da lista</summary><p class="fine">Salve uma cópia da lista em andamento antes de trocar de aparelho ou limpar dados do Safari.</p><button class="secondary" id="backupActive" type="button">⬇ Baixar backup da lista atual</button><label class="form-label" for="restoreActive">Restaurar backup .json</label><input accept=".json,application/json" id="restoreActive" type="file"/><p class="fine">Restaurar substitui a conferência atual, mediante confirmação.</p></details><div class="dash-tools"><div aria-live="polite" id="saveIndicator">● Conferência salva neste iPhone</div><button class="btn-quiet" id="downloadPending" type="button">⬇ Baixar pendentes</button></div></section><details class="advanced-sub"><summary>Leitura manual e ajustes do pedido</summary><div id="technicalControls"><section class="card"><h2>1. Etiqueta do pedido</h2><button id="scanOrder">📷 Ler QR Code da etiqueta</button><details><summary>Inserir código manualmente (teste)</summary><textarea id="rawOrder" placeholder="P:...\nSku:WJ-2673-AZULCLARO+MC40876-AZUL;Q:1"></textarea><button class="secondary" id="loadOrder">Carregar etiqueta</button></details></section><section class="card"><h2>2. Conferência do produto</h2><button disabled="" id="scanProduct">📷 Ler QR Code ou EAN do produto</button><details><summary>Digitar SKU ou EAN manualmente (teste)</summary><input id="skuInput" inputmode="text" placeholder="SKU ou EAN do produto"/><button class="secondary" id="checkSku">Conferir código</button></details><button id="finishList" type="button">🏁 Finalizar conferência da lista</button><button class="secondary" id="reset">Descartar pedido atual</button></section></div></details><details class="advanced-sub"><summary>Histórico completo e backups</summary><div id="historyFull"><section class="card"><h2>Pedidos conferidos nesta lista</h2><input aria-label="Buscar pedido conferido" class="search-field" id="doneSearch" placeholder="Buscar pedido conferido" type="search"/><div id="listHistory"></div><h2 style="margin-top:20px">Conferências salvas neste iPhone</h2><div id="history"></div><button class="secondary" id="export">Exportar histórico (backup)</button><button class="secondary" id="clear">Apagar histórico local</button><small>Os dados ficam neste navegador. Faça backups; o iOS pode remover dados locais. A leitura da câmera exige HTTPS e carregamento da biblioteca de leitura.</small></section></div></details><details class="advanced-sub"><summary>Configurações da sessão e produtos</summary><div class="admin-actions" id="sessionSettings"><div class="session" id="sessionInfo"></div><button class="secondary" id="openCatalogWork" type="button">▤ Gerenciar EANs e SKUs</button><button class="secondary" id="changeSession" type="button">Trocar identificação</button></div></details><div aria-label="Etapas da conferência" class="flowbar flowbar-legacy"><span id="stepList">Lista</span><span id="stepOrder">Etiqueta</span><span id="stepProduct">Produto</span><span id="stepDone">Concluído</span></div></div>
+2610218XYZABC"></textarea><div class="toolbar"><button id="importExpected" type="button">Importar IDs</button><button class="secondary" id="clearExpected" type="button">Limpar lista</button></div><label class="form-label" for="expectedFile">Ou importar arquivo .txt / .csv</label><input accept=".txt,.csv,text/plain,text/csv" id="expectedFile" type="file"/><p class="fine">A conferência continua disponível sem importar a lista, mas o total esperado e os pendentes não poderão ser calculados.</p></details><details><summary>Visualizar pedidos pendentes</summary><input aria-label="Buscar pedido pendente" class="search-field" id="pendingSearch" placeholder="Buscar pedido pendente" type="search"/><div class="pending-list" id="pendingOrders">Carregue uma lista de pedidos esperados.</div></details><details class="backup-block"><summary>Segurança e recuperação da lista</summary><p class="fine">Salve uma cópia da lista em andamento antes de trocar de aparelho ou limpar dados do Safari.</p><button class="secondary" id="backupActive" type="button">⬇ Baixar backup da lista atual</button><label class="form-label" for="restoreActive">Restaurar backup .json</label><input accept=".json,application/json" id="restoreActive" type="file"/><p class="fine">Restaurar substitui a conferência atual, mediante confirmação.</p></details><div class="dash-tools"><div aria-live="polite" id="saveIndicator">● Conferência salva neste iPhone</div><button class="btn-quiet" id="downloadPending" type="button">⬇ Baixar pendentes</button></div></section><details class="advanced-sub"><summary>Leitura manual e ajustes do pedido</summary><div id="technicalControls"><section class="card"><h2>1. Etiqueta do pedido</h2><button id="scanOrder">📷 Ler QR Code da etiqueta</button><details><summary>Inserir código manualmente (teste)</summary><textarea id="rawOrder" placeholder="P:...\nSku:NS-2580 / A8055;Q:1"></textarea><button class="secondary" id="loadOrder">Carregar etiqueta</button></details></section><section class="card"><h2>2. Conferência do produto</h2><button disabled="" id="scanProduct">📷 Ler QR Code ou EAN do produto</button><details><summary>Digitar SKU ou EAN manualmente (teste)</summary><input id="skuInput" inputmode="text" placeholder="SKU ou EAN do produto"/><button class="secondary" id="checkSku">Conferir código</button></details><button id="finishList" type="button">🏁 Finalizar conferência da lista</button><button class="secondary" id="reset">Descartar pedido atual</button></section></div></details><details class="advanced-sub"><summary>Histórico completo e backups</summary><div id="historyFull"><section class="card"><h2>Pedidos conferidos nesta lista</h2><input aria-label="Buscar pedido conferido" class="search-field" id="doneSearch" placeholder="Buscar pedido conferido" type="search"/><div id="listHistory"></div><h2 style="margin-top:20px">Conferências salvas neste iPhone</h2><div id="history"></div><button class="secondary" id="export">Exportar histórico (backup)</button><button class="secondary" id="clear">Apagar histórico local</button><small>Os dados ficam neste navegador. Faça backups; o iOS pode remover dados locais. A leitura da câmera exige HTTPS e carregamento da biblioteca de leitura.</small></section></div></details><details class="advanced-sub"><summary>Configurações da sessão e produtos</summary><div class="admin-actions" id="sessionSettings"><div class="session" id="sessionInfo"></div><button class="secondary" id="openCatalogWork" type="button">▤ Gerenciar EANs e SKUs</button><button class="secondary" id="changeSession" type="button">Trocar identificação</button></div></details><div aria-label="Etapas da conferência" class="flowbar flowbar-legacy"><span id="stepList">Lista</span><span id="stepOrder">Etiqueta</span><span id="stepProduct">Produto</span><span id="stepDone">Concluído</span></div></div>
 </details><section aria-label="Leitor de QR Code" class="card hidden" id="cameraPanel">
 <div id="reader"></div>
 <div class="camera-topbar">
@@ -306,14 +306,37 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
 </section>
 <div id="finalDialog" class="dialog-back hidden" role="dialog" aria-modal="true"><div class="dialog-card"><h2>Finalizar conferência?</h2><p id="finalSummary"></p><button id="saveShare">📲 Salvar e compartilhar no WhatsApp</button><button id="saveOnly" class="secondary">💾 Salvar relatório no celular</button><button id="cancelFinal" class="secondary">Voltar para conferência</button></div></div><!-- ZXing WASM experimental; o leitor V33 permanece como alternativa de seguranca. --><script src="https://cdn.jsdelivr.net/npm/barcode-detector@3.2.2/dist/iife/ponyfill.min.js"></script><script src="./leitor-wasm.js"></script><script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script><script>
 const $=id=>document.getElementById(id);let order=null,scanning=null,busy=false;let masterParts=null;const STORE='shopee_history_v35_kits_teste';const LIST_STORE='shopee_active_list_v35_kits_teste';let listRecords=[],scanEvents=[],expectedOrders=[],errorCount=0,outsideCount=0;const SESSION_STORE='shopee_session_v35_kits_teste';let session=null;const norm=s=>String(s||'').normalize('NFC').trim().replace(/\\n/g,' ').replace(/\s+/g,' ').toUpperCase();const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-// Um kit usa o separador + na etiqueta: SKU-TOUCA+SKU-OCULOS;Q:1.
-// O QTD corresponde à quantidade de kits; cada componente deve ser lido QTD vezes.
+// V39: kits identificados PELO CAMPO SKU da etiqueta, sem catálogo de kits.
+// Suporta +, /, " E " e & para componentes SKU distintos.
+// Barras internas de um SKU, como "WJ 211- BR/1", NÃO significam kit.
+// QTD:2 indica dois kits: cada SKU componente deve ser conferido duas vezes.
+function looksLikeSeparateSKU(part){
+ const p=norm(part);
+ return /^[A-Z]{1,8}[\s-]?\d{2,}[A-Z0-9\s._-]*$/.test(p) || /^\d{3,}[A-Z0-9._-]*$/.test(p);
+}
 function splitKitComponents(sku){
  const value=norm(sku);
- if(!value.includes('+'))return [value];
- const components=value.split('+').map(norm);
- if(components.length<2||components.length>12||components.some(s=>!s||s.length>100||s.includes(':')))
-  throw Error('SKU de kit inválido. Confira os componentes separados por + na etiqueta.');
+ if(/(?:\s+\/|\+)\s*$/.test(value)||/^\s*(?:\/|\+)/.test(value))throw Error('SKU de kit inválido: separador sem componente.');
+ // Separadores explícitos de itens: + ou barra com espaços (" / ").
+ // Dividir apenas dentro do campo SKU, nunca a etiqueta/variação inteira.
+ const chunks=value.split(/\s*\+\s*|\s+\/\s+/);
+ const components=[];
+ for(const chunk of chunks){
+  // " E " (com espaços) ou "&" (com ou sem espaços) podem separar componentes.
+  // Nunca dividir por uma letra E dentro de um SKU, como MODELO-VERDE.
+  // A divisão só acontece se TODOS os trechos parecerem SKUs independentes.
+  const possibleParts=chunk.split(/\s+E\s+|\s*&\s*/).map(x=>norm(x));
+  const parts=possibleParts.length>1&&possibleParts.every(looksLikeSeparateSKU)?possibleParts:[norm(chunk)];
+  for(const part of parts){
+   const compactSlash=part.split('/').map(x=>norm(x));
+   // Barra sem espaços só é separador se TODOS os lados parecem SKUs reais.
+   // Ex.: NS-2580/A8055 vira dois; WJ 211- BR/1 permanece um SKU.
+   if(compactSlash.length>1&&compactSlash.every(looksLikeSeparateSKU))components.push(...compactSlash);
+   else components.push(part);
+  }
+ }
+ if(components.length>12||components.some(c=>!c||c.length>100||c.includes(':')))
+  throw Error('SKU de kit inválido. Confira os códigos dos componentes na etiqueta.');
  return components;
 }
 function parseOrder(raw){
@@ -350,9 +373,11 @@ function skuParts(value){
  if(sections.length<2)return null;
  // O mesmo modelo pode ser impresso com hífen: WJ-2673 = WJ2673; MC-40876 = MC40876.
  let model=sections[0],attrSections=sections.slice(1);
- if(/^(WJ|MC)$/.test(model)&&/^\d{3,}$/.test(sections[1]||'')){
+ if(/^(WJ|MC|AB|XFP)$/.test(model)&&/^\d{3,}$/.test(sections[1]||'')){
   model+=sections[1];attrSections=sections.slice(2);
  }
+ // ÚNICA equivalência entre fornecedores autorizada nesta loja.
+ if(model==='XFP3370'||model==='AB168')model='AB168';
  if(!attrSections.length)return null;
  const attrs=attrSections.join(' ').split(/\s+/).filter(Boolean);
  const filtered=[];
@@ -367,6 +392,9 @@ function skuParts(value){
 }
 function equivalentSku(a,b){
  if(norm(a)===norm(b))return true;
+ // AB-168 e XFP-3370 são exatamente o mesmo produto; a regra não se aplica a nenhum outro modelo.
+ // Se houver sufixos (cor/tamanho), eles ainda precisam coincidir.
+ if(skuKey(a)==='AB-168'&&skuKey(b)==='AB-168')return true;
  const x=skuParts(a),y=skuParts(b);
  return !!(x&&y&&x.model===y.model&&x.attrs.length===y.attrs.length&&x.attrs.every((v,i)=>v===y.attrs[i]));
 }
@@ -424,7 +452,7 @@ function load(raw){
    }
   }
   order=o;logScan('ETIQUETA',o.id,'LIDA');persistList();render();
-  showMessage(o.kitGroups.length?'📦 Kit identificado: confira cada produto separadamente. O pedido só será concluído após todos os componentes.':'Pedido carregado. Escaneie os produtos.','success');$('rawOrder').value='';
+  showMessage(o.kitGroups.length?'📦 Kit detectado automaticamente: confira cada componente separadamente. Só será concluído após todas as leituras.':'Pedido carregado. Escaneie os produtos.','success');$('rawOrder').value='';
  }catch(e){showMessage(e.message,'danger');}
 }
 let audioCtx=null,visualTimer=null,scanGeneration=0;
@@ -727,7 +755,7 @@ function safeCatalogRow(r){
 function eanVariants(value){const v=cleanEAN(value);return v.length===12?[v,'0'+v]:v.length===13&&v[0]==='0'?[v,v.slice(1)]:[v]}
 function eanMatches(value){const variants=new Set(eanVariants(value));return catalog.filter(r=>variants.has(r.ean))}
 // A família só é usada para EAN. QR Code continua exigindo o SKU completo.
-function skuKey(v){return norm(v).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[–—_\s]+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'').replace(/^(WJ|MC)-?(\d{3,})(?=-|$)/,(_,prefix,n)=>prefix+'-'+n)}
+function skuKey(v){return norm(v).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[–—_\s]+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'').replace(/^(WJ|MC)-?(\d{3,})(?=-|$)/,(_,prefix,n)=>prefix+'-'+n).replace(/^AB-?168(?=-|$)/,'AB-168').replace(/^XFP-?3370(?=-|$)/,'AB-168')}
 function hasSkuPrefix(base,full){const a=skuKey(base),b=skuKey(full);return !!a&&(a===b||b.startsWith(a+'-'))}
 function skuFamily(v){
  const a=skuKey(v).split('-').filter(Boolean);
@@ -958,6 +986,13 @@ function processEAN(raw){
  if(!order){showMessage('Leia primeiro o QR Code da etiqueta.','danger');signal(false,'Leia primeiro a etiqueta');return}
  const rows=eanMatches(code);
  if(!rows.length){showMessage('⛔ EAN NÃO CADASTRADO — '+code+'. Cadastre a associação no gerenciamento.','danger');logScan('EAN',code,'DESCONHECIDO');signal(false,'EAN não cadastrado');return}
+ // Exceção estrita para o mesmo produto cadastrado com dois SKUs de fornecedores.
+ // Cada EAN precisa existir no catálogo; jamais aprovamos um EAN desconhecido.
+ // Sem cor/tamanho no pedido ou no cadastro, o EAN exclusivo confirma o SKU base.
+ const supplierMatch=rows.length===1&&skuKey(rows[0].sku)==='AB-168'&&
+  !rows[0].cor&&!rows[0].tamanho&&!rows[0].variacoes&&
+  order.items.filter(i=>skuKey(i.sku)==='AB-168');
+ if(supplierMatch&&supplierMatch.length===1){check(supplierMatch[0].sku,'ean');return}
  const result=resolveEANOptions(rows,order.items);
  if(!result.matchedFamily){showMessage('⛔ PRODUTO ERRADO — EAN '+code+' não pertence à família de SKU deste pedido.','danger');logScan('EAN',code,'ERRO');signal(false,'EAN de outro produto');return}
  // Sem variações cadastradas: o EAN confirma apenas a família, e a variação

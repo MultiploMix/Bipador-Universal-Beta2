@@ -1,17 +1,32 @@
-BIPADOR UNIVERSAL V36 — ATALHOS NA BANCADA
+BIPADOR UNIVERSAL V39 — DETECÇÃO AUTOMÁTICA DE KITS
 
-Base: V35 Kits, com leitor rapido ZXing WebAssembly preservado.
+NOVO: não é necessário cadastrar cada kit.
+O aplicativo lê o campo SKU da etiqueta e separa os componentes quando encontra:
+ - MAIS (+): WJ-2673-AZULCLARO+MC40876-AZUL
+ - BARRA COM ESPAÇOS (/): NS-2580 / A8055
+ - BARRA ENTRE CÓDIGOS DE SKU: NS-2580/A8055
+ - E ENTRE SKUS: NS-2580 e A8055
+ - & ENTRE SKUS: NS-2580 & A8055 ou NS-2580&A8055
 
-Novidades:
-- Descartar pedido atual no topo da conferencia, com confirmacao de seguranca.
-- Botao Digitar EAN ou SKU acessivel na tela principal quando ha pedido em andamento.
-- A entrada manual usa exatamente a mesma regra de verificacao da camera, incluindo kits, quantidades e EANs.
-- Ao concluir ou descartar o pedido, o formulario manual desaparece automaticamente.
+Um kit com Q:1 exige 1 leitura por componente; Q:2 exige 2 leituras por componente.
+Cada componente pode ser lido por QR/SKU ou EAN previamente cadastrado.
+SKU individual com barra como WJ 211- BR/1 continua indivisível.
+Os componentes são extraídos automaticamente da etiqueta, não de um cadastro de kits.
+Quando o QR da etiqueta NÃO informa os componentes, não é possível deduzi-los de um SKU único.
 
-INSTALACAO NO GITHUB PAGES
-1. Crie uma pasta de teste chamada Bipador_Universal_V36_ACESSO_RAPIDO no repositorio Qrcode-Shopee.
-2. Envie o CONTEUDO desta pasta (8 arquivos) diretamente para ela.
-3. Confirme Commit changes e abra /Qrcode-Shopee/Bipador_Universal_V36_ACESSO_RAPIDO/.
-4. Nao apague os dados do navegador.
+IMPORTANTE SOBRE VARIAÇÕES E QUANTIDADE
+O aplicativo confere os SKUs que vêm no QR Code. Se cores/tamanhos ou quantidades
+por componente não estiverem codificados, não podem ser validados automaticamente.
+Verifique visualmente detalhes descritos somente no texto impresso da etiqueta.
 
-IMPORTANTE: leitura real, audio, permissoes de camera e compartilhamento devem ser testados no iPhone.
+MANTIDO: leitor rápido ZXing WASM/fallback, tela simples, digitação manual,
+descartar pedido no topo, EANs, confirmação visual, equivalência AB-168/XFP-3370,
+relatórios e histórico.
+
+INSTALAÇÃO
+Enviar os oito arquivos DE DENTRO DESTA PASTA à pasta atual do GitHub Pages.
+Para testar sem arriscar a V37, usar uma pasta separada Bipador_Universal_V39_KITS_E_OU_AMPERSAND.
+Não limpar dados do Safari; exportar backup antes da atualização.
+
+OBS: "e" apenas com espaços, e "&" apenas quando ambos os lados parecem SKUs completos.
+Textos descritivos e SKUs com barra interna não são separados.
