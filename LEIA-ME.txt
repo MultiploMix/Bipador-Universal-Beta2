@@ -1,24 +1,9 @@
-BIPADOR UNIVERSAL V40 — VARIAÇÕES E COR ALEATÓRIA (TESTE)
+BIPADOR UNIVERSAL V41 — TESTE COR ALEATÓRIA
 
-Use em pasta separada no GitHub Pages até validar com etiquetas reais.
-
-Novo QR recomendado:
-P:261029U318XJFS
-SKU:#MC40876;V:VERDE;Q:5
-SKU:#MC40876;V:ROSA;Q:5
-SKU:#MC40876;V:AZUL;Q:5
-
-Cor aleatória (quando o próprio pedido autoriza):
-P:EXEMPLO
-SKU:MC40876;V:ALEATORIA;Q:3
-
-A etiqueta antiga enviada continha apenas:
-SKU:#MC40876;Q:5 (3 vezes), sem nenhuma cor no QR.
-Por segurança, a V40 identifica essas linhas ambíguas e oferece correção
-manual das variações impressas. Atualize o gerador para incluir V:COR.
-
-Cadastro EAN: marque 'Permite venda com cor aleatória' quando aplicável.
-Essa opção NUNCA transforma um pedido com cor definida em aleatório.
-
-Mantenha os oito arquivos juntos. Antes de atualizar, faça backups.
-Leitor WASM e rotinas de câmera preservados da V39.
+1. Instale os arquivos desta pasta em uma nova pasta no GitHub Pages, sem substituir a versão operacional.
+2. A V41 reconhece ALEATORIA no meio de SKUs longos (ex.: WJ-2670-ALEATORIA-ADULTO-1UN...).
+3. O EAN não aprova sozinho: escolha a cor física e marque a confirmação visual.
+4. Opções de cor duplicadas ou como ALEATORIO são eliminadas da seleção.
+5. O catálogo existente é COPIADO da V40 no mesmo navegador na primeira utilização. Históricos e listas de teste ficam separados.
+6. A V41 mantém o leitor WebAssembly de alta velocidade.
+7. Faça backup do catálogo e valide a câmera no dispositivo real antes de liberar para uso.

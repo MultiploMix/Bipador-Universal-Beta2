@@ -232,7 +232,7 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
 #operatorCard .manual-entry-row input{flex:1;min-width:0;width:auto;height:46px;margin:0;padding:10px 12px;background:white;border:1px solid #cbd5e1;border-radius:10px;font-size:16px}
 #operatorCard .manual-entry-row button{flex:none;width:auto;min-height:46px;margin:0;padding:10px 14px;background:#24354c;color:white;border-radius:10px;font-size:14px;font-weight:800}
 @media(max-width:375px){#operatorCard .discard-quick{font-size:11px;padding:8px 9px}.operator-topbar .operator-kicker{font-size:11px}}
-</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V40 VARIAÇÕES E CORES ALEATÓRIAS</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
+</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V41 TESTE · COR ALEATÓRIA</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
 <div class="operator-topbar"><div class="operator-kicker"><span class="live-dot"></span><span id="miniSession">Conferência em andamento</span></div><button id="discardQuick" class="discard-quick hidden" type="button" aria-label="Descartar pedido atual">✕ Descartar pedido</button></div>
 <h2 class="stage-title" id="stageTitle">Leia a etiqueta do pedido</h2>
 <p class="stage-help" id="stageHelp">Aponte a câmera para o QR Code da etiqueta.</p>
@@ -302,7 +302,7 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
       <h3>Associações cadastradas</h3>
       <input type="search" id="catalogSearch" placeholder="Buscar EAN, SKU, produto ou cor">
       <div id="catalogList" class="catalog-list"></div>
-      <p class="catalog-note">Cor aleatória: habilite no cadastro e use V:ALEATORIA no QR do pedido. EAN único com SKU completo: aprovação automática. EAN apenas com SKU base: confirmação visual simples da variação esperada, sem exigir cadastro de cores. EAN compartilhado: escolha da variação. QR Code do produto continua com SKU completo. Os dados ficam neste navegador: faça backups.</p>
+      <p class="catalog-note">Cor aleatória: habilite no cadastro; o pedido pode vir com V:ALEATORIA ou com ALEATORIA dentro do próprio SKU. EAN único com SKU completo: aprovação automática. EAN apenas com SKU base: confirmação visual simples da variação esperada, sem exigir cadastro de cores. EAN compartilhado: escolha da variação. QR Code do produto continua com SKU completo. Os dados ficam neste navegador: faça backups.</p>
     </div>
   </div>
 </section>
@@ -324,7 +324,7 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
   </div>
 </section>
 <div id="finalDialog" class="dialog-back hidden" role="dialog" aria-modal="true"><div class="dialog-card"><h2>Finalizar conferência?</h2><p id="finalSummary"></p><button id="saveShare">📲 Salvar e compartilhar no WhatsApp</button><button id="saveOnly" class="secondary">💾 Salvar relatório no celular</button><button id="cancelFinal" class="secondary">Voltar para conferência</button></div></div><!-- ZXing WASM experimental; o leitor V33 permanece como alternativa de seguranca. --><script src="https://cdn.jsdelivr.net/npm/barcode-detector@3.2.2/dist/iife/ponyfill.min.js"></script><script src="./leitor-wasm.js"></script><script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script><script>
-const $=id=>document.getElementById(id);let order=null,scanning=null,busy=false;let masterParts=null;const STORE='shopee_history_v40_variacoes_teste';const LIST_STORE='shopee_active_list_v40_variacoes_teste';let listRecords=[],scanEvents=[],expectedOrders=[],errorCount=0,outsideCount=0;const SESSION_STORE='shopee_session_v40_variacoes_teste';let session=null;const norm=s=>String(s||'').normalize('NFC').trim().replace(/\\n/g,' ').replace(/\s+/g,' ').toUpperCase();const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $=id=>document.getElementById(id);let order=null,scanning=null,busy=false;let masterParts=null;const STORE='shopee_history_v41_aleatoria_teste';const LIST_STORE='shopee_active_list_v41_aleatoria_teste';let listRecords=[],scanEvents=[],expectedOrders=[],errorCount=0,outsideCount=0;const SESSION_STORE='shopee_session_v41_aleatoria_teste';let session=null;const norm=s=>String(s||'').normalize('NFC').trim().replace(/\\n/g,' ').replace(/\s+/g,' ').toUpperCase();const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 // V39: kits identificados PELO CAMPO SKU da etiqueta, sem catálogo de kits.
 // Suporta +, /, " E " e & para componentes SKU distintos.
 // Barras internas de um SKU, como "WJ 211- BR/1", NÃO significam kit.
@@ -366,6 +366,19 @@ function randomVariation(value){
  const v=norm(value).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[\s_-]+/g,' ').trim();
  return ['ALEATORIA','ALEATORIO','COR ALEATORIA','CORES ALEATORIAS','SORTIDA','SORTIDO','CORES SORTIDAS','SORTIDAS','SORTIDOS'].includes(v);
 }
+// V41: detecta a palavra ALEATORIA mesmo no meio de SKUs longos de marketplace.
+// Ex.: WJ-2670-ALEATORIA-ADULTO-1UN--T.-NATAÇÃO-ALEATÓRIA-ADUL
+function hasRandomSkuMarker(s){
+ const v=norm(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+ return /(?:^|[^A-Z0-9])(?:ALEATORI[AO]|SORTID[AO])(?=$|[^A-Z0-9])/.test(v);
+}
+function randomOrderInfo(s){
+ const code=skuKey(s),family=skuFamily(s);
+ const tokens=code.split('-');
+ const known=new Set(['ADULTO','INFANTIL','UNICO','PP','P','M','G','GG','XG','XGG','EG','XL','XXL','XXXL','U']);
+ const sizes=tokens.filter(t=>known.has(t));
+ return {family,size:sizes.length? sizes[0] : ''};
+}
 function parseOrder(raw){
  const s=String(raw||'').replace(/\\r\\n|\\n|\\r/g,'\n').replace(/\r\n|\r/g,'\n').trim();
  const idMatch=s.match(/(?:^|[\s;])(?:PEDIDO|P)\s*:\s*(.*?)(?=\s*(?:RASTREIO|SKU)\s*:|$)/i);
@@ -378,10 +391,12 @@ function parseOrder(raw){
  while((m=rx.exec(s))!==null){
   let sku=norm(m[1]).replace(/^#+/,'');let variation=norm(m[2]||'');const q=Number(m[3]);
   if(!sku||!Number.isSafeInteger(q)||q<1||q>9999)throw Error('SKU ou quantidade inválida.');
-  // Também permite variantes ALEATORIA embutidas no SKU da etiqueta.
-  if(!variation){const trailing=sku.match(/^(.*?)\s*[-_]\s*(ALEATORI[AO]|COR\s+ALEATORIA|SORTID[AO])$/i);
-   if(trailing){sku=norm(trailing[1]);variation=norm(trailing[2]);}
-  }
+  // A própria descrição do SKU também pode indicar cor aleatória. Não é
+  // necessário que ALEATORIA esteja no fim ou seja enviada em V:.
+  const embeddedRandom=hasRandomSkuMarker(sku);
+  if(embeddedRandom&&variation&&!randomVariation(variation))
+   throw Error('Etiqueta contraditória: SKU indica ALEATÓRIA, mas V: define outra cor. Corrija o QR.');
+  if(embeddedRandom&&!variation)variation='ALEATORIA';
   const components=splitKitComponents(sku),randomColor=randomVariation(variation);
   const fixedVariation=variation&&!randomColor?variation:'';
   originalLines.push({sku,qtd:q,variacao:variation,aleatoria:randomColor});
@@ -392,11 +407,14 @@ function parseOrder(raw){
     const list=unqualified.get(base)||[];list.push(q);unqualified.set(base,list);
    }
    const suffix=fixedVariation.replace(/[\s_]+/g,'-');
-   const full=suffix&&!skuKey(base).endsWith('-'+skuKey(suffix))?base+'-'+suffix:base;
+   const randomInfo=randomColor?randomOrderInfo(base):null;
+   const full=randomColor?(randomInfo.family+'-ALEATORIA'+(randomInfo.size?'-'+randomInfo.size:'')):
+    (suffix&&!skuKey(base).endsWith('-'+skuKey(suffix))?base+'-'+suffix:base);
+   const baseSku=randomColor?randomInfo.family:base;
    const key=skuKey(full)+'|'+(randomColor?'ALEATORIA':'FIXA');
    const item=entries.get(key);
    if(item){item.qtd+=q;if(item.qtd>9999)throw Error('Quantidade acima do limite.');}
-   else entries.set(key,{sku:full,baseSku:base,variacao:fixedVariation,randomColor,qtd:q,read:0});
+   else entries.set(key,{sku:full,baseSku,variacao:fixedVariation,randomColor,randomSize:randomInfo?.size||'',qtd:q,read:0});
   }
  }
  if(!entries.size)throw Error('Não encontrei SKU e quantidade (Sku:...;Q:1) na etiqueta.');
@@ -459,7 +477,7 @@ function render(){
  const kits=order.kitGroups||[];
  const kitQty=kits.reduce((n,k)=>n+k.qtd,0);
  const kitHeader=kits.length?'<div class="kit-info"><span>📦 '+kitQty+' kit'+(kitQty===1?'':'s')+' · confira cada componente</span><strong>'+kits.reduce((n,k)=>n+k.qtd*k.componentes.length,0)+' leitura(s) necessárias</strong></div>':'';
- $('items').innerHTML=kitHeader+order.items.map(i=>'<div class="line kit-line"><span class="kit-mark '+(i.read>=i.qtd?'done':'')+'">'+(i.read>=i.qtd?'✓':'•')+'</span><div class="kit-sku"><b>'+escapeHtml(i.sku)+(i.randomColor?' · COR ALEATÓRIA':'')+'</b>'+(kits.some(k=>k.componentes.includes(i.sku))?'<small>Produto '+(kits.flatMap(k=>k.componentes).indexOf(i.sku)+1)+' do kit</small>':'')+'</div><span>'+i.read+' / '+i.qtd+'</span></div>').join('');
+ $('items').innerHTML=kitHeader+order.items.map(i=>'<div class="line kit-line"><span class="kit-mark '+(i.read>=i.qtd?'done':'')+'">'+(i.read>=i.qtd?'✓':'•')+'</span><div class="kit-sku"><b>'+escapeHtml(i.randomColor?i.baseSku+' · COR ALEATÓRIA'+(i.randomSize?' · '+i.randomSize:''):i.sku)+'</b>'+(kits.some(k=>k.componentes.includes(i.sku))?'<small>Produto '+(kits.flatMap(k=>k.componentes).indexOf(i.sku)+1)+' do kit</small>':'')+'</div><span>'+i.read+' / '+i.qtd+'</span></div>').join('');
  $('orderProgress').classList.remove('hidden');$('orderProgressText').textContent=read+' de '+total+(order.kitGroups?.length?' componentes':' itens')+' conferidos';
  $('orderProgressPercent').textContent=percent+'%';$('orderProgressFill').style.width=percent+'%';
  $('scanProduct').disabled=read===total;$('nextOrder').classList.toggle('hidden',read!==total);updateFlow();
@@ -564,8 +582,23 @@ function check(raw,method='qr'){
  if(/(?:^|[\s;])(?:P|PEDIDO|RASTREIO|SKU)\s*:|;\s*(?:Q|QTD)\s*:/i.test(sku)){
   showMessage('⛔ Este é um código de etiqueta, não um SKU individual.','danger');logScan('PRODUTO',sku,'ERRO');signal(false,'Código incorreto');return false;
  }
- const matches=order.items.filter(i=>equivalentSku(i.sku,sku)||
-  (i.randomColor&&hasSkuPrefix(i.baseSku||i.sku,sku)));
+ // Pedido de cor aleatória: o QR do produto precisa identificar uma cor
+ // física. Se faltar o tamanho no QR, será confirmado visualmente.
+ if(method==='qr'){
+  const targets=order.items.filter(i=>i.randomColor&&i.read<i.qtd&&hasSkuPrefix(i.baseSku,sku));
+  if(targets.length===1){
+   const item=targets[0],parts=skuKey(sku).slice(skuKey(item.baseSku).length).replace(/^-/, '').split('-').filter(Boolean);
+   const known=new Set(['ADULTO','INFANTIL','UNICO','PP','P','M','G','GG','XG','XGG','EG','XL','XXL','XXXL','U']);
+   const scannedSize=parts.find(v=>known.has(v))||'';
+   const color=parts.filter(v=>!known.has(v)).join(' ');
+   if(!color||hasRandomSkuMarker(color)||item.randomSize&&scannedSize&&item.randomSize!==scannedSize){
+    showMessage('⛔ Cor ou tamanho não identificado corretamente no QR do produto.','danger');signal(false,'Confira a variação');return false;
+   }
+   const candidate={sku,title:color,produto:'',source:'random-color',sizeValue:scannedSize};
+   openEANReview(sku,[candidate],[item],[item.baseSku],'QR do produto');return false;
+  }
+ }
+ const matches=order.items.filter(i=>equivalentSku(i.sku,sku));
  // QR com SKU base: não identifica a cor de várias linhas do mesmo produto.
  // Exige que o funcionário escolha a cor real, como ocorre no EAN de família.
  if(!matches.length){
@@ -818,7 +851,7 @@ async function scan(type,usarLeitorPadrao=false){
 }
 
 // === V24 CATÁLOGO EAN ↔ SKU ===
-const CATALOG_STORE='mm_bipador_catalog_v40_variacoes_teste';const CATALOG_LIMIT=15000;
+const CATALOG_STORE='mm_bipador_catalog_v41_aleatoria_teste';const CATALOG_LIMIT=15000;
 let catalog=[],eanPending=null,editingCatalogIndex=null,catalogCorrections=0;
 function cleanEAN(v){return String(v??'').trim().replace(/\s+/g,'')}
 function checkEAN(v){return /^(?:\d{8}|\d{12}|\d{13})$/.test(cleanEAN(v))}
@@ -929,7 +962,7 @@ function readCatalog(){
   return clean;
  }catch(e){console.warn('Catálogo local indisponível',e);return []}
 }
-try{if(localStorage.getItem(CATALOG_STORE)===null){const anterior=localStorage.getItem('mm_bipador_catalog_v35_kits_teste')||localStorage.getItem('mm_bipador_catalog_v34_teste')||localStorage.getItem('mm_bipador_catalog_v24');if(anterior)localStorage.setItem(CATALOG_STORE,anterior)}}catch(e){}
+try{if(localStorage.getItem(CATALOG_STORE)===null){const anterior=localStorage.getItem('mm_bipador_catalog_v40_variacoes_teste')||localStorage.getItem('mm_bipador_catalog_v35_kits_teste')||localStorage.getItem('mm_bipador_catalog_v34_teste')||localStorage.getItem('mm_bipador_catalog_v24');if(anterior)localStorage.setItem(CATALOG_STORE,anterior)}}catch(e){}
 catalog=readCatalog();
 function openCatalog(){ $('catalogPanel').classList.remove('hidden');renderCatalog() }
 function closeCatalog(){ $('catalogPanel').classList.add('hidden') }
@@ -1001,6 +1034,11 @@ function importCatalogCSV(text){
 // A conferência de QR continua exigindo o SKU completo.
 const EAN_SIZE_WORDS=new Set(['ADULTO','INFANTIL','UNICO','PP','P','M','G','GG','XG','XGG','EG','G1','G2','G3','G4','XL','XXL','XXXL','U']);
 function eanVisualMatch(candidate,item){
+ if(item.randomColor){
+  if(candidate.source!=='random-color'||!hasSkuPrefix(item.baseSku,candidate.sku))return null;
+  if(item.randomSize&&candidate.sizeValue&&item.randomSize!==candidate.sizeValue)return null;
+  return {item,missingSize:item.randomSize&&!candidate.sizeValue?item.randomSize:null,visualOnly:true};
+ }
  // EAN cadastrado somente na família, sem cores: nunca deduzir a variação pelo código.
  // Uma escolha explícita da variação solicitada e um checkbox de inspeção física são obrigatórios.
  if(candidate.source==='pedido-visual')return equivalentSku(candidate.sku,item.sku)?{item,missingSize:null,visualOnly:true}:null;
@@ -1031,8 +1069,13 @@ function updateEANConfirmation(){
  const panel=$('eanSizeConfirmPanel');
  panel.classList.toggle('hidden',!needsCheck);
  if(needsVisual){
-  $('eanSizeConfirmText').textContent='Conferi fisicamente a variação: '+matches[0].item.sku;
-  $('eanConfirmHint').textContent='O EAN está cadastrado somente com o SKU base. Ele não comprova a cor ou o tamanho; confirme olhando o produto.';
+  if(matches[0].item.randomColor){
+   $('eanSizeConfirmText').textContent='Conferi a cor '+opt.title+(matches[0].item.randomSize?' e o tamanho '+matches[0].item.randomSize:'')+' do produto físico.';
+   $('eanConfirmHint').textContent='Cor aleatória: confirme a cor REAL do item antes de aprovar. O EAN identifica a família, não comprova a cor.';
+  }else{
+   $('eanSizeConfirmText').textContent='Conferi fisicamente a variação: '+matches[0].item.sku;
+   $('eanConfirmHint').textContent='O EAN está cadastrado somente com o SKU base. Ele não comprova a cor ou o tamanho; confirme olhando o produto.';
+  }
  }else if(needsSize){
   $('eanSizeConfirmText').textContent='Confirmei fisicamente o tamanho: '+matches[0].missingSize;
   $('eanConfirmHint').textContent='O EAN não identifica o tamanho. Confira a embalagem ou a peça antes de marcar.';
@@ -1048,17 +1091,46 @@ function choosePendingEAN(index){
 }
 function openEANReview(code,options,matches,families,sourceKind='EAN'){
  eanPending={code,options,matches,selected:-1,orderId:order?.id,sourceKind};
- $('eanReviewDescription').textContent=options.some(o=>o.source==='pedido-visual')?sourceKind+' '+code+' cadastrado com SKU base '+families.join(' / ')+'. Este código não comprova a cor. Compare fisicamente o produto com a variação do pedido e confirme.':sourceKind+' '+code+' · SKU base '+families.join(' / ')+'. Confira fisicamente a cor e o tamanho antes de selecionar.';
- $('eanExpectedSKU').textContent=matches.map(i=>i.sku).join(' ou ');
+ const random=matches.some(i=>i.randomColor);
+ $('eanReviewDescription').textContent=random?'Pedido com COR ALEATÓRIA. Escolha a cor que está realmente no produto. O EAN sozinho não identifica a cor.':options.some(o=>o.source==='pedido-visual')?sourceKind+' '+code+' cadastrado com SKU base '+families.join(' / ')+'. Este código não comprova a cor. Compare fisicamente o produto com a variação do pedido e confirme.':sourceKind+' '+code+' · SKU base '+families.join(' / ')+'. Confira fisicamente a cor e o tamanho antes de selecionar.';
+ $('eanExpectedSKU').textContent=matches.map(i=>i.randomColor?i.baseSku+' · COR ALEATÓRIA'+(i.randomSize?' · '+i.randomSize:''):i.sku).join(' ou ');
  const missing=matches.filter(i=>!options.some(o=>eanVisualMatch(o,i)));
  const warning=$('eanExpectedWarning');
  warning.classList.toggle('hidden',!missing.length);
  warning.textContent=missing.length?'Atenção: '+missing.map(i=>i.sku).join(', ')+' ainda não corresponde às opções cadastradas. Revise a grafia da cor e o tamanho em Gerenciar EANs e SKUs. A leitura não será aprovada com a variação errada.':'';
  if(options.some(o=>o.source==='base'&&!o.registeredSize)) $('eanReviewDescription').textContent+=' Se o cadastro não informar tamanho, confirme-o fisicamente na próxima etapa.';
  $('eanChoices').innerHTML=options.map((r,i)=>'<label class="ean-choice"><input type="radio" name="eanVariation" value="'+i+'"><span>'+escapeHtml(r.title||r.sku)+'<small>'+escapeHtml([r.produto,'SKU: '+r.sku].filter(Boolean).join(' · '))+'</small></span></label>').join('')+'<label class="ean-choice ean-wrong"><input type="radio" name="eanVariation" value="'+options.length+'"><span>OUTRA COR OU TAMANHO<small>O produto observado não está nas variações cadastradas</small></span></label>';
- $('eanSizeConfirm').checked=false;$('eanSizeConfirmPanel').classList.add('hidden');$('eanConfirm').disabled=true;$('eanConfirm').textContent=options.some(o=>o.source==='pedido-visual')?'Confirmar após inspeção visual':'Confirmar variação observada';$('eanReview').classList.remove('hidden');
+ $('eanSizeConfirm').checked=false;$('eanSizeConfirmPanel').classList.add('hidden');$('eanConfirm').disabled=true;$('eanConfirm').textContent=random?'Confirmar cor observada':options.some(o=>o.source==='pedido-visual')?'Confirmar após inspeção visual':'Confirmar variação observada';$('eanReview').classList.remove('hidden');
 }
 function closeEANReview(){eanPending=null;$('eanReview').classList.add('hidden')}
+// V41: para COR ALEATÓRIA, o EAN identifica a FAMÍLIA e a escolha
+// humana identifica a cor realmente embalada. Não escolher ALEATORIO como cor.
+function randomColorOptions(rows,item){
+ const family=skuKey(item.baseSku),allowed=[];const seen=new Set();
+ const known=new Set(['ADULTO','INFANTIL','UNICO','PP','P','M','G','GG','XG','XGG','EG','XL','XXL','XXXL','U']);
+ for(const r of rows){
+  if(!hasSkuPrefix(family,r.sku))continue;
+  const explicitSize=skuKey(r.tamanho||'');
+  if(item.randomSize&&explicitSize&&explicitSize!==item.randomSize)continue;
+  const registered=skuKey(r.sku),extra=registered===family?'':registered.slice(family.length+1);
+  const tokens=extra.split('-').filter(Boolean);
+  const inSkuSize=tokens.find(t=>known.has(t))||'';
+  if(item.randomSize&&inSkuSize&&inSkuSize!==item.randomSize)continue;
+  const sources=[r.cor,r.variacoes];
+  if(extra)sources.push(extra.replace(/-/g,' '));
+  for(const raw of sources){
+   for(const fragment of String(raw||'').split(/[,;|]+/)){
+    const color=fragment.trim().replace(/\b(ADULTO|INFANTIL|UNICO|PP|GG|XGG|XXXL|XXL|XL|G[1-4])\b/gi,'').replace(/\s+/g,' ').trim();
+    const key=skuKey(color);
+    if(!key||hasRandomSkuMarker(color)||/^\d+(?:UN|UND|UNIDADES)?$/.test(key)||key.length>45)continue;
+    if(seen.has(key))continue;
+    seen.add(key);
+    allowed.push({sku:family+'-'+key,title:color,produto:r.produto,source:'random-color',sizeValue:explicitSize||inSkuSize||''});
+   }
+  }
+ }
+ return allowed;
+}
 function processEAN(raw){
  const code=cleanEAN(raw);
  if(!order){showMessage('Leia primeiro o QR Code da etiqueta.','danger');signal(false,'Leia primeiro a etiqueta');return}
@@ -1071,16 +1143,19 @@ function processEAN(raw){
   !rows[0].cor&&!rows[0].tamanho&&!rows[0].variacoes&&
   order.items.filter(i=>skuKey(i.sku)==='AB-168');
  if(supplierMatch&&supplierMatch.length===1){check(supplierMatch[0].sku,'ean');return}
- // Cor aleatória: EAN exclusivo de mesma família pode validar o produto.
- // Se o cadastro tem apenas SKU base e NÃO está autorizado para aleatória,
- // mantém inspeção visual obrigatória.
+ // Cor aleatória NUNCA é aprovada automaticamente pelo EAN.
+ // Mesmo que esteja autorizada, o funcionário escolhe a cor física.
  const randomCandidates=order.items.filter(i=>i.randomColor&&i.read<i.qtd&&
-  rows.some(r=>hasSkuPrefix(i.baseSku||i.sku,r.sku)));
- const otherFamilies=rows.some(r=>!randomCandidates.some(i=>hasSkuPrefix(i.baseSku||i.sku,r.sku)));
- if(randomCandidates.length===1&&!otherFamilies){
-  if(rows.some(r=>r.aleatoria||skuKey(r.sku)!==skuKey(randomCandidates[0].baseSku||randomCandidates[0].sku))){
-   check(randomCandidates[0].sku,'ean');return;
+  rows.some(r=>hasSkuPrefix(i.baseSku,r.sku)));
+ if(randomCandidates.length){
+  if(randomCandidates.length!==1||rows.some(r=>!hasSkuPrefix(randomCandidates[0].baseSku,r.sku))){
+   showMessage('⛔ EAN ambíguo: há mais de uma família de produto associada.','danger');signal(false,'EAN ambíguo');return;
   }
+  const item=randomCandidates[0],options=randomColorOptions(rows,item);
+  if(!options.length){
+   showMessage('⛔ COR ALEATÓRIA: cadastre as cores físicas disponíveis no EAN, para o funcionário escolher a cor observada.','danger');signal(false,'Cadastre as cores');return;
+  }
+  openEANReview(code,options,[item],[item.baseSku]);return;
  }
  const result=resolveEANOptions(rows,order.items);
  if(!result.matchedFamily){showMessage('⛔ PRODUTO ERRADO — EAN '+code+' não pertence à família de SKU deste pedido.','danger');logScan('EAN',code,'ERRO');signal(false,'EAN de outro produto');return}
