@@ -1,10 +1,7 @@
-BIPADOR UNIVERSAL V42 — CORREÇÃO DE VARIAÇÃO EM KIT
+BIPADOR UNIVERSAL V43 - Correção de etiquetas com cor aleatoria
 
-- Use esta versão de TESTE em uma pasta nova no GitHub Pages.
-- Em kits, V:1KT--T.AZULCLARO-Ó.AZUL é uma descrição do kit; não é parte dos dois SKUs físicos.
-- WJ-2673-AZULCLARO+MC40876-AZUL passa a exigir uma touca AZULCLARO e um óculos AZUL, separadamente.
-- O EAN/SKU de outro componente ou outra cor continua bloqueado.
-- Em QR apenas com SKU base, a cor precisa ser confirmada visualmente.
-- Preserve a V41 operacional. Faça backup do catálogo antes da atualização.
-- Os registros de teste são mantidos separadamente. O catálogo antigo é copiado na primeira abertura.
-- O leitor WebAssembly da V34 não foi alterado.
+Corrige o QR quando SKU inclui ALEATORIA e o campo V: inclui descricao comercial, por exemplo: 1un- T. NATACAO ALEATORIA ADUL.
+
+Mantem a conferencia visual da cor fisica e do tamanho, com leitor WebAssembly e conferencia de kits.
+
+INSTALACAO: Publique os arquivos desta pasta diretamente numa pasta de teste separada no repositorio Qrcode-Shopee. Nao limpe os dados do Safari.

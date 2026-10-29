@@ -232,7 +232,7 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
 #operatorCard .manual-entry-row input{flex:1;min-width:0;width:auto;height:46px;margin:0;padding:10px 12px;background:white;border:1px solid #cbd5e1;border-radius:10px;font-size:16px}
 #operatorCard .manual-entry-row button{flex:none;width:auto;min-height:46px;margin:0;padding:10px 14px;background:#24354c;color:white;border-radius:10px;font-size:14px;font-weight:800}
 @media(max-width:375px){#operatorCard .discard-quick{font-size:11px;padding:8px 9px}.operator-topbar .operator-kicker{font-size:11px}}
-</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V41 TESTE · COR ALEATÓRIA</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
+</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V43 TESTE · ALEATÓRIA CORRIGIDA</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
 <div class="operator-topbar"><div class="operator-kicker"><span class="live-dot"></span><span id="miniSession">Conferência em andamento</span></div><button id="discardQuick" class="discard-quick hidden" type="button" aria-label="Descartar pedido atual">✕ Descartar pedido</button></div>
 <h2 class="stage-title" id="stageTitle">Leia a etiqueta do pedido</h2>
 <p class="stage-help" id="stageHelp">Aponte a câmera para o QR Code da etiqueta.</p>
@@ -372,6 +372,17 @@ function hasRandomSkuMarker(s){
  const v=norm(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'');
  return /(?:^|[^A-Z0-9])(?:ALEATORI[AO]|SORTID[AO])(?=$|[^A-Z0-9])/.test(v);
 }
+// V43: variacoes comerciais podem ser descricoes completas, nao somente V:ALEATORIA.
+// Ex.: V:1un- T. NATAÇÃO ALEATÓRIA ADUL significa cor aleatoria.
+// A presenca de uma cor especifica junto de ALEATORIA precisa ser revisada,
+// para nao aceitar etiquetas realmente contraditorias.
+function randomVariationDescription(value){
+ if(randomVariation(value))return true;
+ if(!hasRandomSkuMarker(value))return false;
+ const words=norm(value).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Z0-9]+/g,' ');
+ const fixedColor=/\b(?:PRETO|PRETA|BRANCO|BRANCA|VERMELHO|VERMELHA|ROSA|AZUL|AZULCLARO|AZULMARINHO|VERDE|PRATA|DOURADO|DOURADA|AMARELO|AMARELA|LILAS|CINZA|ROXO|ROXA|LARANJA)\b/;
+ return !fixedColor.test(words);
+}
 function randomOrderInfo(s){
  const code=skuKey(s),family=skuFamily(s);
  const tokens=code.split('-');
@@ -394,10 +405,13 @@ function parseOrder(raw){
   // A própria descrição do SKU também pode indicar cor aleatória. Não é
   // necessário que ALEATORIA esteja no fim ou seja enviada em V:.
   const embeddedRandom=hasRandomSkuMarker(sku);
-  if(embeddedRandom&&variation&&!randomVariation(variation))
+  const commercialRandom=!!variation&&randomVariationDescription(variation);
+  if(embeddedRandom&&variation&&!commercialRandom)
    throw Error('Etiqueta contraditória: SKU indica ALEATÓRIA, mas V: define outra cor. Corrija o QR.');
   if(embeddedRandom&&!variation)variation='ALEATORIA';
-  const components=splitKitComponents(sku),isKit=components.length>1,randomColor=randomVariation(variation);
+  // A modalidade ALEATORIA pode aparecer no SKU, no campo V:, ou em ambos.
+  // O restante da descricao comercial nao deve ser acrescentado ao SKU fisico.
+  const components=splitKitComponents(sku),isKit=components.length>1,randomColor=embeddedRandom||commercialRandom;
   if(isKit&&randomColor)throw Error('Kit com cor aleatória precisa informar a variação de cada componente no próprio SKU (ou códigos individuais).');
   // V42: em kits, V: descreve o KIT (ex.: 1KT--T.AZULCLARO-Ó.AZUL).
   // Não repetir o texto comercial em cada componente. Isso fazia o pedido
