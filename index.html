@@ -324,7 +324,7 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
   </div>
 </section>
 <div id="finalDialog" class="dialog-back hidden" role="dialog" aria-modal="true"><div class="dialog-card"><h2>Finalizar conferência?</h2><p id="finalSummary"></p><button id="saveShare">📲 Salvar e compartilhar no WhatsApp</button><button id="saveOnly" class="secondary">💾 Salvar relatório no celular</button><button id="cancelFinal" class="secondary">Voltar para conferência</button></div></div><!-- ZXing WASM experimental; o leitor V33 permanece como alternativa de seguranca. --><script src="https://cdn.jsdelivr.net/npm/barcode-detector@3.2.2/dist/iife/ponyfill.min.js"></script><script src="./leitor-wasm.js"></script><script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script><script>
-const $=id=>document.getElementById(id);let order=null,scanning=null,busy=false;let masterParts=null;const STORE='shopee_history_v41_aleatoria_teste';const LIST_STORE='shopee_active_list_v41_aleatoria_teste';let listRecords=[],scanEvents=[],expectedOrders=[],errorCount=0,outsideCount=0;const SESSION_STORE='shopee_session_v41_aleatoria_teste';let session=null;const norm=s=>String(s||'').normalize('NFC').trim().replace(/\\n/g,' ').replace(/\s+/g,' ').toUpperCase();const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $=id=>document.getElementById(id);let order=null,scanning=null,busy=false;let masterParts=null;const STORE='shopee_history_v42_kits_teste';const LIST_STORE='shopee_active_list_v42_kits_teste';let listRecords=[],scanEvents=[],expectedOrders=[],errorCount=0,outsideCount=0;const SESSION_STORE='shopee_session_v42_kits_teste';let session=null;const norm=s=>String(s||'').normalize('NFC').trim().replace(/\\n/g,' ').replace(/\s+/g,' ').toUpperCase();const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 // V39: kits identificados PELO CAMPO SKU da etiqueta, sem catálogo de kits.
 // Suporta +, /, " E " e & para componentes SKU distintos.
 // Barras internas de um SKU, como "WJ 211- BR/1", NÃO significam kit.
@@ -397,24 +397,31 @@ function parseOrder(raw){
   if(embeddedRandom&&variation&&!randomVariation(variation))
    throw Error('Etiqueta contraditória: SKU indica ALEATÓRIA, mas V: define outra cor. Corrija o QR.');
   if(embeddedRandom&&!variation)variation='ALEATORIA';
-  const components=splitKitComponents(sku),randomColor=randomVariation(variation);
-  const fixedVariation=variation&&!randomColor?variation:'';
+  const components=splitKitComponents(sku),isKit=components.length>1,randomColor=randomVariation(variation);
+  if(isKit&&randomColor)throw Error('Kit com cor aleatória precisa informar a variação de cada componente no próprio SKU (ou códigos individuais).');
+  // V42: em kits, V: descreve o KIT (ex.: 1KT--T.AZULCLARO-Ó.AZUL).
+  // Não repetir o texto comercial em cada componente. Isso fazia o pedido
+  // esperar MC40876-AZUL-1KT--T.AZULCLARO-Ó.AZUL em vez de MC40876-AZUL.
+  // Os SKUs físicos de cada componente continuam obrigatórios e independentes.
+  // Para produtos simples, o campo V: mantém o comportamento anterior.
+  const fixedVariation=variation&&!randomColor&&!isKit?variation:'';
   originalLines.push({sku,qtd:q,variacao:variation,aleatoria:randomColor});
-  if(components.length>1)kits.push({sku,qtd:q,componentes:components});
+  if(isKit)kits.push({sku,qtd:q,componentes:components,variacaoComercial:variation});
   for(const component of components){
    const base=norm(component).replace(/^#+/,'');
    if(!variation){
     const list=unqualified.get(base)||[];list.push(q);unqualified.set(base,list);
    }
    const suffix=fixedVariation.replace(/[\s_]+/g,'-');
-   const randomInfo=randomColor?randomOrderInfo(base):null;
-   const full=randomColor?(randomInfo.family+'-ALEATORIA'+(randomInfo.size?'-'+randomInfo.size:'')):
+   const randomInfo=!isKit&&randomColor?randomOrderInfo(base):null;
+   const componentRandom=!!randomInfo;
+   const full=componentRandom?(randomInfo.family+'-ALEATORIA'+(randomInfo.size?'-'+randomInfo.size:'')):
     (suffix&&!skuKey(base).endsWith('-'+skuKey(suffix))?base+'-'+suffix:base);
-   const baseSku=randomColor?randomInfo.family:base;
-   const key=skuKey(full)+'|'+(randomColor?'ALEATORIA':'FIXA');
+   const baseSku=componentRandom?randomInfo.family:base;
+   const key=skuKey(full)+'|'+(componentRandom?'ALEATORIA':'FIXA');
    const item=entries.get(key);
    if(item){item.qtd+=q;if(item.qtd>9999)throw Error('Quantidade acima do limite.');}
-   else entries.set(key,{sku:full,baseSku,variacao:fixedVariation,randomColor,randomSize:randomInfo?.size||'',qtd:q,read:0});
+   else entries.set(key,{sku:full,baseSku,variacao:fixedVariation,randomColor:componentRandom,randomSize:randomInfo?.size||'',qtd:q,read:0});
   }
  }
  if(!entries.size)throw Error('Não encontrei SKU e quantidade (Sku:...;Q:1) na etiqueta.');
@@ -602,10 +609,11 @@ function check(raw,method='qr'){
  // QR com SKU base: não identifica a cor de várias linhas do mesmo produto.
  // Exige que o funcionário escolha a cor real, como ocorre no EAN de família.
  if(!matches.length){
-  const candidateItems=order.items.filter(i=>!i.randomColor&&i.variacao&&
-   skuKey(i.baseSku)===skuKey(sku)&&i.read<i.qtd);
+  const candidateItems=order.items.filter(i=>!i.randomColor&&i.read<i.qtd&&
+   skuKey(i.sku)!==skuKey(sku)&&skuKey(sku)===skuFamily(i.sku));
   if(candidateItems.length){
-   const opts=candidateItems.map(i=>({sku:i.sku,title:i.variacao,produto:'',source:'pedido-visual',registeredSize:false}));
+   // Um QR com apenas o SKU base não prova a cor; exigir inspeção visual.
+   const opts=candidateItems.map(i=>({sku:i.sku,title:i.variacao||skuKey(i.sku).slice(skuKey(sku).length).replace(/^-/, '').replace(/-/g,' · '),produto:'',source:'pedido-visual',registeredSize:false}));
    openEANReview(sku,opts,candidateItems,[sku],'QR do produto');return false;
   }
  }
@@ -851,7 +859,7 @@ async function scan(type,usarLeitorPadrao=false){
 }
 
 // === V24 CATÁLOGO EAN ↔ SKU ===
-const CATALOG_STORE='mm_bipador_catalog_v41_aleatoria_teste';const CATALOG_LIMIT=15000;
+const CATALOG_STORE='mm_bipador_catalog_v42_kits_teste';const CATALOG_LIMIT=15000;
 let catalog=[],eanPending=null,editingCatalogIndex=null,catalogCorrections=0;
 function cleanEAN(v){return String(v??'').trim().replace(/\s+/g,'')}
 function checkEAN(v){return /^(?:\d{8}|\d{12}|\d{13})$/.test(cleanEAN(v))}
@@ -925,7 +933,8 @@ function resolveEANOptions(rows,items){
  const anchors=rows.filter(r=>items.some(i=>equivalentSku(r.sku,i.sku)||hasSkuPrefix(r.sku,i.sku)));
  if(!anchors.length)return {matchedFamily:false,options:[],families};
  const options=[];
- for(const family of families){
+ const matchedFamilies=families.filter(f=>anchors.some(r=>hasSkuPrefix(f,r.sku)));
+ for(const family of matchedFamilies){
   // Só mostramos os produtos da família do pedido, não SKUs de famílias estranhas no mesmo EAN.
   if(!anchors.some(r=>hasSkuPrefix(family,r.sku)))continue;
   const familyOptions=[];
@@ -939,7 +948,8 @@ function resolveEANOptions(rows,items){
    if(!options.some(x=>equivalentSku(x.sku,opt.sku)))options.push(opt);
   }
  }
- return {matchedFamily:true,options,families};
+ // Evita avisar que falta a touca quando o funcionário está bipando o EAN dos óculos.
+ return {matchedFamily:true,options,families:matchedFamilies};
 }
 function saveCatalog(rows){
  if(rows.length>CATALOG_LIMIT)throw Error('O catálogo excede '+CATALOG_LIMIT+' associações.');
@@ -962,7 +972,7 @@ function readCatalog(){
   return clean;
  }catch(e){console.warn('Catálogo local indisponível',e);return []}
 }
-try{if(localStorage.getItem(CATALOG_STORE)===null){const anterior=localStorage.getItem('mm_bipador_catalog_v40_variacoes_teste')||localStorage.getItem('mm_bipador_catalog_v35_kits_teste')||localStorage.getItem('mm_bipador_catalog_v34_teste')||localStorage.getItem('mm_bipador_catalog_v24');if(anterior)localStorage.setItem(CATALOG_STORE,anterior)}}catch(e){}
+try{if(localStorage.getItem(CATALOG_STORE)===null){const anterior=localStorage.getItem('mm_bipador_catalog_v41_aleatoria_teste')||localStorage.getItem('mm_bipador_catalog_v40_variacoes_teste')||localStorage.getItem('mm_bipador_catalog_v35_kits_teste')||localStorage.getItem('mm_bipador_catalog_v34_teste')||localStorage.getItem('mm_bipador_catalog_v24');if(anterior)localStorage.setItem(CATALOG_STORE,anterior)}}catch(e){}
 catalog=readCatalog();
 function openCatalog(){ $('catalogPanel').classList.remove('hidden');renderCatalog() }
 function closeCatalog(){ $('catalogPanel').classList.add('hidden') }

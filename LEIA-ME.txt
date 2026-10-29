@@ -1,9 +1,10 @@
-BIPADOR UNIVERSAL V41 — TESTE COR ALEATÓRIA
+BIPADOR UNIVERSAL V42 — CORREÇÃO DE VARIAÇÃO EM KIT
 
-1. Instale os arquivos desta pasta em uma nova pasta no GitHub Pages, sem substituir a versão operacional.
-2. A V41 reconhece ALEATORIA no meio de SKUs longos (ex.: WJ-2670-ALEATORIA-ADULTO-1UN...).
-3. O EAN não aprova sozinho: escolha a cor física e marque a confirmação visual.
-4. Opções de cor duplicadas ou como ALEATORIO são eliminadas da seleção.
-5. O catálogo existente é COPIADO da V40 no mesmo navegador na primeira utilização. Históricos e listas de teste ficam separados.
-6. A V41 mantém o leitor WebAssembly de alta velocidade.
-7. Faça backup do catálogo e valide a câmera no dispositivo real antes de liberar para uso.
+- Use esta versão de TESTE em uma pasta nova no GitHub Pages.
+- Em kits, V:1KT--T.AZULCLARO-Ó.AZUL é uma descrição do kit; não é parte dos dois SKUs físicos.
+- WJ-2673-AZULCLARO+MC40876-AZUL passa a exigir uma touca AZULCLARO e um óculos AZUL, separadamente.
+- O EAN/SKU de outro componente ou outra cor continua bloqueado.
+- Em QR apenas com SKU base, a cor precisa ser confirmada visualmente.
+- Preserve a V41 operacional. Faça backup do catálogo antes da atualização.
+- Os registros de teste são mantidos separadamente. O catálogo antigo é copiado na primeira abertura.
+- O leitor WebAssembly da V34 não foi alterado.

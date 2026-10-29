@@ -1,4 +1,4 @@
-const CACHE='bipador-universal-v41-random-fix-01';
+const CACHE='bipador-universal-v42-kit-componente-01';
 const ASSETS=['./','./index.html','./manifest.webmanifest','./icon.svg','./logo-multiplo-mix.png','./leitor-wasm.js'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)));self.skipWaiting()});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>(k.startsWith('bipador-universal-v38-')||k.startsWith('bipador-universal-v39-')||k.startsWith('bipador-universal-v40-'))&&k!==CACHE).map(k=>caches.delete(k)))));self.clients.claim()});
