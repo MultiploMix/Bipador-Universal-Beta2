@@ -1,6 +1,11 @@
-// CONFIGURAÇÃO DO FIREBASE (somente dados públicos de configuração do projeto).
-// Copie o objeto firebaseConfig em Firebase Console > Configurações do Projeto > Seus aplicativos > Web.
-// NÃO coloque e-mail, senha, token de acesso ou chave de conta de serviço neste arquivo.
-window.BIPADOR_FIREBASE_CONFIG = null;
-// Exemplo após configurar:
-// window.BIPADOR_FIREBASE_CONFIG = { apiKey: '...', authDomain: '...', projectId: '...', appId: '...' };
+// Configuracao publica do aplicativo web BipaMix (Firebase).
+// Nao incluir senhas, tokens pessoais ou chaves privadas neste arquivo.
+window.BIPADOR_FIREBASE_CONFIG = {
+  apiKey: 'AIzaSyB7wz0kL7atYhw4cyZpxw4k2VnAIyVnBsA',
+  authDomain: 'bipamix.firebaseapp.com',
+  projectId: 'bipamix',
+  storageBucket: 'bipamix.firebasestorage.app',
+  messagingSenderId: '545294974164',
+  appId: '1:545294974164:web:d20fb34ffb5f9f37d04f41',
+  measurementId: 'G-ZB7WYT66CW'
+};

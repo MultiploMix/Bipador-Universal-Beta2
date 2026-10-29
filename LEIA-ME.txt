@@ -1,9 +1,3 @@
-BIPADOR UNIVERSAL V46 — CATÁLOGO COMPARTILHADO
-
-1. Atualização experimental baseada na V45.
-2. Para ativar a nuvem, leia COMO_ATIVAR_NUVEM.md e configure o Firebase.
-3. Sem configurar, continua funcionando localmente (não compartilha automaticamente).
-4. Envie index.html, leitor-wasm.js, sw.js, logo-multiplo-mix.png, icon.svg, manifest.webmanifest, firebase-config.js, catalog-cloud.js para sua pasta do GitHub Pages.
-5. firestore.rules e COMO_ATIVAR_NUVEM.md são arquivos de instrução e NÃO precisam ir para a pasta pública do site.
-6. Não compartilhe senhas no GitHub. Faça backup dos EANs antes de migrar.
-7. Histórico de conferência continua local; somente EAN/SKU e variações são compartilhados.
+Bipador Universal V46 - BipaMix configurado
+Leia COMO_TESTAR_BIPAMIX.md antes de publicar.
+Oito arquivos do aplicativo + modelo CSV + instrucoes.
