@@ -255,7 +255,7 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
 #sharedEANReview .shared-ean-other{border-color:#eabec1;background:#fff7f7;color:#9b2630}
 #sharedEANReview .ean-size-confirm{margin:14px 0}
 @media(max-width:400px){#sharedEANReview .ean-review-sheet{padding:20px 17px}#sharedEANReview .ean-choice{padding:13px 12px}}
-</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V48 TESTE · EAN COMPARTILHADO</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
+</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V49 TESTE · WL/WJ 1417</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
 <div class="operator-topbar"><div class="operator-kicker"><span class="live-dot"></span><span id="miniSession">Conferência em andamento</span></div><button id="discardQuick" class="discard-quick hidden" type="button" aria-label="Descartar pedido atual">✕ Descartar pedido</button></div>
 <h2 class="stage-title" id="stageTitle">Leia a etiqueta do pedido</h2>
 <p class="stage-help" id="stageHelp">Aponte a câmera para o QR Code da etiqueta.</p>
@@ -326,7 +326,7 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
       <form id="catalogForm" class="catalog-form">
         <label for="catalogEAN">EAN / UPC</label>
         <div class="catalog-inline"><input id="catalogEAN" inputmode="numeric" placeholder="8, 12 ou 13 dígitos" maxlength="24" required><button id="scanCatalogEAN" class="secondary" type="button">📷 Bipar</button></div>
-        <label for="catalogSKU">SKU do produto (família ou SKU completo)</label><input id="catalogSKU" placeholder="Ex.: WJ-2670" maxlength="100" required><p class="catalog-note">EAN exclusivo por cor: cadastre o SKU completo para conferência automática. Se cadastrar apenas o SKU base, o aplicativo pedirá confirmação visual da variação do pedido, sem exigir cadastro de cores.</p>
+        <label for="catalogSKU">SKU do produto (família ou SKU completo)</label><input id="catalogSKU" placeholder="Ex.: WJ-2670" maxlength="100" required><p class="catalog-note">EAN exclusivo por cor: cadastre o SKU completo para conferência automática. Para a linha de alicates 1417, WL e WJ são fornecedores equivalentes quando todo o restante do SKU é igual (ex.: WL-1417-A = WJ-1417-A). Se cadastrar apenas o SKU base, o aplicativo pedirá confirmação visual da variação do pedido, sem exigir cadastro de cores.</p>
         <label for="catalogName">Produto (opcional)</label><input id="catalogName" placeholder="Ex.: Meia feminina" maxlength="120">
         <div class="catalog-pair"><div><label for="catalogColor">Cor principal (também entra nas opções)</label><input id="catalogColor" placeholder="Ex.: Preto" maxlength="60"></div><div><label for="catalogSize">Tamanho (se aplicável)</label><input id="catalogSize" placeholder="Ex.: Adulto" maxlength="50"></div></div>
         <label class="catalog-random-row" for="catalogRandom"><input type="checkbox" id="catalogRandom"> <span>Permite venda com <b>cor aleatória</b></span></label>
@@ -534,7 +534,9 @@ function parseOrder(raw){
 }
 // Comparação segura: modelo obrigatório na primeira posição; atributos seguintes em qualquer ordem.
 function skuParts(value){
- const cleaned=norm(value).replace(/^#+/,'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[–—_]+/g,'-').replace(/\s*-\s*/g,'-').replace(/\s+/g,' ').trim();
+ // Usa a mesma forma canonica dos EANs, inclusive a equivalencia WL/WJ-1417.
+ // Nao remove as variacoes -A, -B, -PRETO etc.: precisam continuar coincidindo.
+ const cleaned=skuKey(value);
  const sections=cleaned.split('-').map(x=>x.trim()).filter(Boolean);
  if(sections.length<2)return null;
  // O mesmo modelo pode ser impresso com hífen: WJ-2673 = WJ2673; MC-40876 = MC40876.
@@ -542,7 +544,7 @@ function skuParts(value){
  if(/^(WJ|MC|AB|XFP)$/.test(model)&&/^\d{3,}$/.test(sections[1]||'')){
   model+=sections[1];attrSections=sections.slice(2);
  }
- // ÚNICA equivalência entre fornecedores autorizada nesta loja.
+ // AB/XFP ja foram normalizados no skuKey; manter a equivalencia.
  if(model==='XFP3370'||model==='AB168')model='AB168';
  if(!attrSections.length)return null;
  const attrs=attrSections.join(' ').split(/\s+/).filter(Boolean);
@@ -999,7 +1001,17 @@ function safeCatalogRow(r){
 function eanVariants(value){const v=cleanEAN(value);return v.length===12?[v,'0'+v]:v.length===13&&v[0]==='0'?[v,v.slice(1)]:[v]}
 function eanMatches(value){const variants=new Set(eanVariants(value));return catalog.filter(r=>variants.has(r.ean))}
 // A família só é usada para EAN. QR Code continua exigindo o SKU completo.
-function skuKey(v){return norm(v).replace(/^#+/,'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[–—_\s]+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'').replace(/^(WJ|MC)-?(\d{3,})(?=-|$)/,(_,prefix,n)=>prefix+'-'+n).replace(/^WL-?1417-?([A-Z])(?=-|$)/,'WL-1417-$1').replace(/^WL-?1417(?=-|$)/,'WL-1417').replace(/^AB-?168(?=-|$)/,'AB-168').replace(/^XFP-?3370(?=-|$)/,'AB-168')}
+// V49: equivalencia de fornecedores restrita EXCLUSIVAMENTE a familia 1417.
+// WJ-1417-A = WL-1417-A; WJ1417B = WL 1417B, mas A != B.
+// Nunca equiparar WJ e WL para codigos de outras familias.
+function skuKey(v){
+ return norm(v).replace(/^#+/,'').normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+  .replace(/[–—_\s]+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'')
+  .replace(/^(WJ|MC)-?(\d{3,})(?=-|$)/,(_,prefix,n)=>prefix+'-'+n)
+  .replace(/^(?:WJ|WL)-?1417-?([A-Z])(?=-|$)/,'WJ-1417-$1')
+  .replace(/^(?:WJ|WL)-?1417(?=-|$)/,'WJ-1417')
+  .replace(/^AB-?168(?=-|$)/,'AB-168').replace(/^XFP-?3370(?=-|$)/,'AB-168');
+}
 function hasSkuPrefix(base,full){const a=skuKey(base),b=skuKey(full);return !!a&&(a===b||b.startsWith(a+'-'))}
 function skuFamily(v){
  const a=skuKey(v).split('-').filter(Boolean);

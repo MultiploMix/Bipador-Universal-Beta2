@@ -1,0 +1,19 @@
+BIPADOR UNIVERSAL V49 — WL/WJ 1417: ALIASES DE FORNECEDOR
+
+REGRA RESTRITA
+- WL-1417 equivale a WJ-1417.
+- WL-1417-A equivale a WJ-1417-A; WL1417B equivale a WJ-1417-B.
+- Demais variacoes e palavras (ex.: -PRETO) devem coincidir.
+- A e B sao variantes DIFERENTES: nao se tornam equivalentes.
+- WL-1418 NAO passa a equivaler a WJ-1418: a regra e somente para a familia 1417.
+
+CATALOGO EAN COMPARTILHADO
+- Continue cadastrando o EAN real ao SKU do fornecedor.
+- WJ/WL 1417 com o mesmo sufixo sao reconhecidos como um mesmo item.
+- Um EAN de dois modelos diferentes ainda exige escolha e confirmacao fisica.
+- Se o EAN for exclusivo de um SKU completo, a conferencia pode ser automatica.
+- O codigo da etiqueta e o SKU original cadastrado sao preservados no historico e no Firebase.
+- Nao altera cadastros nem historicos automaticamente; altera somente a forma de comparar.
+
+TESTE: envie os oito arquivos do aplicativo para pasta V49_WL_WJ_TESTE no GitHub Pages.
+Mantenha o aplicativo principal funcionando ate validar em aparelho real.
