@@ -1,0 +1,15 @@
+BIPADOR UNIVERSAL V48 — EAN COMPARTILHADO ENTRE MODELOS
+
+1. A V48 e uma pasta de TESTES; mantenha sua versao anterior para expedição.
+2. No cadastro de EANs/SKUs, vincule o MESMO EAN ao SKU do Alicate Universal e ao SKU do Alicate de Bico (cada um em registro próprio, com nome do produto).
+3. O EAN exclusivo do Alicate de Corte continua vinculado somente ao seu SKU.
+4. Ao bipar o EAN compartilhado, aparecerá uma lista com TODOS os modelos cadastrados.
+5. Selecione fisicamente o produto real, marque a confirmação visual e confirme.
+6. Se a seleção for diferente do SKU pedido, o Bipador rejeitará sem contabilizar.
+7. Se dois modelos do kit tiverem mesmo EAN, cada leitura selecionada conta somente para o respectivo item.
+8. SKUs diferentes NÃO se tornam equivalentes e o EAN sozinho NAO distingue o modelo.
+
+Arquivos do aplicativo: index.html, manifest.webmanifest, icon.svg, logo-multiplo-mix.png, leitor-wasm.js, sw.js, firebase-config.js, catalog-cloud.js.
+
+Teste preferencial: publicar os 8 arquivos em uma pasta V48_TESTE no GitHub Pages; depois da validacao no iPhone, atualizar o aplicativo principal.
+O Firebase usa o projeto BipaMix ja configurado. Os EANs cadastrados ficam no catalogo compartilhado.

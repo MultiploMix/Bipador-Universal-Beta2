@@ -246,7 +246,16 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
 .catalog-locked{opacity:.65;pointer-events:none}.catalog-locked button{pointer-events:none}
 .cloud-hidden{display:none!important}
 @media(max-width:390px){.cloud-actions{grid-template-columns:1fr}}
-</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V47 TESTE · TIKTOK E EAN</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
+/* V48: tela concisa para EAN usado por modelos diferentes. */
+#sharedEANReview .ean-review-sheet h2{margin-bottom:8px}
+#sharedEANReview .shared-ean-description{font-size:14px;line-height:1.5;color:#536174;margin-top:0}
+#sharedEANReview .ean-choices{margin-top:10px}
+#sharedEANReview .ean-choice{min-height:68px}
+#sharedEANReview .ean-choice small{overflow-wrap:anywhere}
+#sharedEANReview .shared-ean-other{border-color:#eabec1;background:#fff7f7;color:#9b2630}
+#sharedEANReview .ean-size-confirm{margin:14px 0}
+@media(max-width:400px){#sharedEANReview .ean-review-sheet{padding:20px 17px}#sharedEANReview .ean-choice{padding:13px 12px}}
+</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V48 TESTE · EAN COMPARTILHADO</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
 <div class="operator-topbar"><div class="operator-kicker"><span class="live-dot"></span><span id="miniSession">Conferência em andamento</span></div><button id="discardQuick" class="discard-quick hidden" type="button" aria-label="Descartar pedido atual">✕ Descartar pedido</button></div>
 <h2 class="stage-title" id="stageTitle">Leia a etiqueta do pedido</h2>
 <p class="stage-help" id="stageHelp">Aponte a câmera para o QR Code da etiqueta.</p>
@@ -334,7 +343,7 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
       <h3>Associações cadastradas</h3>
       <input type="search" id="catalogSearch" placeholder="Buscar EAN, SKU, produto ou cor">
       <div id="catalogList" class="catalog-list"></div>
-      <p class="catalog-note">Cor aleatória: habilite no cadastro; o pedido pode vir com V:ALEATORIA ou com ALEATORIA dentro do próprio SKU. EAN único com SKU completo: aprovação automática. EAN apenas com SKU base: confirmação visual simples da variação esperada, sem exigir cadastro de cores. EAN compartilhado: escolha da variação. QR Code do produto continua com SKU completo. Quando conectado, os produtos são sincronizados entre aparelhos; o histórico de pedidos permanece local. Faça backups.</p>
+      <p class="catalog-note">Cor aleatória: habilite no cadastro; o pedido pode vir com V:ALEATORIA ou com ALEATORIA dentro do próprio SKU. EAN único com SKU completo: aprovação automática. EAN apenas com SKU base: confirmação visual simples da variação esperada, sem exigir cadastro de cores. EAN compartilhado entre modelos: escolha física obrigatória e bloqueio de modelo divergente. QR Code do produto continua com SKU completo. Quando conectado, os produtos são sincronizados entre aparelhos; o histórico de pedidos permanece local. Faça backups.</p>
     </div>
   </div>
 </section>
@@ -353,6 +362,24 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
     <button id="eanConfirm" type="button" disabled>Confirmar variação observada</button>
     <button id="eanCancel" type="button" class="secondary">Cancelar sem contabilizar</button>
     <p class="catalog-note">O EAN identifica o produto-base. A cor e o tamanho selecionados são informados visualmente pelo funcionário; o código de barras não comprova esses atributos.</p>
+  </div>
+</section>
+<!-- V48: identificacao obrigatoria do MODELO quando um EAN pertence a produtos distintos. -->
+<section id="sharedEANReview" class="ean-review hidden" role="dialog" aria-modal="true" aria-label="Identificar modelo do produto com EAN compartilhado">
+  <div class="ean-review-sheet">
+    <div class="ean-review-badge">⚠ EAN COMPARTILHADO</div>
+    <h2>Qual produto está na sua mão?</h2>
+    <p id="sharedEANDescription" class="shared-ean-description">Este mesmo EAN está em produtos diferentes. Confira o modelo físico antes de continuar.</p>
+    <div class="ean-expected"><small>O pedido solicita</small><strong id="sharedEANExpected"></strong></div>
+    <p><strong>Selecione o produto que está segurando:</strong></p>
+    <div id="sharedEANChoices" class="ean-choices" role="radiogroup" aria-label="Modelo do produto observado"></div>
+    <div id="sharedEANCheckPanel" class="ean-size-confirm hidden">
+      <label><input id="sharedEANCheck" type="checkbox"><span>Conferi fisicamente o modelo, a cor e o tamanho (quando houver).</span></label>
+      <small>O código EAN é igual em todos estes modelos. Somente sua inspeção identifica o produto correto.</small>
+    </div>
+    <button id="sharedEANConfirm" type="button" disabled>Confirmar produto observado</button>
+    <button id="sharedEANCancel" type="button" class="secondary">Cancelar sem contabilizar</button>
+    <p class="catalog-note">Se o modelo real não for o pedido, o Bipador bloqueia a conferência. Nunca escolha o modelo do pedido sem conferir a peça na mão.</p>
   </div>
 </section>
 <div id="finalDialog" class="dialog-back hidden" role="dialog" aria-modal="true"><div class="dialog-card"><h2>Finalizar conferência?</h2><p id="finalSummary"></p><button id="saveShare">📲 Salvar e compartilhar no WhatsApp</button><button id="saveOnly" class="secondary">💾 Salvar relatório no celular</button><button id="cancelFinal" class="secondary">Voltar para conferência</button></div></div><!-- ZXing WASM experimental; o leitor V33 permanece como alternativa de seguranca. --><script src="https://cdn.jsdelivr.net/npm/barcode-detector@3.2.2/dist/iife/ponyfill.min.js"></script><script src="./leitor-wasm.js"></script><script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script><script src="./firebase-config.js"></script><script type="module" src="./catalog-cloud.js"></script><script>
@@ -1364,11 +1391,108 @@ function randomColorOptions(rows,item){
  }
  return allowed;
 }
+// V48 — Um EAN pode identificar varios produtos fisicos diferentes.
+// NUNCA aprovar automaticamente por um EAN compartilhado, mesmo que apenas
+// um dos SKUs associados apareca no pedido: a leitura nao prova o modelo.
+let sharedEANPending=null;
+function sharedEANOptions(rows){
+ const result=[],seen=new Set();
+ for(const row of rows){
+  const variants=eanOptionRows(row,skuFamily(row.sku));
+  const choices=variants.length?variants:[{sku:row.sku,source:'familia-visual',registeredSize:false,title:'',produto:row.produto}];
+  for(const candidate of choices){
+   const sku=skuKey(candidate.sku);
+   if(!sku||seen.has(sku))continue;
+   seen.add(sku);
+   const product=String(row.produto||'').trim();
+   const detail=(row.cor||row.tamanho||row.variacoes)?String(candidate.title||'').trim():'';
+   const productTitle=product||candidate.sku;
+   const extra=(detail&&detail.toUpperCase()!==productTitle.toUpperCase())?detail:'';
+   result.push({...candidate,sku:candidate.sku,produto:product,title:productTitle+(extra?' · '+extra:''),rowSku:row.sku});
+  }
+ }
+ return result;
+}
+function sharedEANItemMatch(candidate,item){
+ if(item.randomColor){
+  // Nao presumir uma cor aleatoria de um EAN compartilhado entre modelos.
+  // Mantem a validacao segura do fluxo de cor aleatoria existente.
+  return null;
+ }
+ const match=eanVisualMatch(candidate,item);
+ if(match)return match;
+ // EAN associado somente ao SKU-base: o modelo e conhecido, mas cor/tamanho
+ // dependem da confirmacao VISUAL. Nao usar se duas linhas do pedido forem
+ // compativeis com o mesmo modelo, pois seria ambiguo qual contabilizar.
+ if(candidate.source==='familia-visual'&&hasSkuPrefix(candidate.sku,item.sku))
+  return {item,missingSize:null,visualOnly:true};
+ return null;
+}
+function closeSharedEANReview(){sharedEANPending=null;$('sharedEANReview').classList.add('hidden')}
+function updateSharedEANChoice(){
+ const pending=sharedEANPending;if(!pending)return;
+ const ix=pending.selected,other=ix===pending.options.length,valid=ix>=0&&ix<pending.options.length;
+ $('sharedEANCheckPanel').classList.toggle('hidden',!valid);
+ $('sharedEANConfirm').textContent=other?'Registrar produto diferente':'Confirmar modelo observado';
+ $('sharedEANConfirm').disabled=ix<0||(valid&&!$('sharedEANCheck').checked);
+ [...$('sharedEANChoices').querySelectorAll('.ean-choice')].forEach((el,i)=>el.classList.toggle('selected',i===ix));
+}
+function openSharedEANReview(code,options){
+ if(!order)return;
+ sharedEANPending={code,options,selected:-1,orderId:order.id};
+ $('sharedEANDescription').textContent='EAN '+code+' é utilizado em '+options.length+' modelos ou variações cadastradas. O código sozinho não identifica qual está na sua mão.';
+ $('sharedEANExpected').textContent=order.items.filter(i=>i.read<i.qtd).map(i=>i.randomColor?i.baseSku+' (cor aleatória)':i.sku).join(' ou ');
+ $('sharedEANChoices').innerHTML=options.map((opt,i)=>
+  '<label class="ean-choice"><input type="radio" name="sharedEANModel" value="'+i+'"><span><strong>'+escapeHtml(opt.title)+'</strong><small>SKU: '+escapeHtml(opt.sku)+'</small></span></label>'
+ ).join('')+'<label class="ean-choice shared-ean-other"><input type="radio" name="sharedEANModel" value="'+options.length+'"><span><strong>OUTRO MODELO</strong><small>O produto físico não corresponde às opções cadastradas</small></span></label>';
+ $('sharedEANCheck').checked=false;
+ $('sharedEANConfirm').disabled=true;
+ $('sharedEANConfirm').textContent='Confirmar modelo observado';
+ $('sharedEANCheckPanel').classList.add('hidden');
+ $('sharedEANReview').classList.remove('hidden');
+}
+$('sharedEANChoices').addEventListener('change',e=>{
+ if(e.target.name!=='sharedEANModel'||!sharedEANPending)return;
+ sharedEANPending.selected=Number(e.target.value);
+ $('sharedEANCheck').checked=false;updateSharedEANChoice();
+});
+$('sharedEANCheck').addEventListener('change',updateSharedEANChoice);
+$('sharedEANCancel').onclick=()=>{closeSharedEANReview();showMessage('EAN compartilhado: conferência cancelada, nenhuma unidade contabilizada.');};
+$('sharedEANConfirm').onclick=()=>{
+ const pending=sharedEANPending;if(!pending||pending.selected<0)return;
+ if(!order||order.id!==pending.orderId){closeSharedEANReview();showMessage('O pedido mudou. Faça a leitura novamente.','danger');return}
+ const option=pending.options[pending.selected];
+ if(!option){
+  closeSharedEANReview();
+  showMessage('⛔ PRODUTO DIFERENTE — o EAN compartilhado não identifica o modelo observado. Nenhuma unidade contabilizada.','danger');
+  logScan('EAN COMPARTILHADO',pending.code,'MODELO DIFERENTE');signal(false,'Modelo diferente');return;
+ }
+ if(!$('sharedEANCheck').checked)return;
+ const matches=order.items.map(item=>sharedEANItemMatch(option,item)).filter(Boolean);
+ const openMatches=matches.filter(x=>x.item.read<x.item.qtd);
+ closeSharedEANReview();
+ if(!matches.length){
+  showMessage('⛔ MODELO ERRADO — '+(option.produto||option.sku)+' ('+option.sku+') não corresponde ao pedido. Nenhuma unidade contabilizada.','danger');
+  logScan('EAN COMPARTILHADO',pending.code+' → '+option.sku,'MODELO ERRADO');signal(false,'Modelo diferente');return;
+ }
+ if(openMatches.length!==1){
+  const message=openMatches.length?'⛔ MODELO AMBÍGUO — há mais de uma linha compatível no pedido. Cadastre variantes específicas.':'⛔ QUANTIDADE COMPLETA — este modelo já foi conferido no pedido.';
+  showMessage(message,'danger');logScan('EAN COMPARTILHADO',pending.code+' → '+option.sku,'AMBÍGUO OU EXCEDENTE');signal(false,openMatches.length?'Modelo ambíguo':'Quantidade já conferida');return;
+ }
+ const item=openMatches[0].item;
+ const accepted=check(item.sku,'visual');
+ if(accepted)logScan('EAN COMPARTILHADO',pending.code+' → '+option.sku,'MODELO CONFIRMADO VISUALMENTE');
+};
 function processEAN(raw){
  const code=cleanEAN(raw);
  if(!order){showMessage('Leia primeiro o QR Code da etiqueta.','danger');signal(false,'Leia primeiro a etiqueta');return}
  const rows=eanMatches(code);
  if(!rows.length){showMessage('⛔ EAN NÃO CADASTRADO — '+code+'. Cadastre a associação no gerenciamento.','danger');logScan('EAN',code,'DESCONHECIDO');signal(false,'EAN não cadastrado');return}
+ // Detecta modelos/variacoes diferentes compartilhando o MESMO EAN.
+ // Se ha varias opcoes fisicas possiveis, a escolha visual e obrigatoria,
+ // independentemente de quantos SKUs aparecem no pedido.
+ const sharedOptions=sharedEANOptions(rows);
+ if(sharedOptions.length>1){openSharedEANReview(code,sharedOptions);return;}
  // Exceção estrita para o mesmo produto cadastrado com dois SKUs de fornecedores.
  // Cada EAN precisa existir no catálogo; jamais aprovamos um EAN desconhecido.
  // Sem cor/tamanho no pedido ou no cadastro, o EAN exclusivo confirma o SKU base.
