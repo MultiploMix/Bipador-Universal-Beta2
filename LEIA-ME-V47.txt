@@ -1,0 +1,49 @@
+BIPADOR UNIVERSAL V47 - COMPATIBILIDADE TIKTOK (TESTE)
+
+OBJETIVO
+Corrigir a comparação dos EANs de produtos identificados por SKUs legados nas etiquetas do TikTok, mantendo a conferência obrigatória de modelo, cor e quantidade.
+
+MUDANÇAS
+1) Compatibilidade com descrições antigas da etiqueta, quando o EAN já estiver cadastrado na família correta:
+   2670 TOUCA NATAÇÃO PRETO
+   2665 ÓCULOS PRETO
+   O modelo numérico do pedido é comparado com o modelo no SKU cadastrado no catálogo. Ex.: 2670 pode corresponder a WJ-2670; o prefixo não é assumido como válido em qualquer produto. A categoria e a cor também precisam ser compatíveis.
+2) Se o EAN foi cadastrado apenas com SKU base ou possui cores compartilhadas, o operador precisa selecionar e confirmar a variação visualmente.
+3) Normalização de WL 1417B, WL1417B e WL-1417-B para o mesmo SKU, sem confundir WL-1417-A com WL-1417-B.
+4) Erros de família exibem o SKU associado ao EAN no catálogo, facilitando a correção de cadastro.
+5) Cor divergente, EAN sem cadastro, modelo diferente, quantidade excedida e cadastro contraditório continuam bloqueados.
+6) Sem alterações no motor de leitura da câmera, Firebase, login, dados locais, kits ou conjuntos.
+
+IMPORTANTE
+- Os EANs não são vinculados automaticamente pelos números que contêm. Cada EAN precisa estar cadastrado corretamente no Catálogo Compartilhado.
+- Se o EAN estiver associado a outro SKU/família no Firebase, a leitura continuará sendo rejeitada e o aviso mostrará qual associação deve ser revisada.
+- O caso WL-1417 depende de verificar a qual variante o EAN 6950322814172 realmente pertence; não pressupomos que todas as variantes tenham o mesmo código.
+- Este pacote corrige a interpretação no Bipador. NÃO modifica o conversor de etiquetas TikTok nem os QR Codes já impressos.
+
+INSTALAÇÃO DE TESTE NO GITHUB PAGES
+Repositório: MultiploMix/Bipador-Universal-Beta2
+1. Faça backup da versão usada pela equipe.
+2. Crie uma pasta V47_TIKTOK_TESTE no repositório e envie os 8 arquivos funcionais do ZIP diretamente para a pasta.
+3. Acesse https://multiplomix.github.io/Bipador-Universal-Beta2/V47_TIKTOK_TESTE/
+4. Confira no cabeçalho V47 TESTE TIKTOK E EAN.
+5. Conecte ao Firebase BipaMix com uma conta autorizada (sem passar senha a terceiros).
+6. Verifique os vínculos reais no catálogo e só então faça leituras físicas de teste.
+7. Não substitua a versão de expedição antes dos testes reais.
+
+ARQUIVOS FUNCIONAIS
+index.html, firebase-config.js, catalog-cloud.js, leitor-wasm.js, sw.js,
+icon.svg, manifest.webmanifest, logo-multiplo-mix.png
+
+TESTES EXECUTADOS
+- Kit 2670 + 2665: cada componente exige um bip; EAN com SKU base pede revisão visual.
+- EAN de cor errada e EAN de outro modelo rejeitados.
+- WL 1417B: duas leituras aceitas quando a quantidade é 2; excesso bloqueado.
+- Kit Shopee com dois produtos permanece separado.
+- Conjunto XFP/AB com COM 4 mantém quantidade física 4.
+- Sintaxe JavaScript validada.
+
+LIMITE DE VALIDACAO
+Testes automatizados da lógica, com catálogo simulado. Não foi possível testar diretamente a câmera física, o conteúdo bruto dos QR Codes fotografados nem consultar o catálogo real do Firebase sem acesso autenticado.
+
+ACESSO AO GITHUB
+Não foi possível gravar diretamente no seu repositório devido à restrição de escrita da integração. O ZIP contém os arquivos necessários para upload manual.

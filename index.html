@@ -246,7 +246,7 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
 .catalog-locked{opacity:.65;pointer-events:none}.catalog-locked button{pointer-events:none}
 .cloud-hidden{display:none!important}
 @media(max-width:390px){.cloud-actions{grid-template-columns:1fr}}
-</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V46 TESTE · CATÁLOGO COMPARTILHADO</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
+</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V47 TESTE · TIKTOK E EAN</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
 <div class="operator-topbar"><div class="operator-kicker"><span class="live-dot"></span><span id="miniSession">Conferência em andamento</span></div><button id="discardQuick" class="discard-quick hidden" type="button" aria-label="Descartar pedido atual">✕ Descartar pedido</button></div>
 <h2 class="stage-title" id="stageTitle">Leia a etiqueta do pedido</h2>
 <p class="stage-help" id="stageHelp">Aponte a câmera para o QR Code da etiqueta.</p>
@@ -972,7 +972,7 @@ function safeCatalogRow(r){
 function eanVariants(value){const v=cleanEAN(value);return v.length===12?[v,'0'+v]:v.length===13&&v[0]==='0'?[v,v.slice(1)]:[v]}
 function eanMatches(value){const variants=new Set(eanVariants(value));return catalog.filter(r=>variants.has(r.ean))}
 // A família só é usada para EAN. QR Code continua exigindo o SKU completo.
-function skuKey(v){return norm(v).replace(/^#+/,'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[–—_\s]+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'').replace(/^(WJ|MC)-?(\d{3,})(?=-|$)/,(_,prefix,n)=>prefix+'-'+n).replace(/^AB-?168(?=-|$)/,'AB-168').replace(/^XFP-?3370(?=-|$)/,'AB-168')}
+function skuKey(v){return norm(v).replace(/^#+/,'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[–—_\s]+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'').replace(/^(WJ|MC)-?(\d{3,})(?=-|$)/,(_,prefix,n)=>prefix+'-'+n).replace(/^WL-?1417-?([A-Z])(?=-|$)/,'WL-1417-$1').replace(/^WL-?1417(?=-|$)/,'WL-1417').replace(/^AB-?168(?=-|$)/,'AB-168').replace(/^XFP-?3370(?=-|$)/,'AB-168')}
 function hasSkuPrefix(base,full){const a=skuKey(base),b=skuKey(full);return !!a&&(a===b||b.startsWith(a+'-'))}
 function skuFamily(v){
  const a=skuKey(v).split('-').filter(Boolean);
@@ -1026,6 +1026,107 @@ function expectedSizesForFamily(family,opts,items){
  }
  return [...sizes];
 }
+// V47: etiquetas antigas do TikTok imprimem descricoes em vez de SKU de estoque.
+// Somente dois formatos comprovados sao convertidos para cotejo de EAN.
+// NENHUM EAN e aprovado pelo numero contido nele: o cadastro Firebase e obrigatorio.
+// 2670 TOUCA NATACAO PRETO -> familia de catalogo terminando em 2670, cor PRETO.
+// 2665 OCULOS PRETO -> familia de catalogo terminando em 2665, cor PRETO.
+// Em caso de cadastro sem cor, e exigida inspecao visual.
+const TIKTOK_COLORS={
+ PRETO:'PRETO',PRETA:'PRETO',AZUL:'AZUL',AZ:'AZUL',AZULCLARO:'AZULCLARO',
+ ROSA:'ROSA',VERDE:'VERDE',PRATA:'PRATA',BRANCO:'BRANCO',BRANCA:'BRANCO',
+ VERMELHO:'VERMELHO',VERMELHA:'VERMELHO',BEGE:'BEGE',AMARELO:'AMARELO',
+ AMARELA:'AMARELO',CINZA:'CINZA',LILAS:'LILAS',ROXO:'ROXO',ROXA:'ROXO'
+};
+function tiktokLegacyDescriptor(v){
+ const txt=norm(v).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[_-]+/g,' ').replace(/\s+/g,' ').trim();
+ let m=txt.match(/^(2670)\s+TOUCA\s+NATACAO\s+(.+)$/);
+ if(!m)m=txt.match(/^(2665)\s+OCULOS\s+(.+)$/);
+ if(!m)return null;
+ const color=TIKTOK_COLORS[m[2].replace(/\s+/g,'')];
+ return color?{modelo:m[1],cor:color,tipo:m[1]==='2670'?'TOUCA':'OCULOS'}:null;
+}
+function tiktokCatalogModel(v){
+ const fam=skuFamily(v);
+ const m=fam.match(/^(?:[A-Z]{1,6}-)?(2670|2665)$/);
+ return m?m[1]:'';
+}
+function tiktokCatalogKindMatches(row,desc){
+ if(tiktokCatalogModel(row.sku)!==desc.modelo)return false;
+ const p=norm(row.produto||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+ // Se a descricao declara explicitamente a OUTRA categoria, rejeitar.
+ if(desc.tipo==='TOUCA'&&/\bOCULOS\b/.test(p)&&!/\bTOUCA\b/.test(p))return false;
+ if(desc.tipo==='OCULOS'&&/\bTOUCA\b/.test(p)&&!/\bOCULOS\b/.test(p))return false;
+ return true;
+}
+function tiktokCandidateColor(candidate){
+ const family=skuFamily(candidate.sku);
+ const suffix=skuKey(candidate.sku).slice(skuKey(family).length).replace(/^-/,'');
+ if(!suffix)return '';
+ const tokens=suffix.split('-').filter(Boolean);
+ for(let k=0;k<tokens.length;k++){
+  const combo=tokens[k]+(tokens[k+1]||'');
+  if(TIKTOK_COLORS[combo])return TIKTOK_COLORS[combo];
+  if(TIKTOK_COLORS[tokens[k]])return TIKTOK_COLORS[tokens[k]];
+ }
+ return '';
+}
+function tiktokLegacyCandidateMatches(candidate,item){
+ const d=tiktokLegacyDescriptor(item.sku);
+ return !!(d&&tiktokCatalogModel(candidate.sku)===d.modelo&&tiktokCandidateColor(candidate)===d.cor);
+}
+function processTikTokLegacyEAN(code,rows){
+ const candidates=order.items.map(i=>({item:i,desc:tiktokLegacyDescriptor(i.sku)})).filter(x=>x.desc);
+ if(!candidates.length)return false;
+ const related=rows.filter(r=>candidates.some(x=>tiktokCatalogKindMatches(r,x.desc)));
+ if(!related.length)return false; // EAN de outra familia: fluxo normal rejeita.
+ // Impede associacao contraditoria (ex.: SKU termina PRETO, campo Cor diz AZUL).
+ for(const row of related){
+  const suffixColor=tiktokCandidateColor({sku:row.sku});
+  const text=norm(row.cor||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'');
+  const statedColor=TIKTOK_COLORS[text]||'';
+  if(suffixColor&&statedColor&&suffixColor!==statedColor){
+   showMessage('⛔ CADASTRO INCONSISTENTE — SKU '+row.sku+' e cor '+row.cor+' divergem. Corrija o EAN no catálogo.','danger');
+   logScan('EAN',code,'CADASTRO INCONSISTENTE');signal(false,'Cadastro divergente');return true;
+  }
+ }
+ const uniqueModels=new Set(related.map(r=>tiktokCatalogModel(r.sku)));
+ const untrusted=rows.filter(r=>!candidates.some(x=>tiktokCatalogKindMatches(r,x.desc)));
+ if(uniqueModels.size!==1||untrusted.length){
+  showMessage('⛔ EAN AMBÍGUO — cadastro associado a produtos diferentes. Revise o catálogo.','danger');
+  logScan('EAN',code,'AMBÍGUO');signal(false,'EAN ambíguo');return true;
+ }
+ const items=candidates.filter(x=>related.some(r=>tiktokCatalogKindMatches(r,x.desc))).map(x=>x.item);
+ const options=[];
+ for(const row of related){
+  const family=skuFamily(row.sku),variants=eanOptionRows(row,family);
+  if(variants.length){
+   for(const opt of variants){
+    if(!options.some(x=>skuKey(x.sku)===skuKey(opt.sku)))options.push(opt);
+   }
+  }else{
+   // SKU base sem cor: mostrar apenas a variante do PEDIDO,
+   // obrigando confirmacao visual; nunca aprovar por similaridade.
+   for(const item of items){
+    if(tiktokCatalogKindMatches(row,tiktokLegacyDescriptor(item.sku))&&
+       !options.some(x=>x.source==='pedido-visual'&&skuKey(x.sku)===skuKey(item.sku)))
+      options.push({sku:item.sku,title:tiktokLegacyDescriptor(item.sku).cor,produto:row.produto,source:'pedido-visual',registeredSize:false});
+   }
+  }
+ }
+ const eligible=options.filter(opt=>items.some(item=>eanVisualMatch(opt,item)));
+ if(!eligible.length){
+  showMessage('⛔ VARIAÇÃO ERRADA — modelo correspondente, mas cor diferente da etiqueta. Cadastro do EAN: '+related.map(r=>r.sku).slice(0,3).join(' / ')+'.','danger');
+  logScan('EAN',code,'COR DIVERGENTE');signal(false,'Cor incorreta');return true;
+ }
+ // EAN inequivoco ligado ao SKU completo + cor verificada: leitura automatica.
+ if(rows.length===1&&items.length===1&&eligible.length===1&&eligible[0].source==='completo'){
+  check(items[0].sku,'ean');return true;
+ }
+ // Quando o EAN e da familia ou compartilhado entre cores, revisar fisicamente.
+ openEANReview(code,options,items,[...uniqueModels].map(m=>'MODELO '+m));return true;
+}
+
 function resolveEANOptions(rows,items){
  const families=[...new Set(items.map(i=>skuFamily(i.sku)))];
  const anchors=rows.filter(r=>items.some(i=>equivalentSku(r.sku,i.sku)||hasSkuPrefix(r.sku,i.sku)));
@@ -1165,6 +1266,9 @@ function eanVisualMatch(candidate,item){
   if(item.randomSize&&candidate.sizeValue&&item.randomSize!==candidate.sizeValue)return null;
   return {item,missingSize:item.randomSize&&!candidate.sizeValue?item.randomSize:null,visualOnly:true};
  }
+ // Compatibilidade TikTok: modelo e cor precisam coincidir exatamente.
+ // Se o EAN identifica apenas a familia (ou cor compartilhada), exigir validacao visual.
+ if(tiktokLegacyCandidateMatches(candidate,item))return {item,missingSize:null,visualOnly:candidate.source!=='completo'};
  // EAN cadastrado somente na família, sem cores: nunca deduzir a variação pelo código.
  // Uma escolha explícita da variação solicitada e um checkbox de inspeção física são obrigatórios.
  if(candidate.source==='pedido-visual')return equivalentSku(candidate.sku,item.sku)?{item,missingSize:null,visualOnly:true}:null;
@@ -1272,6 +1376,7 @@ function processEAN(raw){
   !rows[0].cor&&!rows[0].tamanho&&!rows[0].variacoes&&
   order.items.filter(i=>skuKey(i.sku)==='AB-168');
  if(supplierMatch&&supplierMatch.length===1){check(supplierMatch[0].sku,'ean');return}
+ if(processTikTokLegacyEAN(code,rows))return;
  // Cor aleatória NUNCA é aprovada automaticamente pelo EAN.
  // Mesmo que esteja autorizada, o funcionário escolhe a cor física.
  const randomCandidates=order.items.filter(i=>i.randomColor&&i.read<i.qtd&&
@@ -1287,7 +1392,7 @@ function processEAN(raw){
   openEANReview(code,options,[item],[item.baseSku]);return;
  }
  const result=resolveEANOptions(rows,order.items);
- if(!result.matchedFamily){showMessage('⛔ PRODUTO ERRADO — EAN '+code+' não pertence à família de SKU deste pedido.','danger');logScan('EAN',code,'ERRO');signal(false,'EAN de outro produto');return}
+ if(!result.matchedFamily){showMessage('⛔ PRODUTO ERRADO — EAN '+code+' cadastrado para '+rows.map(r=>r.sku).slice(0,3).join(' / ')+', diferente do SKU pedido. Revise a associação no catálogo.','danger');logScan('EAN',code,'ERRO');signal(false,'EAN de outro produto');return}
  // Sem variações cadastradas: o EAN confirma apenas a família, e a variação
  // completa é verificada visualmente, SEM exigir cadastrar todas as cores.
  // Importante: se dois EANs diferentes forem associados ao mesmo SKU base,
