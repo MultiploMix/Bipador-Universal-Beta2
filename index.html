@@ -255,7 +255,7 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
 #sharedEANReview .shared-ean-other{border-color:#eabec1;background:#fff7f7;color:#9b2630}
 #sharedEANReview .ean-size-confirm{margin:14px 0}
 @media(max-width:400px){#sharedEANReview .ean-review-sheet{padding:20px 17px}#sharedEANReview .ean-choice{padding:13px 12px}}
-</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V49 TESTE · WL/WJ 1417</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
+</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V50 TESTE · ALICATES 1417</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
 <div class="operator-topbar"><div class="operator-kicker"><span class="live-dot"></span><span id="miniSession">Conferência em andamento</span></div><button id="discardQuick" class="discard-quick hidden" type="button" aria-label="Descartar pedido atual">✕ Descartar pedido</button></div>
 <h2 class="stage-title" id="stageTitle">Leia a etiqueta do pedido</h2>
 <p class="stage-help" id="stageHelp">Aponte a câmera para o QR Code da etiqueta.</p>
@@ -1004,13 +1004,35 @@ function eanMatches(value){const variants=new Set(eanVariants(value));return cat
 // V49: equivalencia de fornecedores restrita EXCLUSIVAMENTE a familia 1417.
 // WJ-1417-A = WL-1417-A; WJ1417B = WL 1417B, mas A != B.
 // Nunca equiparar WJ e WL para codigos de outras familias.
+// V50: WL e WJ identificam os mesmos modelos somente na familia de alicates 1417.
+// Os SKUs comerciais longos do TikTok levam quantidade + descricao APOS o modelo.
+// Essa parte e removida da comparacao SOMENTE com descriptor coerente:
+//   WL-1417-1UN--ALICATE-UNIVERSAL -> WJ-1417 (universal)
+//   WL-1417A-1UN--ALICATE-DE-BICO -> WJ-1417-A (bico)
+//   WL 1417B-1UN--ALICATE-DE-CORTE -> WJ-1417-B (corte)
+// Descriptor incoerente (ex.: 1417B + UNIVERSAL) nunca pode liberar um EAN.
 function skuKey(v){
- return norm(v).replace(/^#+/,'').normalize('NFD').replace(/[\u0300-\u036f]/g,'')
-  .replace(/[–—_\s]+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'')
-  .replace(/^(WJ|MC)-?(\d{3,})(?=-|$)/,(_,prefix,n)=>prefix+'-'+n)
+ let key=norm(v).replace(/^#+/,'').normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+  .replace(/[–—_\s]+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');
+ const commercial=key.match(/^(?:WJ|WL)-?1417(?:-?([AB]))?-(\d{1,3}(?:UN|UND|UNID|UNIDADE|UNIDADES|PC|PCS))-(?:ALICATE-)?(UNIVERSAL|(?:DE-)?BICO|(?:DE-)?CORTE)(?:-.*)?$/);
+ if(commercial){
+  const variant=commercial[1]||'';
+  const model=commercial[3].replace(/^DE-/,'');
+  const expected=variant==='A'?'BICO':variant==='B'?'CORTE':'UNIVERSAL';
+  if(model===expected)return 'WJ-1417'+(variant?'-'+variant:'');
+  // Preserva a descricao contraditoria para impedir igualdade acidental.
+ }
+ return key.replace(/^(WJ|MC)-?(\d{3,})(?=-|$)/,(_,prefix,n)=>prefix+'-'+n)
   .replace(/^(?:WJ|WL)-?1417-?([A-Z])(?=-|$)/,'WJ-1417-$1')
   .replace(/^(?:WJ|WL)-?1417(?=-|$)/,'WJ-1417')
   .replace(/^AB-?168(?=-|$)/,'AB-168').replace(/^XFP-?3370(?=-|$)/,'AB-168');
+}
+// Codigo 1417 sem letra e o Universal, nao o pai dos modelos Bico e Corte.
+// Em outras familias preserva o fluxo anterior de EAN por SKU-base/variacoes.
+function eanAssociationMatchesItem(catalogSku,expectedSku){
+ const a=skuKey(catalogSku),b=skuKey(expectedSku);
+ if(a.startsWith('WJ-1417')&&b.startsWith('WJ-1417'))return a===b;
+ return equivalentSku(catalogSku,expectedSku)||hasSkuPrefix(catalogSku,expectedSku);
 }
 function hasSkuPrefix(base,full){const a=skuKey(base),b=skuKey(full);return !!a&&(a===b||b.startsWith(a+'-'))}
 function skuFamily(v){
@@ -1168,7 +1190,7 @@ function processTikTokLegacyEAN(code,rows){
 
 function resolveEANOptions(rows,items){
  const families=[...new Set(items.map(i=>skuFamily(i.sku)))];
- const anchors=rows.filter(r=>items.some(i=>equivalentSku(r.sku,i.sku)||hasSkuPrefix(r.sku,i.sku)));
+ const anchors=rows.filter(r=>items.some(i=>eanAssociationMatchesItem(r.sku,i.sku)));
  if(!anchors.length)return {matchedFamily:false,options:[],families};
  const options=[];
  const matchedFamilies=families.filter(f=>anchors.some(r=>hasSkuPrefix(f,r.sku)));
@@ -1436,7 +1458,7 @@ function sharedEANItemMatch(candidate,item){
  // EAN associado somente ao SKU-base: o modelo e conhecido, mas cor/tamanho
  // dependem da confirmacao VISUAL. Nao usar se duas linhas do pedido forem
  // compativeis com o mesmo modelo, pois seria ambiguo qual contabilizar.
- if(candidate.source==='familia-visual'&&hasSkuPrefix(candidate.sku,item.sku))
+ if(candidate.source==='familia-visual'&&eanAssociationMatchesItem(candidate.sku,item.sku))
   return {item,missingSize:null,visualOnly:true};
  return null;
 }
@@ -1505,6 +1527,14 @@ function processEAN(raw){
  // independentemente de quantos SKUs aparecem no pedido.
  const sharedOptions=sharedEANOptions(rows);
  if(sharedOptions.length>1){openSharedEANReview(code,sharedOptions);return;}
+ // V50: na familia 1417, o codigo sem A/B e o modelo UNIVERSAL em si,
+ // nao um SKU-base generico. Se o EAN exclusivo estiver cadastrado exatamente
+ // para ele, aprovar diretamente. EAN compartilhado continua exigindo revisao.
+ if(rows.length===1&&skuKey(rows[0].sku)==='WJ-1417'&&
+    !rows[0].cor&&!rows[0].tamanho&&!rows[0].variacoes&&!rows[0].aleatoria){
+  const universal=order.items.filter(i=>skuKey(i.sku)==='WJ-1417');
+  if(universal.length===1){check(universal[0].sku,'ean');return;}
+ }
  // Exceção estrita para o mesmo produto cadastrado com dois SKUs de fornecedores.
  // Cada EAN precisa existir no catálogo; jamais aprovamos um EAN desconhecido.
  // Sem cor/tamanho no pedido ou no cadastro, o EAN exclusivo confirma o SKU base.
@@ -1534,16 +1564,16 @@ function processEAN(raw){
  // Importante: se dois EANs diferentes forem associados ao mesmo SKU base,
  // seus valores NÃO revelam qual cor cada código representa.
  if(!result.options.length){
-  const genericRows=rows.filter(r=>skuKey(r.sku)===skuFamily(r.sku)&&order.items.some(i=>hasSkuPrefix(r.sku,i.sku)));
+  const genericRows=rows.filter(r=>skuKey(r.sku)===skuFamily(r.sku)&&order.items.some(i=>eanAssociationMatchesItem(r.sku,i.sku)));
   const genericOptions=[];
   for(const item of order.items){
-   const row=genericRows.find(r=>hasSkuPrefix(r.sku,item.sku));
+   const row=genericRows.find(r=>eanAssociationMatchesItem(r.sku,item.sku));
    if(!row)continue;
    const suffix=skuKey(item.sku).slice(skuKey(row.sku).length).replace(/^-/, '');
    genericOptions.push({sku:item.sku,title:suffix.replace(/-/g,' · ')||item.sku,produto:row.produto,source:'pedido-visual',registeredSize:false});
   }
   if(!genericOptions.length){showMessage('⛔ EAN não identifica uma variação deste pedido. Revise o SKU cadastrado.','danger');logScan('EAN',code,'SEM CORRESPONDÊNCIA');signal(false,'EAN não corresponde');return}
-  openEANReview(code,genericOptions,order.items.filter(i=>genericRows.some(r=>hasSkuPrefix(r.sku,i.sku))),result.families);
+  openEANReview(code,genericOptions,order.items.filter(i=>genericRows.some(r=>eanAssociationMatchesItem(r.sku,i.sku))),result.families);
   return;
  }
  // Aprovação automática somente com associação inequívoca ao SKU COMPLETO.
