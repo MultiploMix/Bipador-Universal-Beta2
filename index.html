@@ -255,7 +255,7 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
 #sharedEANReview .shared-ean-other{border-color:#eabec1;background:#fff7f7;color:#9b2630}
 #sharedEANReview .ean-size-confirm{margin:14px 0}
 @media(max-width:400px){#sharedEANReview .ean-review-sheet{padding:20px 17px}#sharedEANReview .ean-choice{padding:13px 12px}}
-</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V51 TESTE · SKU EQUIVALENTE</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
+</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V52 TESTE · IMPORTAÇÃO SEGURA</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
 <div class="operator-topbar"><div class="operator-kicker"><span class="live-dot"></span><span id="miniSession">Conferência em andamento</span></div><button id="discardQuick" class="discard-quick hidden" type="button" aria-label="Descartar pedido atual">✕ Descartar pedido</button></div>
 <h2 class="stage-title" id="stageTitle">Leia a etiqueta do pedido</h2>
 <p class="stage-help" id="stageHelp">Aponte a câmera para o QR Code da etiqueta.</p>
@@ -1314,6 +1314,23 @@ function parseCSV(text){
  if(quoted)throw Error('CSV com aspas não fechadas.');
  row.push(field);if(row.some(x=>x.trim()))rows.push(row.slice());return rows;
 }
+// V52 — Atualização segura do catálogo: chave estável EAN + SKU do fornecedor.
+// A opção CorAleatoria e as variações NÃO fazem parte da identidade: editar essas
+// propriedades deve ATUALIZAR o documento no Firebase em vez de gerar cópias.
+function catalogStableKey(row){return cleanEAN(row.ean)+'|'+skuKey(row.sku)}
+function catalogDistinctParts(value){
+ return String(value||'').split(/[,;|]/).map(v=>v.trim()).filter(Boolean);
+}
+function catalogMergeColors(values){
+ const seen=new Set(),out=[];
+ for(const v of values){
+  for(const c of catalogDistinctParts(v)){
+   const n=norm(c).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ');
+   if(!seen.has(n)){seen.add(n);out.push(c)}
+  }
+ }
+ return out;
+}
 function importCatalogCSV(text){
  const rows=parseCSV(text);if(rows.length<2)throw Error('CSV vazio ou sem linhas de produtos.');
  const head=rows[0].map(x=>norm(x).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Z0-9]/g,''));
@@ -1321,22 +1338,63 @@ function importCatalogCSV(text){
  const ce=col(['EAN','GTIN','CODIGODEBARRAS','CODIGOBARRAS','BARCODE']),cs=col(['SKU','SKUINT','SKUINTERNO','SELLERSKU','SKUVENDEDOR']);
  if(ce<0||cs<0)throw Error('O CSV precisa ter colunas EAN e SKU. Confira o modelo.');
  const cp=col(['PRODUTO','NOME','NOMEDOPRODUTO','DESCRICAO']),cc=col(['COR','COLOUR','COLOR','VARIACAO']),ct=col(['TAMANHO','SIZE']),cv=col(['VARIACOES','VARIACOESDECOR','CORES','VARIANTES','VARIATIONS']),ca=col(['CORALEATORIA','ALEATORIA','ALEATORIO','RANDOMCOLOR']);
- let invalid=[],inserted=0,updated=0,identical=0;const next=catalog.slice();
+ const incoming=new Map(),invalid=[];let repeatedCsv=0;
  rows.slice(1).forEach((r,j)=>{
   try{
    const val=i=>i<0?'':(r[i]||'');
    const item=safeCatalogRow({ean:val(ce),sku:val(cs),produto:val(cp),cor:val(cc),tamanho:val(ct),variacoes:val(cv),aleatoria:val(ca)});
-   const index=next.findIndex(x=>catalogIdentity(x)===catalogIdentity(item));
-   if(index<0){next.push(item);inserted++}
-   else if(JSON.stringify(next[index])===JSON.stringify(item))identical++;
-   else{item.__cloudId=next[index]?.__cloudId;next[index]=item;updated++}
+   const key=catalogStableKey(item),prev=incoming.get(key);
+   if(prev){
+    repeatedCsv++;
+    incoming.set(key,{...prev,
+     produto:item.produto||prev.produto,
+     cor:prev.cor||item.cor,
+     tamanho:prev.tamanho||item.tamanho,
+     variacoes:catalogMergeColors([prev.variacoes,item.variacoes,prev.cor&&item.cor&&norm(prev.cor)!==norm(item.cor)?item.cor:'']).join(', '),
+     aleatoria:prev.aleatoria||item.aleatoria});
+   }else incoming.set(key,item);
   }catch(e){invalid.push(j+2)}
  });
- if(!inserted&&!updated)throw Error('Nenhum cadastro novo. Linhas inválidas: '+(invalid.slice(0,15).join(', ')||'nenhuma')+'; existentes: '+identical+'.');
- if(next.length>CATALOG_LIMIT)throw Error('O catálogo excederia o limite permitido.');
- const report='Novas: '+inserted+'\nAtualizadas: '+updated+'\nJá cadastradas: '+identical+'\nInválidas: '+invalid.length+(invalid.length?' (linhas '+invalid.slice(0,15).join(', ')+')':'');
- if(invalid.length&&!confirm('Há '+invalid.length+' linha(s) inválida(s), que serão ignoradas.\n'+report+'\nImportar as demais?'))return;
- try{saveCatalog(next);alert((cloudCatalogConfigured?'Importação iniciada — aguarde o aviso de sincronização na nuvem.\n':'Importação concluída.\n')+report)}catch(e){alert('Falha ao salvar o catálogo: '+e.message)}
+ if(!incoming.size)throw Error('Nenhum produto válido no CSV.');
+ // Preserve todos os EAN/SKUs que não constam neste arquivo.
+ const previousByKey=new Map();
+ for(const old of catalog){const key=catalogStableKey(old);if(!previousByKey.has(key))previousByKey.set(key,[]);previousByKey.get(key).push(old)}
+ const touched=new Set(incoming.keys());
+ const next=catalog.filter(old=>!touched.has(catalogStableKey(old)));
+ let added=0,updated=0,identical=0,deduplicated=0;
+ for(const [key,item] of incoming){
+  const existing=previousByKey.get(key)||[];
+  if(!existing.length){next.push(item);added++;continue;}
+  deduplicated+=Math.max(0,existing.length-1);
+  const keep=existing[0];
+  // Nunca apague informações cadastradas mais recentemente na nuvem apenas
+  // porque o CSV antigo deixou o nome, tamanho ou cor em branco.
+  const colors=catalogMergeColors(existing.map(r=>r.cor).concat(item.cor));
+  const variations=catalogMergeColors(existing.map(r=>r.variacoes).concat(item.variacoes,colors.slice(1).join(', ')));
+  let product=item.produto||existing.find(r=>r.produto)?.produto||'';
+  const cor=item.cor||colors[0]||'';
+  const filteredVars=variations.filter(v=>norm(v)!==norm(cor));
+  const merged={...item,
+   __cloudId:keep.__cloudId,
+   produto:product,
+   cor,
+   tamanho:item.tamanho||existing.find(r=>r.tamanho)?.tamanho||'',
+   variacoes:filteredVars.join(', '),
+   // O CSV é a fonte da autorização; SIM é aplicado sem alterar o pedido.
+   aleatoria:!!item.aleatoria};
+  next.push(merged);
+  const changed=existing.length!==1||
+   ['ean','sku','produto','cor','tamanho','variacoes','aleatoria'].some(k=>JSON.stringify(keep[k])!==JSON.stringify(merged[k]));
+  if(changed)updated++;else identical++;
+ }
+ if(next.length>CATALOG_LIMIT)throw Error('O catálogo excederia o limite de associações.');
+ if(!added&&!updated){alert('Nenhuma alteração necessária. '+identical+' associações já estão atualizadas.');return}
+ const report='Novos: '+added+'\nAtualizados: '+updated+'\nDuplicados anteriores consolidados: '+deduplicated+'\nNão alterados: '+identical+'\nLinhas inválidas: '+invalid.length+(invalid.length?' (linhas '+invalid.slice(0,15).join(', ')+')':'')+(repeatedCsv?'\nDuplicados dentro do CSV: '+repeatedCsv:'');
+ if(invalid.length&& !confirm('ATENÇÃO: '+invalid.length+' linhas são inválidas e serão ignoradas.\n\n'+report+'\n\nContinuar?'))return;
+ if(!confirm('ATUALIZAÇÃO SEGURA DO CATÁLOGO\n\n'+report+'\n\nOs outros EANs/SKUs permanecem.\n\nANTES DE CONFIRMAR: você já baixou o BACKUP COMPLETO JSON do catálogo sincronizado?'))return;
+ if(!confirm('Última confirmação: aplicar '+(added+updated)+' alterações ao catálogo '+(cloudCatalogConfigured?'compartilhado Firebase':'local')+'?'))return;
+ try{saveCatalog(next);alert((cloudCatalogConfigured?'Atualização enviada. Confira o status SINCRONIZADO antes de usar outro aparelho.':'Catálogo atualizado.')+'\n\n'+report)}
+ catch(e){alert('Falha ao atualizar catálogo: '+e.message)}
 }
 // Conferência EAN: o SKU base pode omitir exatamente UM tamanho conhecido.
 // Somente no EAN de família, somente após selecionar COR e confirmar TAMANHO.
