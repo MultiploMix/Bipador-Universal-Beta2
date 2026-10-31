@@ -255,7 +255,7 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
 #sharedEANReview .shared-ean-other{border-color:#eabec1;background:#fff7f7;color:#9b2630}
 #sharedEANReview .ean-size-confirm{margin:14px 0}
 @media(max-width:400px){#sharedEANReview .ean-review-sheet{padding:20px 17px}#sharedEANReview .ean-choice{padding:13px 12px}}
-</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V52 TESTE · IMPORTAÇÃO SEGURA</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
+</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V54 TESTE · KITS TIKTOK</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
 <div class="operator-topbar"><div class="operator-kicker"><span class="live-dot"></span><span id="miniSession">Conferência em andamento</span></div><button id="discardQuick" class="discard-quick hidden" type="button" aria-label="Descartar pedido atual">✕ Descartar pedido</button></div>
 <h2 class="stage-title" id="stageTitle">Leia a etiqueta do pedido</h2>
 <p class="stage-help" id="stageHelp">Aponte a câmera para o QR Code da etiqueta.</p>
@@ -449,10 +449,25 @@ function randomOrderInfo(s){
  const sizes=tokens.filter(t=>known.has(t));
  return {family,size:sizes.length? sizes[0] : ''};
 }
+// V53: SKU comercial EXCLUSIVO da fita de vedação WJ-211.
+// Etiqueta TikTok: "WJ 211- BR/3-3-FITAS" = WJ-211-BRANCO, conjunto de 3 fitas.
+// Não remova as quantidades nem simplifique outros produtos por aproximação.
+function tape211Bundle(value){
+ const txt=norm(value).normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+ const m=txt.match(/^WJ[\s-]*211[\s-]+(BR|BRANCO|CZ|CINZA)\s*\/\s*(\d{1,2})\s*-\s*(\d{1,2})\s*-\s*FITAS?$/);
+ if(!m)return null;
+ const units=Number(m[2]),printed=Number(m[3]);
+ return {color:m[1]==='BR'?'BRANCO':m[1]==='CZ'?'CINZA':m[1],units,valid:units===printed&&units>=1&&units<=24};
+}
 // V45: só esta família possui conjuntos físicos reconhecidos pelo texto COM N.
 // Q:1 significa um conjunto vendido; COM 4 exige quatro leituras físicas.
 // Não usamos o número inicial (XFP-3370-4) isoladamente para inferir quantidade.
 function physicalUnitsPerSet(sku,variation){
+ const fita=tape211Bundle(sku);
+ if(fita){
+  if(!fita.valid)throw Error('Quantidade de fitas inconsistente na etiqueta. Não foi possível conferir o conjunto automaticamente.');
+  return fita.units;
+ }
  if(skuFamily(sku)!=='AB-168')return 1;
  const values=[sku,variation].map(v=>norm(v).normalize('NFD').replace(/[\u0300-\u036f]/g,''));
  const found=[];
@@ -1014,6 +1029,9 @@ function eanMatches(value){const variants=new Set(eanVariants(value));return cat
 function skuKey(v){
  let key=norm(v).replace(/^#+/,'').normalize('NFD').replace(/[\u0300-\u036f]/g,'')
   .replace(/[–—_\s]+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');
+ // V53: só WJ-211 com quantidade e descrição impressas coerentes vira cor de estoque.
+ const tape=tape211Bundle(v);
+ if(tape?.valid)return 'WJ-211-'+tape.color;
  // V51: códigos de confecção com a cor junto do modelo, por exemplo
  // VT001PRETO G = VT001 G PRETO. Só separa cores conhecidas após modelo
  // de confecção, sem remover nem adivinhar o tamanho da peça.
@@ -1120,13 +1138,38 @@ const TIKTOK_COLORS={
  VERMELHO:'VERMELHO',VERMELHA:'VERMELHO',BEGE:'BEGE',AMARELO:'AMARELO',
  AMARELA:'AMARELO',CINZA:'CINZA',LILAS:'LILAS',ROXO:'ROXO',ROXA:'ROXO'
 };
+// V54: Etiquetas TikTok podem escrever "2670 TOUCA NATACAO ROSA ADULTO"
+// e "2665 OCULOS PT". PT significa PRETO SOMENTE no descriptor 2665.
+// Cor, modelo e tamanho nunca são ignorados por aproximação.
 function tiktokLegacyDescriptor(v){
  const txt=norm(v).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[_-]+/g,' ').replace(/\s+/g,' ').trim();
  let m=txt.match(/^(2670)\s+TOUCA\s+NATACAO\s+(.+)$/);
  if(!m)m=txt.match(/^(2665)\s+OCULOS\s+(.+)$/);
  if(!m)return null;
- const color=TIKTOK_COLORS[m[2].replace(/\s+/g,'')];
- return color?{modelo:m[1],cor:color,tipo:m[1]==='2670'?'TOUCA':'OCULOS'}:null;
+ const parts=m[2].trim().split(/\s+/);
+ const last=parts[parts.length-1];
+ const tamanho=last==='ADULTO'||last==='INFANTIL'?parts.pop():'';
+ const colorText=parts.join('');
+ // PT é uma abreviação atestada apenas para os óculos 2665.
+ if(colorText==='PT'&&m[1]!=='2665')return null;
+ const cor=colorText==='PT'&&m[1]==='2665'?'PRETO':TIKTOK_COLORS[colorText];
+ if(!cor)return null;
+ return {modelo:m[1],cor,tamanho,tipo:m[1]==='2670'?'TOUCA':'OCULOS'};
+}
+function tiktokCandidateSize(candidate){
+ const sizes=['ADULTO','INFANTIL'];
+ const values=[candidate.sku,candidate.sizeValue||''].map(x=>skuKey(x).split('-'));
+ const detected=[...new Set(values.flat().filter(x=>sizes.includes(x)))];
+ return detected.length===1?detected[0]:detected.length>1?'CONFLITO':'';
+}
+function tiktokLegacyMatchDetails(candidate,item){
+ const d=tiktokLegacyDescriptor(item.sku);
+ if(!d||tiktokCatalogModel(candidate.sku)!==d.modelo||tiktokCandidateColor(candidate)!==d.cor)return null;
+ const actualSize=tiktokCandidateSize(candidate);
+ if(actualSize==='CONFLITO'||(d.tamanho&&actualSize&&d.tamanho!==actualSize))return null;
+ // Se a etiqueta exige ADULTO mas o SKU cadastrado não informa tamanho,
+ // o funcionário deve inspecionar o produto antes de contabilizar.
+ return {missingSize:d.tamanho&&!actualSize?d.tamanho:null,visualOnly:candidate.source!=='completo'||!!(d.tamanho&&!actualSize)};
 }
 function tiktokCatalogModel(v){
  const fam=skuFamily(v);
@@ -1154,8 +1197,7 @@ function tiktokCandidateColor(candidate){
  return '';
 }
 function tiktokLegacyCandidateMatches(candidate,item){
- const d=tiktokLegacyDescriptor(item.sku);
- return !!(d&&tiktokCatalogModel(candidate.sku)===d.modelo&&tiktokCandidateColor(candidate)===d.cor);
+ return !!tiktokLegacyMatchDetails(candidate,item);
 }
 function processTikTokLegacyEAN(code,rows){
  const candidates=order.items.map(i=>({item:i,desc:tiktokLegacyDescriptor(i.sku)})).filter(x=>x.desc);
@@ -1202,7 +1244,8 @@ function processTikTokLegacyEAN(code,rows){
   logScan('EAN',code,'COR DIVERGENTE');signal(false,'Cor incorreta');return true;
  }
  // EAN inequivoco ligado ao SKU completo + cor verificada: leitura automatica.
- if(rows.length===1&&items.length===1&&eligible.length===1&&eligible[0].source==='completo'){
+ if(rows.length===1&&items.length===1&&eligible.length===1&&eligible[0].source==='completo'&&
+    !eanVisualMatch(eligible[0],items[0])?.missingSize){
   check(items[0].sku,'ean');return true;
  }
  // Quando o EAN e da familia ou compartilhado entre cores, revisar fisicamente.
@@ -1408,7 +1451,8 @@ function eanVisualMatch(candidate,item){
  }
  // Compatibilidade TikTok: modelo e cor precisam coincidir exatamente.
  // Se o EAN identifica apenas a familia (ou cor compartilhada), exigir validacao visual.
- if(tiktokLegacyCandidateMatches(candidate,item))return {item,missingSize:null,visualOnly:candidate.source!=='completo'};
+ const legacyDetails=tiktokLegacyMatchDetails(candidate,item);
+ if(legacyDetails)return {item,...legacyDetails};
  // EAN cadastrado somente na família, sem cores: nunca deduzir a variação pelo código.
  // Uma escolha explícita da variação solicitada e um checkbox de inspeção física são obrigatórios.
  if(candidate.source==='pedido-visual')return equivalentSku(candidate.sku,item.sku)?{item,missingSize:null,visualOnly:true}:null;
