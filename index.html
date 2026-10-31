@@ -255,7 +255,7 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
 #sharedEANReview .shared-ean-other{border-color:#eabec1;background:#fff7f7;color:#9b2630}
 #sharedEANReview .ean-size-confirm{margin:14px 0}
 @media(max-width:400px){#sharedEANReview .ean-review-sheet{padding:20px 17px}#sharedEANReview .ean-choice{padding:13px 12px}}
-</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V54 TESTE · KITS TIKTOK</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
+</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V57 TESTE · SKUS E COR ALEATÓRIA</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
 <div class="operator-topbar"><div class="operator-kicker"><span class="live-dot"></span><span id="miniSession">Conferência em andamento</span></div><button id="discardQuick" class="discard-quick hidden" type="button" aria-label="Descartar pedido atual">✕ Descartar pedido</button></div>
 <h2 class="stage-title" id="stageTitle">Leia a etiqueta do pedido</h2>
 <p class="stage-help" id="stageHelp">Aponte a câmera para o QR Code da etiqueta.</p>
@@ -365,6 +365,27 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
   </div>
 </section>
 <!-- V48: identificacao obrigatoria do MODELO quando um EAN pertence a produtos distintos. -->
+<!-- V55: divergência específica e não comprovada entre fornecedor CG248 e etiqueta CG9248.
+     NÃO é equivalência automática de SKU ou de ROSA/SALMÃO. -->
+<section id="lhamaAliasReview" class="ean-review hidden" role="dialog" aria-modal="true" aria-label="Conferir divergência de mochila lhama">
+  <div class="ean-review-sheet">
+    <div class="ean-review-badge">⚠ CONFERÊNCIA ESPECIAL — MOCHILA</div>
+    <h2>Confira o modelo e a cor física</h2>
+    <p>O EAN cadastrado não comprova sozinho que esta mochila é a pedida.</p>
+    <div class="ean-expected"><small>O pedido solicita</small><strong id="lhamaExpectedSKU"></strong></div>
+    <div class="catalog-alert" role="alert"><strong>O catálogo identifica:</strong><div id="lhamaRegisteredSKU"></div><small>ROSA e SALMÃO podem ser tons diferentes. Se não for exatamente a mochila ROSA solicitada, NÃO confirme.</small></div>
+    <p><strong>Observe a mochila que está na sua mão:</strong></p>
+    <div class="ean-size-confirm" style="background:#fff;border-color:#d7dce3">
+      <label><input id="lhamaModelCheck" type="checkbox"><span>Confirmei que é a mesma mochila Lhama do pedido (não outro modelo).</span></label>
+    </div>
+    <div class="ean-size-confirm" style="background:#fff;border-color:#d7dce3">
+      <label><input id="lhamaColorCheck" type="checkbox"><span>Confirmei que a cor física é ROSA, conforme o pedido (não SALMÃO diferente).</span></label>
+    </div>
+    <button id="lhamaAliasConfirm" type="button" disabled>Confirmar após inspeção física</button>
+    <button id="lhamaAliasReject" type="button" class="secondary">Produto diferente / cancelar</button>
+    <p class="catalog-note">Essa exceção vale apenas para o EAN e SKU deste caso. Será registrada como validação visual, não como aprovação automática de EAN.</p>
+  </div>
+</section>
 <section id="sharedEANReview" class="ean-review hidden" role="dialog" aria-modal="true" aria-label="Identificar modelo do produto com EAN compartilhado">
   <div class="ean-review-sheet">
     <div class="ean-review-badge">⚠ EAN COMPARTILHADO</div>
@@ -459,10 +480,59 @@ function tape211Bundle(value){
  const units=Number(m[2]),printed=Number(m[3]);
  return {color:m[1]==='BR'?'BRANCO':m[1]==='CZ'?'CINZA':m[1],units,valid:units===printed&&units>=1&&units<=24};
 }
+// V57 — Etiquetas TikTok com descricao comercial repetida apos 1UN.
+// Somente familias/formatos comprovados. Modelo, cor e tamanho devem
+// coincidir na parte do SKU e no eco da descricao; jamais aproximar cores.
+function stockSkuFromCommerce(value){
+ const key=norm(value).normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+  .replace(/[–—_\s]+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');
+ // Ex.: WJ-2670-PRETO-ADULTO-1UN-TOUCA-NATACAO-PRETO-ADULTO.
+ const cap=key.match(/^WJ-?2670-(PRETO|PRATA|AZUL|ROSA|VERDE|BRANCO|CINZA)-(ADULTO|INFANTIL)-(\d{1,2})UN-TOUCA-NATACAO-([A-Z]+)-(ADULTO|INFANTIL)$/);
+ if(cap){
+  if(cap[1]===cap[4]&&cap[2]===cap[5]&&Number(cap[3])>=1)
+   return 'WJ-2670-'+cap[1]+'-'+cap[2];
+  return null; // Descricoes contraditorias NUNCA viram SKU valido.
+ }
+ // Ex.: R003-AZUL-CANETA-M-1UN-REGATA-AZUL-CANETA-M.
+ // A abreviacao AZ CANETA do QR fisico e AZUL CANETA na etiqueta.
+ const regata=key.match(/^R003-(AZ|AZUL)-CANETA-(PP|P|M|G|GG)-(\d{1,2})UN-REGATA-(AZ|AZUL)-CANETA-(PP|P|M|G|GG)$/);
+ if(regata){
+  if(regata[2]===regata[5]&&Number(regata[3])>=1)
+   return 'R003-AZUL-CANETA-'+regata[2];
+  return null;
+ }
+ return null;
+}
+// V56 — Lote de pares do MESMO produto (não é um kit de SKUs distintos).
+// Formato comprovado na etiqueta TikTok:
+// XFP-3370-3PAR-3-PARES--ALMOFADA-BEGE-DE-PÉ
+// Reconhece modelo e cor SOMENTE se a descrição for coerente e as duas
+// quantidades impressas coincidirem. Não transforma 3 pares em 1 bip.
+function almofada3370Pairs(value){
+ const key=norm(value).normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+  .replace(/[–—_\s]+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');
+ const m=key.match(/^(?:XFP-?3370|AB-?168)-(\d{1,2})-?PAR(?:ES)?-(\d{1,2})-PAR(?:ES)?-ALMOFADA-(BEGE|PRETO|PRETA)(?:-DE-PE)?$/);
+ if(!m)return null;
+ const pairs=Number(m[1]),printed=Number(m[2]);
+ return {pairs,color:m[3]==='PRETA'?'PRETO':m[3],valid:pairs===printed&&pairs>=1&&pairs<=24};
+}
+// Impede que um lote mal formatado (ex.: 3PAR/4PARES) caia em conferência
+// genérica de 1 unidade por engano.
+function almofada3370LooksLikePairs(value){
+ const key=norm(value).normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+  .replace(/[–—_\s]+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');
+ return /^(?:XFP-?3370|AB-?168)-\d{1,2}-?PAR(?:ES)?[-/]/.test(key);
+}
 // V45: só esta família possui conjuntos físicos reconhecidos pelo texto COM N.
 // Q:1 significa um conjunto vendido; COM 4 exige quatro leituras físicas.
 // Não usamos o número inicial (XFP-3370-4) isoladamente para inferir quantidade.
 function physicalUnitsPerSet(sku,variation){
+ const almofada=almofada3370Pairs(sku);
+ if(almofada){
+  if(!almofada.valid)throw Error('Quantidade de pares contraditória na etiqueta (3PAR/3-PARES). Corrija o QR Code.');
+  return almofada.pairs;
+ }
+ if(almofada3370LooksLikePairs(sku))throw Error('Etiqueta de pares AB-168 / XFP-3370 inválida: confira quantidade, modelo e cor.');
  const fita=tape211Bundle(sku);
  if(fita){
   if(!fita.valid)throw Error('Quantidade de fitas inconsistente na etiqueta. Não foi possível conferir o conjunto automaticamente.');
@@ -1027,8 +1097,17 @@ function eanMatches(value){const variants=new Set(eanVariants(value));return cat
 //   WL 1417B-1UN--ALICATE-DE-CORTE -> WJ-1417-B (corte)
 // Descriptor incoerente (ex.: 1417B + UNIVERSAL) nunca pode liberar um EAN.
 function skuKey(v){
+ const commercialSku=stockSkuFromCommerce(v);
+ if(commercialSku)return commercialSku;
  let key=norm(v).replace(/^#+/,'').normalize('NFD').replace(/[\u0300-\u036f]/g,'')
   .replace(/[–—_\s]+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');
+ // V57: abreviacao AZ CANETA e AZUL CANETA identificam a mesma COR
+ // apenas na regata R003. AZUL simples nao equivale a AZUL CANETA.
+ key=key.replace(/^R003-(?:AZ|AZUL)-CANETA(?=-|$)/,'R003-AZUL-CANETA');
+ // V56: lote de pares identificado pelo SKU comercial TikTok. Conserva
+ // a cor física e não mistura BEGE com PRETO; a quantidade é contada no pedido.
+ const pairs=almofada3370Pairs(v);
+ if(pairs?.valid)return 'AB-168-'+pairs.color;
  // V53: só WJ-211 com quantidade e descrição impressas coerentes vira cor de estoque.
  const tape=tape211Bundle(v);
  if(tape?.valid)return 'WJ-211-'+tape.color;
@@ -1640,11 +1719,78 @@ $('sharedEANConfirm').onclick=()=>{
  const accepted=check(item.sku,'visual');
  if(accepted)logScan('EAN COMPARTILHADO',pending.code+' → '+option.sku,'MODELO CONFIRMADO VISUALMENTE');
 };
+// V55 — Exceção de inspeção visual ESTRITAMENTE controlada para o cadastro
+// CG248 (EAN 7899753535876) contra a etiqueta CG9248-ROSA-MOCHILA-LHAMA-ROSA.
+// Não equipara ROSA e SALMÃO automaticamente. Não modifica o Firebase.
+let lhamaAliasPending=null;
+function matchLhamaAliasReview(code,rows,items){
+ if(String(code)!=='7899753535876'||rows.length!==1)return null;
+ const row=rows[0];
+ if(skuKey(row.sku)!=='CG248')return null;
+ const product=skuKey(row.produto||'');
+ if(!/^MOCHILA(?:-|$)/.test(product)||!/(?:^|-)LAMA(?:-|$)|(?:^|-)LHAMA(?:-|$)/.test(product))return null;
+ const variations=skuKey([row.cor,row.variacoes].filter(Boolean).join(' ')).replace(/[^A-Z0-9]+/g,'-');
+ if(!/(?:^|-)SALMAO(?:-|$)/.test(variations))return null;
+ const eligible=items.filter(item=>!item.randomColor&&item.read<item.qtd&&
+  /^CG9248-ROSA-(?:\d{1,2}-UNID-)?MOCHILA-LHAMA-ROSA$/.test(skuKey(item.sku)));
+ return eligible.length===1?{item:eligible[0],row}:null;
+}
+function closeLhamaAliasReview(){lhamaAliasPending=null;$('lhamaAliasReview').classList.add('hidden')}
+function updateLhamaAliasReview(){
+ $('lhamaAliasConfirm').disabled=!lhamaAliasPending||!$('lhamaModelCheck').checked||!$('lhamaColorCheck').checked;
+}
+function openLhamaAliasReview(code,result){
+ lhamaAliasPending={code,orderId:order.id,itemSku:result.item.sku};
+ $('lhamaExpectedSKU').textContent=result.item.sku;
+ $('lhamaRegisteredSKU').textContent=(result.row.produto||'Mochila Lhama')+' · SKU '+result.row.sku+' · Cores: '+(result.row.variacoes||result.row.cor||'não informadas')+' · EAN '+code;
+ $('lhamaModelCheck').checked=false;$('lhamaColorCheck').checked=false;
+ updateLhamaAliasReview();
+ $('lhamaAliasReview').classList.remove('hidden');
+}
+$('lhamaModelCheck').addEventListener('change',updateLhamaAliasReview);
+$('lhamaColorCheck').addEventListener('change',updateLhamaAliasReview);
+$('lhamaAliasReject').onclick=()=>{
+ const code=lhamaAliasPending?.code||'';
+ closeLhamaAliasReview();
+ showMessage('⛔ MOCHILA NÃO CONFIRMADA — divergência entre CG9248 ROSA e CG248 SALMÃO. Nenhuma unidade contabilizada.','danger');
+ logScan('EAN DIVERGENTE',code,'SEM CONFIRMAÇÃO');signal(false,'Confira modelo e cor');
+};
+$('lhamaAliasConfirm').onclick=()=>{
+ const pending=lhamaAliasPending;
+ if(!pending||!$('lhamaModelCheck').checked||!$('lhamaColorCheck').checked)return;
+ if(!order||order.id!==pending.orderId){closeLhamaAliasReview();showMessage('O pedido mudou. Leia novamente o produto.','danger');return;}
+ const fresh=matchLhamaAliasReview(pending.code,eanMatches(pending.code),order.items);
+ if(!fresh||fresh.item.sku!==pending.itemSku){closeLhamaAliasReview();showMessage('A conferência mudou. Leia novamente o EAN.','danger');return;}
+ closeLhamaAliasReview();
+ logScan('EAN ESPECIAL',pending.code,'CG248 SALMÃO / CG9248 ROSA: INSPEÇÃO VISUAL');
+ check(fresh.item.sku,'visual');
+};
 function processEAN(raw){
  const code=cleanEAN(raw);
  if(!order){showMessage('Leia primeiro o QR Code da etiqueta.','danger');signal(false,'Leia primeiro a etiqueta');return}
  const rows=eanMatches(code);
  if(!rows.length){showMessage('⛔ EAN NÃO CADASTRADO — '+code+'. Cadastre a associação no gerenciamento.','danger');logScan('EAN',code,'DESCONHECIDO');signal(false,'EAN não cadastrado');return}
+ // V55: problema CG248 SALMÃO / CG9248 ROSA exige DUAS confirmações físicas.
+ // Nunca autorizar a correspondência por texto, sem observar o produto.
+ const lhamaAlias=matchLhamaAliasReview(code,rows,order.items);
+ if(lhamaAlias){openLhamaAliasReview(code,lhamaAlias);return;}
+ // V57: uma mesma familia com diversas cores no cadastro nao significa
+ // EAN compartilhado entre MODELOS. Em pedido de COR ALEATORIA, priorizar
+ // a conferencia visual da cor; rejeitar outros modelos no mesmo EAN.
+ // Cor aleatória NUNCA é aprovada automaticamente pelo EAN.
+ // Mesmo que esteja autorizada, o funcionário escolhe a cor física.
+ const randomCandidates=order.items.filter(i=>i.randomColor&&i.read<i.qtd&&
+  rows.some(r=>hasSkuPrefix(i.baseSku,r.sku)));
+ if(randomCandidates.length){
+  if(randomCandidates.length!==1||rows.some(r=>!hasSkuPrefix(randomCandidates[0].baseSku,r.sku))){
+   showMessage('⛔ EAN ambíguo: há mais de uma família de produto associada.','danger');signal(false,'EAN ambíguo');return;
+  }
+  const item=randomCandidates[0],options=randomColorOptions(rows,item);
+  if(!options.length){
+   showMessage('⛔ COR ALEATÓRIA: cadastre as cores físicas disponíveis no EAN, para o funcionário escolher a cor observada.','danger');signal(false,'Cadastre as cores');return;
+  }
+  openEANReview(code,options,[item],[item.baseSku]);return;
+ }
  // Detecta modelos/variacoes diferentes compartilhando o MESMO EAN.
  // Se ha varias opcoes fisicas possiveis, a escolha visual e obrigatoria,
  // independentemente de quantos SKUs aparecem no pedido.
@@ -1666,20 +1812,6 @@ function processEAN(raw){
   order.items.filter(i=>skuKey(i.sku)==='AB-168');
  if(supplierMatch&&supplierMatch.length===1){check(supplierMatch[0].sku,'ean');return}
  if(processTikTokLegacyEAN(code,rows))return;
- // Cor aleatória NUNCA é aprovada automaticamente pelo EAN.
- // Mesmo que esteja autorizada, o funcionário escolhe a cor física.
- const randomCandidates=order.items.filter(i=>i.randomColor&&i.read<i.qtd&&
-  rows.some(r=>hasSkuPrefix(i.baseSku,r.sku)));
- if(randomCandidates.length){
-  if(randomCandidates.length!==1||rows.some(r=>!hasSkuPrefix(randomCandidates[0].baseSku,r.sku))){
-   showMessage('⛔ EAN ambíguo: há mais de uma família de produto associada.','danger');signal(false,'EAN ambíguo');return;
-  }
-  const item=randomCandidates[0],options=randomColorOptions(rows,item);
-  if(!options.length){
-   showMessage('⛔ COR ALEATÓRIA: cadastre as cores físicas disponíveis no EAN, para o funcionário escolher a cor observada.','danger');signal(false,'Cadastre as cores');return;
-  }
-  openEANReview(code,options,[item],[item.baseSku]);return;
- }
  const result=resolveEANOptions(rows,order.items);
  if(!result.matchedFamily){showMessage('⛔ PRODUTO ERRADO — EAN '+code+' cadastrado para '+rows.map(r=>r.sku).slice(0,3).join(' / ')+', diferente do SKU pedido. Revise a associação no catálogo.','danger');logScan('EAN',code,'ERRO');signal(false,'EAN de outro produto');return}
  // Sem variações cadastradas: o EAN confirma apenas a família, e a variação

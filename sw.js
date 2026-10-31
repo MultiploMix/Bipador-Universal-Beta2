@@ -1,4 +1,4 @@
-const CACHE='bipador-universal-v54-kits-tiktok-01';
+const CACHE='bipador-universal-v57-almofadas-3pares-01';
 const ASSETS=['./','./index.html','./manifest.webmanifest','./icon.svg','./logo-multiplo-mix.png','./leitor-wasm.js','./firebase-config.js','./catalog-cloud.js'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)));self.skipWaiting()});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('bipador-universal-')&&k!==CACHE).map(k=>caches.delete(k)))));self.clients.claim()});
