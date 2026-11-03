@@ -255,7 +255,7 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
 #sharedEANReview .shared-ean-other{border-color:#eabec1;background:#fff7f7;color:#9b2630}
 #sharedEANReview .ean-size-confirm{margin:14px 0}
 @media(max-width:400px){#sharedEANReview .ean-review-sheet{padding:20px 17px}#sharedEANReview .ean-choice{padding:13px 12px}}
-</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V57 TESTE · SKUS E COR ALEATÓRIA</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
+</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V58 TESTE · LEITURA RÁPIDA + SKU SEGURO</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
 <div class="operator-topbar"><div class="operator-kicker"><span class="live-dot"></span><span id="miniSession">Conferência em andamento</span></div><button id="discardQuick" class="discard-quick hidden" type="button" aria-label="Descartar pedido atual">✕ Descartar pedido</button></div>
 <h2 class="stage-title" id="stageTitle">Leia a etiqueta do pedido</h2>
 <p class="stage-help" id="stageHelp">Aponte a câmera para o QR Code da etiqueta.</p>
@@ -667,6 +667,70 @@ function supplierAliasEquivalent(a,b){
  const x=supplierAliasVariant(a),y=supplierAliasVariant(b);
  return !!(x&&y&&x.color&&y.color&&x.color===y.color&&x.size===y.size);
 }
+// V58 — Camada adicional de compatibilidade entre formatos de lojas.
+// Não altera as regras especiais anteriores e NÃO transforma SKU-base em aprovação.
+// Só remove a descrição que venha APÓS um marcador de UMA unidade (1UN/1PC),
+// quando a cor e o tamanho aparecem de modo coerente nos dois lados.
+// Outros pacotes, conjuntos e kits (2UN, 3PAR, COM-4) ficam intactos.
+const SHOP_COMMERCE_COLORS=[
+ 'AZUL-CANETA','AZUL-CLARO','AZUL-CEU','AZUL-MARINHO','VERDE-MANTEIGA',
+ 'ROSA-MANTEIGA','AMARELO-MANTEIGA','VERMELHO-PIMENTA',
+ 'PRETO','PRETA','BRANCO','BRANCA','ROSA','AZUL','VERDE','AMARELO',
+ 'AMARELA','VERMELHO','VERMELHA','PRATA','DOURADO','DOURADA','BEGE',
+ 'CINZA','LILAS','ROXO','ROXA','MARROM','VINHO','LARANJA'
+];
+const SHOP_SIZE_TOKENS=new Set(['INFANTIL','ADULTO','UNICO','PP','P','M','G','GG','XG','XGG','EG','G1','G2','G3','G4','XL','XXL','XXXL']);
+function shopColorsIn(code){
+ const parts=code.split('-').filter(Boolean),found=[];
+ for(let i=0;i<parts.length;){
+  let matched='';
+  for(const c of SHOP_COMMERCE_COLORS){
+   const tokens=c.split('-');
+   if(tokens.every((v,j)=>parts[i+j]===v)){
+    if(!matched||tokens.length>matched.split('-').length)matched=c;
+   }
+  }
+  if(matched){
+   const synonyms={PRETA:'PRETO',BRANCA:'BRANCO',VERMELHA:'VERMELHO',AMARELA:'AMARELO',ROXA:'ROXO'};
+   found.push(synonyms[matched]||matched);
+   i+=matched.split('-').length;
+  }else i++;
+ }
+ return [...new Set(found)];
+}
+function shopCommerceStockSku(value){
+ const normalized=norm(value).replace(/^#+/,'').normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+  .replace(/[–—_\s]+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');
+ // As famílias abaixo possuem validações especializadas (cores, quantidades,
+ // variações ou modelos de fornecedores) e nunca passam pelo fallback genérico.
+ if(/^(?:WJ-?1417|WL-?1417|WJ-?2670|WJ-?211|XFP-?3370|AB-?168|R003)(?:-|$)/.test(normalized))return null;
+ const m=normalized.match(/^(.+?)-(?:1UN|1UND|1UNID|1UNIDADE|1PC|1PCS)-([A-Z0-9-]+)$/);
+ if(!m)return null;
+ const stock=m[1],description=m[2];
+ if(!/^[A-Z0-9]+(?:-[A-Z0-9]+){1,}$/.test(stock))return null;
+ if(/(?:^|-)(?:KIT|COM|PAR|PARES|ALEATORIA|ALEATORIO)(?:-|$)/.test(stock))return null;
+ const stockColors=shopColorsIn(stock),descColors=shopColorsIn(description);
+ // Sem cor comprovada, o fallback não toma nenhuma decisão.
+ if(stockColors.length!==1||descColors.length!==1||stockColors[0]!==descColors[0])return null;
+ const stockSizes=stock.split('-').filter(t=>SHOP_SIZE_TOKENS.has(t));
+ const descSizes=description.split('-').filter(t=>SHOP_SIZE_TOKENS.has(t));
+ if(stockSizes.length>1||descSizes.length>1)return null;
+ // Tamanho explícito na descrição precisa repetir o mesmo tamanho do SKU.
+ // Tamanho no SKU mas omitido na descrição não invalida a peça; o SKU permanece.
+ if(descSizes.length&&(!stockSizes.length||descSizes[0]!==stockSizes[0]))return null;
+ return stock;
+}
+function shopCommerceEquivalent(a,b){
+ const x=shopCommerceStockSku(a),y=shopCommerceStockSku(b);
+ if(!x&&!y)return false;
+ // Comparação só de atributos EXATOS; o SKU comercial não pode aprovar
+ // outro tamanho, outra cor ou outro modelo.
+ const aa=skuKey(x||a),bb=skuKey(y||b);
+ if(aa===bb)return true;
+ const pa=skuParts(aa),pb=skuParts(bb);
+ return !!(pa&&pb&&pa.model===pb.model&&pa.attrs.length===pb.attrs.length&&
+  pa.attrs.every((t,i)=>t===pb.attrs[i]));
+}
 function equivalentSku(a,b){
  if(norm(a)===norm(b)||skuKey(a)===skuKey(b))return true;
  // AB-168 e XFP-3370 são exatamente o mesmo produto; a regra não se aplica a nenhum outro modelo.
@@ -674,7 +738,9 @@ function equivalentSku(a,b){
  if(skuKey(a)==='AB-168'&&skuKey(b)==='AB-168')return true;
  if(supplierAliasEquivalent(a,b))return true;
  const x=skuParts(a),y=skuParts(b);
- return !!(x&&y&&x.model===y.model&&x.attrs.length===y.attrs.length&&x.attrs.every((v,i)=>v===y.attrs[i]));
+ if(x&&y&&x.model===y.model&&x.attrs.length===y.attrs.length&&x.attrs.every((v,i)=>v===y.attrs[i]))return true;
+ // Apenas se a regra existente não encontrou a correspondência.
+ return shopCommerceEquivalent(a,b);
 }
 function validateSkuAmbiguity(items){
  for(let i=0;i<items.length;i++)for(let j=i+1;j<items.length;j++){
@@ -1084,7 +1150,28 @@ function safeCatalogRow(r){
  return {__cloudId:typeof r.__cloudId==='string'&&/^[A-Za-z0-9]{16,32}$/.test(r.__cloudId)?r.__cloudId:undefined,ean,sku,aleatoria:r.aleatoria===true||/^(1|SIM|TRUE|YES)$/i.test(String(r.aleatoria||'')),produto:String(r.produto||'').trim().slice(0,120),cor:correctKnownColorTypo(String(r.cor||'').trim().slice(0,60)),tamanho:String(r.tamanho||'').trim().slice(0,50),variacoes:correctKnownColorTypo(String(r.variacoes||'').trim().slice(0,500))};
 }
 function eanVariants(value){const v=cleanEAN(value);return v.length===12?[v,'0'+v]:v.length===13&&v[0]==='0'?[v,v.slice(1)]:[v]}
-function eanMatches(value){const variants=new Set(eanVariants(value));return catalog.filter(r=>variants.has(r.ean))}
+// V58: índice rápido por EAN, sem perder códigos compartilhados.
+// A atualização Firebase substitui o array, então o índice acompanha a versão.
+const catalogEANIndexCacheV58=new WeakMap();
+function eanMatches(value){
+ let index=catalogEANIndexCacheV58.get(catalog);
+ if(!index){
+  index=new Map();
+  catalog.forEach((row,position)=>{
+   if(!index.has(row.ean))index.set(row.ean,[]);
+   index.get(row.ean).push({row,position});
+  });
+  catalogEANIndexCacheV58.set(catalog,index);
+ }
+ const unique=new Set(),matches=[];
+ for(const candidate of eanVariants(value)){
+  for(const entry of index.get(candidate)||[]){
+   if(!unique.has(entry.row)){unique.add(entry.row);matches.push(entry)}
+  }
+ }
+ // Mesmo resultado e mesma ordem de catálogo do filtro anterior.
+ return matches.sort((a,b)=>a.position-b.position).map(entry=>entry.row);
+}
 // A família só é usada para EAN. QR Code continua exigindo o SKU completo.
 // V49: equivalencia de fornecedores restrita EXCLUSIVAMENTE a familia 1417.
 // WJ-1417-A = WL-1417-A; WJ1417B = WL 1417B, mas A != B.
@@ -1145,6 +1232,19 @@ function skuKey(v){
   .replace(/^(?:WJ|WL)-?1417(?=-|$)/,'WJ-1417')
   .replace(/^AB-?168(?=-|$)/,'AB-168').replace(/^XFP-?3370(?=-|$)/,'AB-168');
 }
+// V58: cache local e limitado para não reprocessar SKUs longos do catálogo
+// em cada leitura. Recriado automaticamente após o limite; não persiste dados.
+const originalSkuKeyV58=skuKey;
+const skuKeyCacheV58=new Map();
+skuKey=function(v){
+ const text=String(v??'');
+ if(text.length>350)return originalSkuKeyV58(v);
+ if(skuKeyCacheV58.has(text))return skuKeyCacheV58.get(text);
+ const val=originalSkuKeyV58(v);
+ if(skuKeyCacheV58.size>=2048)skuKeyCacheV58.clear();
+ skuKeyCacheV58.set(text,val);
+ return val;
+};
 // Codigo 1417 sem letra e o Universal, nao o pai dos modelos Bico e Corte.
 // Em outras familias preserva o fluxo anterior de EAN por SKU-base/variacoes.
 function eanAssociationMatchesItem(catalogSku,expectedSku){

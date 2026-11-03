@@ -1,4 +1,4 @@
-/* Bipador Universal V34 - experimento de leitura com ZXing WASM.
+/* Bipador Universal V58 - leitura adaptativa mantendo ZXing WASM e fallback V33.
    Usa o ponyfill BarcodeDetector (Sec-ant) carregado pela pagina.
    Interface compativel com os metodos usados pela V33.
    O modulo e descartado automaticamente se falhar; leitor V33 permanece como reserva.
@@ -18,6 +18,10 @@
    this.detector=null;
    this.canvas=document.createElement('canvas');
    this.ctx=this.canvas.getContext('2d',{willReadFrequently:true});
+   // Segundo canvas mantém o detalhe para QR denso sem realocar a cada tentativa.
+   this.detailCanvas=document.createElement('canvas');
+   this.detailCtx=this.detailCanvas.getContext('2d',{willReadFrequently:true});
+   this.frameCount=0;
    this.lastFrameAt=0;
    this.failures=0;
    this.firstResult=false;
@@ -71,31 +75,43 @@
   }
   _drawFrame(){
    const v=this.video;
-   if(!v||v.readyState<2||!v.videoWidth||!v.videoHeight)return false;
+   if(!v||v.readyState<2||!v.videoWidth||!v.videoHeight)return null;
    const vw=v.videoWidth,vh=v.videoHeight;
    let x=0,y=0,w=vw,h=vh;
    if(this.mode==='order'||this.mode==='list'){
+    // QR Master conserva a qualidade anterior; nunca reduzir detalhes.
     const side=Math.min(vw*.98,vh*.98);
     x=(vw-side)/2;y=(vh-side)/2;w=h=side;
    }else{
-    // Codigo linear precisa de largura; QR de produto tambem pode aparecer.
     w=vw*.98;h=vh*.84;x=(vw-w)/2;y=(vh-h)/2;
    }
-   const longest=this.mode==='list'?1500:this.mode==='order'?1250:1150;
+   this.frameCount++;
+   const age=performance.now()-(this.captureStartedAt||performance.now());
+   // EAN/QR de produto: tentativas leves alternadas com detalhe; após 1,5s
+   // aumenta a proporção de quadros detalhados para códigos pequenos.
+   const detail=this.mode==='list'||this.mode==='order'||
+    (age>1500?this.frameCount%2===0:this.frameCount%4===0);
+   const longest=this.mode==='list'?1500:this.mode==='order'?1250:detail?1150:880;
+   const canvas=detail?this.detailCanvas:this.canvas;
+   const ctx=detail?this.detailCtx:this.ctx;
    const scale=Math.min(1,longest/Math.max(w,h));
    const cw=Math.max(160,Math.round(w*scale));
    const ch=Math.max(160,Math.round(h*scale));
-   if(this.canvas.width!==cw)this.canvas.width=cw;
-   if(this.canvas.height!==ch)this.canvas.height=ch;
-   this.ctx.drawImage(v,x,y,w,h,0,0,cw,ch);
-   return true;
+   if(canvas.width!==cw)canvas.width=cw;
+   if(canvas.height!==ch)canvas.height=ch;
+   ctx.drawImage(v,x,y,w,h,0,0,cw,ch);
+   this.stats.resolucao=(detail?'detalhe':'rapida')+' '+cw+'x'+ch;
+   return canvas;
   }
   async _tick(){
    if(this.stopped||this.paused)return;
-   if(!this._drawFrame()){this._next(90);return;}
+   // iOS pode manter a aba sem primeiro plano: evita gastar bateria.
+   if(document.hidden){this._next(180);return;}
+   const frame=this._drawFrame();
+   if(!frame){this._next(70);return;}
    const started=performance.now();
    try{
-    const found=await this.detector.detect(this.canvas);
+    const found=await this.detector.detect(frame);
     if(this.stopped||this.paused)return;
     this.failures=0;
     this.stats.tentativas++;
@@ -120,7 +136,8 @@
     }
    }
    const elapsed=performance.now()-started;
-   this._next(Math.max(25,110-elapsed));
+   // Não aguarda 110ms extras após decodificação; mantém um único decode ativo.
+   this._next(Math.max(15,95-elapsed));
   }
   pause(){
    if(this.stopped)throw Error('Camera encerrada');
