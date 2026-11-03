@@ -255,7 +255,7 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
 #sharedEANReview .shared-ean-other{border-color:#eabec1;background:#fff7f7;color:#9b2630}
 #sharedEANReview .ean-size-confirm{margin:14px 0}
 @media(max-width:400px){#sharedEANReview .ean-review-sheet{padding:20px 17px}#sharedEANReview .ean-choice{padding:13px 12px}}
-</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V63 · CORREÇÕES 47 ETIQUETAS</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
+</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V64 · AUDITORIA DE 201 ETIQUETAS</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
 <div class="operator-topbar"><div class="operator-kicker"><span class="live-dot"></span><span id="miniSession">Conferência em andamento</span></div><button id="discardQuick" class="discard-quick hidden" type="button" aria-label="Descartar pedido atual">✕ Descartar pedido</button></div>
 <h2 class="stage-title" id="stageTitle">Leia a etiqueta do pedido</h2>
 <p class="stage-help" id="stageHelp">Aponte a câmera para o QR Code da etiqueta.</p>
@@ -465,6 +465,7 @@ function randomVariationDescription(value){
 }
 function randomOrderInfo(s){
  const code=skuKey(s),family=skuFamily(s);
+ if(code==='WJ-1433-MODELO-A-ALEATORIA')return {family:'WJ-1433-MODELO-A',size:''};
  const tokens=code.split('-');
  const known=new Set(['ADULTO','INFANTIL','UNICO','PP','P','M','G','GG','XG','XGG','EG','XL','XXL','XXXL','U']);
  const sizes=tokens.filter(t=>known.has(t));
@@ -734,8 +735,107 @@ function knownPhysicalPackV63(sku,variation){
   return {stockSku:'VT001-M-PRETO',unitsPerSet:1};
  return null;
 }
+// V64: repara somente sequências realmente presentes nos cinco PDFs enviados.
+function repairLegacyQrTextV64(value){return String(value||'')
+ .replace(/GEOMﾃ欝RICO/gi,'GEOMETRICO').replace(/GEOM矇TRICO/gi,'GEOMETRICO')
+ .replace(/ALﾃ陰TORIA/gi,'ALEATORIA').replace(/ALEAT籀RIA/gi,'ALEATORIA')
+ .replace(/DIVISﾃ迭IAS/gi,'DIVISORIAS').replace(/FORM繭ES/gi,'FORMOES')
+ .replace(/NATA癟瓊O/gi,'NATACAO').replace(/籀CULOS/gi,'OCULOS')
+ .replace(/MET獺LICO/gi,'METALICO');}
+// As condições abaixo são restritas à combinação SKU e variação real do PDF.
+// Não usar detecção genérica de números no SKU para deduzir um kit.
+function knownPhysicalPackV64(sku,variation){
+ const id=v60SafeKey(sku),v=v60SafeKey(variation);
+ // Segurança: a etiqueta diz que há mais de um produto, mas omite o EAN/SKU individual.
+ if(id==='MAMAS-OFF-WHITE-LUVA-CINZA-8-A-12-ANOS')
+   throw Error('KIT TOUCA+LUVA INFANTIL: falta o SKU real da luva cinza 8 a 12 anos; confira manualmente.');
+ if(/^BXM-08-(CZA|AZL)-LUVA$/.test(id))
+   throw Error('KIT BXM-08 + LUVA PRETA: falta identificar a luva por SKU/EAN. Não concluir só pelo gorro.');
+ if(id==='HE054'){
+  if(v!=='1-UNID-PACOTE-C-8-DIVISORIAS')throw Error('HE054: descrição divergente; confira o kit.');
+  throw Error('HE054 contém 8 divisórias: definir se a conferência será pela embalagem lacrada ou por 8 itens físicos.');
+ }
+ if(id==='WJ-1766'){
+  if(v!=='KIT-COM-4-FORMOES-PARA-MADEIRA')throw Error('WJ-1766: descrição de kit divergente.');
+  throw Error('WJ-1766: kit de 4 formões sem SKU individual; configure os quatro componentes ou confira o kit lacrado manualmente.');
+ }
+ if(id==='WJ-168-ZE-0853'){
+  if(v!=='CARREGADOR-USB')throw Error('Carregador WJ-168/ZE-0853: variação divergente.');
+  throw Error('Carregador WJ-168 / ZE-0853: duas referências para aparente produto único; confirme o SKU de estoque antes de vincular EAN.');
+ }
+ // Família 1433: geometrico Modelo A. Cor aleatória NÃO pode se misturar com Modelo B.
+ if(id==='WJ-1433-ALEATORIO-GEOMETRICO'){
+  if(v!=='COR-ALEATORIA-MODELO-A')throw Error('WJ-1433 modelo A: cor aleatória e modelo da descrição divergentes.');
+  return {stockSku:'WJ-1433-MODELO-A-ALEATORIA',unitsPerSet:1};
+ }
+ if(id==='WJ-1433-PRETO-GEOMETRICO'){
+  if(v!=='PRETA-GEOMETRICO-MODELO-A')throw Error('WJ-1433: a descrição não confirma PRETO GEOMÉTRICO Modelo A.');
+  return {stockSku:'WJ-1433-MODELO-A-PRETO',unitsPerSet:1};
+ }
+ if(id==='WJ-2055-MODELO-B'){
+  if(v!=='PRETO-LISO-MODELO-B')throw Error('WJ-2055: Modelo B só admite esta descrição PRETO LISO.');
+  return {stockSku:'WJ-2055-MODELO-B-PRETO',unitsPerSet:1};
+ }
+ // WJ-211 BR/1,2,3: quantidade de FITAS avulsas da cor branca.
+ const whiteTape=id.match(/^WJ-211-BR-(\d{1,2})$/);
+ if(whiteTape){
+  const units=Number(whiteTape[1]);
+  if(units<1||units>24||(v!==units+'-FITAS'&&!(units===1&&v==='1-FITA')))
+   throw Error('Fita WJ-211: número de unidades impresso no SKU difere da variação.');
+  return {stockSku:'WJ-211-BRANCO',unitsPerSet:units};
+ }
+ // NS-5002 kit de 10 bolinhas: Q:1 é UM anúncio, mas são DEZ bolinhas.
+ if(id==='NS-5002-KIT-10UN'){
+  if(v!=='10UN-BOLINHAS-MAPA-MUNDI')throw Error('NS-5002 KIT10: anúncio não comprova 10 bolinhas.');
+  return {stockSku:'NS-5002',unitsPerSet:10};
+ }
+ // Almofadas do pé: SKU comercial representa 1 PAR preto (não 1 peça solta).
+ if(id==='XFP-3370-1UNID-PRETA'){
+  if(v!=='ALMOFADA-PRETA-1-PAR')throw Error('Almofada XFP-3370: descrição não confirma o par PRETO.');
+  return {stockSku:'AB-168-PRETO',unitsPerSet:1};
+ }
+ // Carteira porta passaporte: AZUL e ROSÊ são cores diferentes (ROSÊ != ROSA).
+ if(id==='WJ-1626-AZ'){
+  if(v!=='1-CARTEIRA-P-PASSAPORTE-AZUL')throw Error('WJ-1626: AZ exige AZUL.');
+  return {stockSku:'WJ-1626-AZUL',unitsPerSet:1};
+ }
+ if(id==='WJ-1626-RS'){
+  if(v!=='1-CARTEIRA-P-PASSAPORTE-ROSE')throw Error('WJ-1626: RS exige ROSÊ.');
+  return {stockSku:'WJ-1626-ROSE',unitsPerSet:1};
+ }
+ if(id==='AY-0235-ALT'){
+  if(!/^18-5X4X12-COR-ALEATORIA$/.test(v))throw Error('AY-0235 ALT: descrição não confirma aleatória.');
+  return {stockSku:'AY-0235-ALEATORIA',unitsPerSet:1};
+ }
+ if(id==='MC40876'){
+  if(v!=='OCULOS-NATACAO-VERDE-01-UNIDADE')throw Error('MC40876: a descrição deve confirmar VERDE.');
+  return {stockSku:'MC40876-VERDE',unitsPerSet:1};
+ }
+ if(id==='60008'){
+  if(v!=='CAPA-DE-CELULAR-BRANCO')throw Error('60008: a cor não é BRANCO.');
+  return {stockSku:'60008-BRANCO',unitsPerSet:1};
+ }
+ if(id==='A8055-PR'){
+  if(v!=='PRETA-LISTRADA')throw Error('A8055 PR: exige meia PRETA LISTRADA.');
+  return {stockSku:'A8055-PRETA-LISTRADA',unitsPerSet:1};
+ }
+ if(id==='1610'){
+  if(v!=='FACA-RUSTICA-MODELO-A')throw Error('Faca 1610: modelo diferente de A.');
+  // Não inventar equivalência com WJ-1610 sem comprovação do cadastro.
+  return {stockSku:'1610-MODELO-A',unitsPerSet:1};
+ }
+ if(id==='WJ-2083'){
+  if(v!=='VINTAGE')throw Error('WJ-2083: anúncio diferente do modelo Vintage.');
+  return {stockSku:'WJ-2083',unitsPerSet:1};
+ }
+ if(id==='DMGV01'){
+  if(v!=='PADRAO')throw Error('DMGV01: variação divergente.');
+  return {stockSku:'DMGV01',unitsPerSet:1};
+ }
+ return null;
+}
 function parseOrder(raw){
- const s=repairLegacyQrTextV62(repairLegacyQrTextV63(raw)).replace(/\\r\\n|\\n|\\r/g,'\n').replace(/\r\n|\r/g,'\n').trim();
+ const s=repairLegacyQrTextV62(repairLegacyQrTextV63(repairLegacyQrTextV64(raw))).replace(/\\r\\n|\\n|\\r/g,'\n').replace(/\r\n|\r/g,'\n').trim();
  const idMatch=s.match(/(?:^|[\s;])(?:PEDIDO|P)\s*:\s*(.*?)(?=\s*(?:RASTREIO|SKU)\s*:|$)/i);
  if(!idMatch||!idMatch[1].trim())throw Error('Não encontrei o pedido (P: ou PEDIDO:) no QR Code.');
  const id=idMatch[1].trim();
@@ -755,7 +855,7 @@ function parseOrder(raw){
   if(embeddedRandom&&!variation)variation='ALEATORIA';
   // A modalidade ALEATORIA pode aparecer no SKU, no campo V:, ou em ambos.
   // O restante da descricao comercial nao deve ser acrescentado ao SKU fisico.
-  const knownPack=knownPhysicalPackV63(sku,variation)||knownPhysicalPackV62(sku,variation)||knownPhysicalPackV61(sku,variation)||knownPhysicalPackV60(sku,variation)||knownPhysicalPackV59(sku,variation);
+  const knownPack=knownPhysicalPackV64(sku,variation)||knownPhysicalPackV63(sku,variation)||knownPhysicalPackV62(sku,variation)||knownPhysicalPackV61(sku,variation)||knownPhysicalPackV60(sku,variation)||knownPhysicalPackV59(sku,variation);
   const components=splitKitComponents(knownPack?.stockSku||sku),isKit=components.length>1,randomColor=embeddedRandom||commercialRandom;
   const unitsPerSet=knownPack?knownPack.unitsPerSet:(!isKit?physicalUnitsPerSet(sku,variation):1);
   const physicalQty=q*unitsPerSet;
@@ -1383,6 +1483,10 @@ function skuKey(v){
  key=key.replace(/^R003-BRANCA(?=-|$)/,'R003-BRANCO')
         .replace(/^R003-PRETA(?=-|$)/,'R003-PRETO');
  // V63: códigos autorizados exclusivamente para os produtos e cores desta família.
+ // V64: somente estes códigos comprovados recebem o nome da variante física.
+ if(key==='A8055-PR')return 'A8055-PRETA-LISTRADA';
+ if(key==='WJ-1626-AZ')return 'WJ-1626-AZUL';
+ if(key==='WJ-1626-RS')return 'WJ-1626-ROSE';
  if(key==='A5114-OFF'||key==='A5114-OFF-WHITE')return 'A5114-BRANCO';
  if(key==='WJ-211-BR')return 'WJ-211-BRANCO';
  if(key==='WJ-211-C')return 'WJ-211-CINZA';
