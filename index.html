@@ -270,7 +270,7 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
 #v68LabelCue strong{font-size:clamp(20px,5vw,26px);font-weight:900;letter-spacing:.01em}
 #v68LabelCue small{font-size:clamp(15px,4vw,19px);font-weight:750;letter-spacing:.015em}
 @media(prefers-reduced-motion:reduce){#v68LabelCue{transition:none}}
-</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V69 · LEITURA DE ETIQUETAS CORRIGIDA</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
+</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V70 · EAN AUTOMÁTICO SEM REINICIAR</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
 <div class="operator-topbar"><div class="operator-kicker"><span class="live-dot"></span><span id="miniSession">Conferência em andamento</span></div><button id="discardQuick" class="discard-quick hidden" type="button" aria-label="Descartar pedido atual">✕ Descartar pedido</button></div>
 <h2 class="stage-title" id="stageTitle">Leia a etiqueta do pedido</h2>
 <p class="stage-help" id="stageHelp">Aponte a câmera para o QR Code da etiqueta.</p>
@@ -1527,6 +1527,7 @@ async function toggleTorch(){
  if(reader===scanning)button.disabled=false;
 }
 async function closeScan(){
+ if(v70WakeTimer!==null){clearTimeout(v70WakeTimer);v70WakeTimer=null;}
  clearFastRelease();fastPaused=false;v66ReaderPaused=false;v66RecentValue='';v66CooldownUntil=0;
  scanGeneration++;
  const wasCatalog=activeScanType==='ean-catalog';const obj=scanning;scanning=null;activeScanType=null;
@@ -1534,6 +1535,30 @@ async function closeScan(){
  if(obj){try{await obj.stop()}catch(e){}try{obj.clear()}catch(e){}}
  $('reader').innerHTML='';resetCameraControls();busy=false;if(wasCatalog)openCatalog();
 }
+// V70: o motor WASM pausa após o primeiro QR/EAN.
+// Rearmar a decodificação sem encerrar o stream da câmera.
+// Respeitar cooldown, revisão visual e mudanças de pedido para evitar bipagem dupla.
+let v70WakeTimer=null;
+function v70WakeReader(reader,token,delay=65){
+ if(!reader?.isWasm||reader!==scanning||token!==scanGeneration||v66ReaderPaused||fastPaused||v66ReviewIsOpen())return;
+ if(v70WakeTimer!==null)clearTimeout(v70WakeTimer);
+ const wait=Math.max(55,Math.min(2000,Number(delay)||65));
+ v70WakeTimer=setTimeout(()=>{
+  v70WakeTimer=null;
+  if(reader!==scanning||token!==scanGeneration||v66ReaderPaused||fastPaused||v66ReviewIsOpen())return;
+  if(busy){v70WakeReader(reader,token,110);return;}
+  try{reader.resume();}
+  catch(error){
+   // Reiniciar o motor padrão somente se o motor atual falhou.
+   // A fase 'product' DEVE continuar como product, não voltar a QR do pedido.
+   if(reader!==scanning||token!==scanGeneration)return;
+   cameraStatus('Retomando leitura automaticamente…',2200);
+   wasmDisabledForSession=true;
+   void scan(activeScanType==='product'?'product':activeScanType||'order',true);
+  }
+ },wait);
+}
+
 let wasmDisabledForSession=false;
 async function scan(type,usarLeitorPadrao=false){
  unlockAudio();
@@ -1564,7 +1589,7 @@ async function scan(type,usarLeitorPadrao=false){
     console.warn('Bipador V34: WASM falhou, restaurando leitor padrão',err);
     wasmDisabledForSession=true;
     cameraStatus('Retomando leitor padrão…');
-    void scan(type,true);
+    void scan(activeScanType==='product'?'product':type,true);
    };
   }
 
@@ -1583,10 +1608,10 @@ async function scan(type,usarLeitorPadrao=false){
   },async text=>{
    if(busy||scanning!==reader||token!==scanGeneration||v66ReviewIsOpen())return;
    const mode=activeScanType,now=Date.now();
-   if(now<v66CooldownUntil)return;
+   if(now<v66CooldownUntil){v70WakeReader(reader,token,v66CooldownUntil-now+65);return;}
    // A mesma embalagem parada na câmera nunca deve contar duas vezes.
    if(mode==='product'&&text===v66RecentValue&&now-v66RecentSeenAt<700){
-    v66RecentSeenAt=now;return;
+    v66RecentSeenAt=now;v70WakeReader(reader,token,180);return;
    }
    busy=true;
    try{
@@ -1616,7 +1641,7 @@ async function scan(type,usarLeitorPadrao=false){
     showMessage('Falha na leitura: '+(e?.message||e),'danger');
     cameraStatus('Tente aproximar o código novamente.',2500);
     // Manter câmera aberta para corrigir sem outro toque.
-   }finally{busy=false;}
+   }finally{busy=false;v70WakeReader(reader,token,Math.max(65,v66CooldownUntil-Date.now()+65));}
   },()=>{});
   if(token!==scanGeneration||scanning!==reader){try{await reader.stop()}catch(e){}try{reader.clear()}catch(e){}return;}
   // Não usar outro getUserMedia, getCameras, resolução forçada ou foco avançado.
