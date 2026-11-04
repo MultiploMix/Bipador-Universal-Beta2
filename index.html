@@ -270,7 +270,7 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
 #v68LabelCue strong{font-size:clamp(20px,5vw,26px);font-weight:900;letter-spacing:.01em}
 #v68LabelCue small{font-size:clamp(15px,4vw,19px);font-weight:750;letter-spacing:.015em}
 @media(prefers-reduced-motion:reduce){#v68LabelCue{transition:none}}
-</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V68 · SOM + SINAL AO LER ETIQUETA</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
+</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V69 · LEITURA DE ETIQUETAS CORRIGIDA</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
 <div class="operator-topbar"><div class="operator-kicker"><span class="live-dot"></span><span id="miniSession">Conferência em andamento</span></div><button id="discardQuick" class="discard-quick hidden" type="button" aria-label="Descartar pedido atual">✕ Descartar pedido</button></div>
 <h2 class="stage-title" id="stageTitle">Leia a etiqueta do pedido</h2>
 <p class="stage-help" id="stageHelp">Aponte a câmera para o QR Code da etiqueta.</p>
@@ -935,6 +935,59 @@ function knownPhysicalPackV67(sku,variation){
  if(id==='B-13050'&&v==='1-UNID-ASTRONALT-A-BRANCO')return {stockSku:'B-13050-BRANCO',unitsPerSet:1};
  return null;
 }
+// V69: conferir tokens sem depender de pontuação exata do decoder iOS.
+// Não altera estoque/EAN; só a validação da etiqueta em três famílias.
+function v69Tokenize(value){
+ return norm(String(value||'').normalize('NFKC')).normalize('NFD')
+  .replace(/[\u0300-\u036f]/g,'').replace(/[^A-Z0-9]+/g,'-')
+  .replace(/-+/g,'-').replace(/^-|-$/g,'');
+}
+function v69Words(value,allow){
+ return [...new Set((v69Tokenize(value).split('-').filter(Boolean)).filter(v=>allow.includes(v)))];
+}
+const v69Colors=['PRETO','PRETA','CINZA','BEGE','AZUL','ROSA','BRANCO','BRANCA','VERDE','AMARELO','AMARELA','LARANJA','ROXO','ROXA','MARROM','LILAS','PRATA','DOURADO','DOURADA','ALEATORIA'];
+function v69Color(c){return c==='PRETA'?'PRETO':c==='BRANCA'?'BRANCO':c==='AMARELA'?'AMARELO':c==='ROXA'?'ROXO':c==='DOURADA'?'DOURADO':c;}
+function knownPhysicalPackV69(sku,variation){
+ const id=v69Tokenize(sku),v=v69Tokenize(variation);
+ if(id==='B5084'){
+  const normalized=v69Words(v,v69Colors).map(v69Color);
+  if(!v.startsWith('1-PAR-')||new Set(normalized).size!==1||!normalized.length||
+   !/(?:^|-)4-(?:A-)?8-ANOS(?:-|$)/.test(v)||
+   !/(?:^|-)14-CM-X-9-CM(?:-|$)/.test(v))
+    throw Error('B5084: QR reconhecido, mas cor, faixa de 4–8 anos ou medida 14×9 cm não coincidem.');
+  return {stockSku:'B5084-'+normalized[0]+'-4-8-ANOS',unitsPerSet:1};
+ }
+ if(id==='5110-1'||id==='5110-K2'){
+  const two=id==='5110-K2';
+  const expected=two?/^KIT-2-TOUCAS-PRETO-/:/^1-TOUCA-PRETO-/;
+  const hasBasic=/(?:^|-)(?:BASICA|B-ICA|B-ASICA)(?:-|$)/.test(v);
+  const colors=v69Words(v,v69Colors).map(v69Color);
+  if(!expected.test(v)||!hasBasic||colors.length!==1||colors[0]!=='PRETO')
+    throw Error((two?'5110-K2':'5110-1')+': etiqueta lida, mas não confirma '+(two?'duas toucas':'uma touca')+' PRETA BÁSICA.');
+  return {stockSku:'A5110-PRETO',unitsPerSet:two?2:1};
+ }
+ const match=id.match(/^XFP-3370-(\d{1,2})-(BEGE|PRETA|PRETO|ALEATORIA)$/);
+ if(match){
+  const n=Number(match[1]);const color=match[2]==='PRETA'?'PRETO':match[2];
+  const detected=v69Words(v,v69Colors).map(v69Color);
+  const count=(v.match(/(?:^|-)COM-(\d{1,2})(?:-|$)/)||[])[1];
+  if(n<1||n>24||!v.includes('ALMOFADA')||new Set(detected).size!==1||detected[0]!==color||Number(count)!==n||!count)
+   throw Error('XFP-3370: QR lido, mas quantidade ou cor impressa divergem do SKU.');
+  return {stockSku:'AB-168-'+color,unitsPerSet:n};
+ }
+ return null;
+}
+
+// Caso não seja possível normalizar o QR, mostrar apenas SKU/V recebidos,
+// sem expor endereço, nome, número de pedido ou rastreio no diagnóstico.
+function v69LabelDiagnostic(raw,error){
+ const msg=String(error?.message||error||'Erro ao conferir etiqueta');
+ if(!/^(?:B5084|5110-|XFP-3370)/.test(msg))return msg;
+ const m=String(raw||'').match(/SKU\s*:\s*([^;]+)\s*;\s*(?:V|VAR|VARIACAO|VARIAÇÃO|COR)\s*:\s*([^;]+)\s*;/i);
+ if(!m)return msg;
+ return msg+' | SKU recebido: '+m[1].trim().slice(0,45)+' | Variação recebida: '+m[2].trim().slice(0,95);
+}
+
 function parseOrder(raw){
  const s=repairLegacyQrTextV62(repairLegacyQrTextV63(repairLegacyQrTextV64(repairLegacyQrTextV65(raw)))).replace(/\\r\\n|\\n|\\r/g,'\n').replace(/\r\n|\r/g,'\n').trim();
  const idMatch=s.match(/(?:^|[\s;])(?:PEDIDO|P)\s*:\s*(.*?)(?=\s*(?:RASTREIO|SKU)\s*:|$)/i);
@@ -956,7 +1009,7 @@ function parseOrder(raw){
   if(embeddedRandom&&!variation)variation='ALEATORIA';
   // A modalidade ALEATORIA pode aparecer no SKU, no campo V:, ou em ambos.
   // O restante da descricao comercial nao deve ser acrescentado ao SKU fisico.
-  const knownPack=knownPhysicalPackV67(sku,variation)||knownPhysicalPackV65(sku,variation)||knownPhysicalPackV64(sku,variation)||knownPhysicalPackV63(sku,variation)||knownPhysicalPackV62(sku,variation)||knownPhysicalPackV61(sku,variation)||knownPhysicalPackV60(sku,variation)||knownPhysicalPackV59(sku,variation);
+  const knownPack=knownPhysicalPackV69(sku,variation)||knownPhysicalPackV67(sku,variation)||knownPhysicalPackV65(sku,variation)||knownPhysicalPackV64(sku,variation)||knownPhysicalPackV63(sku,variation)||knownPhysicalPackV62(sku,variation)||knownPhysicalPackV61(sku,variation)||knownPhysicalPackV60(sku,variation)||knownPhysicalPackV59(sku,variation);
   const components=splitKitComponents(knownPack?.stockSku||sku),isKit=components.length>1,randomColor=embeddedRandom||commercialRandom;
   const unitsPerSet=knownPack?knownPack.unitsPerSet:(!isKit?physicalUnitsPerSet(sku,variation):1);
   const physicalQty=q*unitsPerSet;
@@ -1191,7 +1244,7 @@ function load(raw){
   legacyVariantRepair=e.legacy||null;
   $('legacyVariantPanel').classList.toggle('hidden',!legacyVariantRepair);
   if(legacyVariantRepair){$('legacyVariantHelp').textContent='SKU '+legacyVariantRepair.sku+' aparece '+legacyVariantRepair.qtds.length+' vezes, em quantidades '+legacyVariantRepair.qtds.join(', ')+'. Digite uma variação para cada linha impressa, na mesma ordem.';}
-  showMessage(e.message,'danger');
+  showMessage(v69LabelDiagnostic(raw,e),'danger');
  }
 }
 $('applyLegacyVariants').onclick=()=>{
