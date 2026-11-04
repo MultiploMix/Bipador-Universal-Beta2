@@ -255,7 +255,7 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
 #sharedEANReview .shared-ean-other{border-color:#eabec1;background:#fff7f7;color:#9b2630}
 #sharedEANReview .ean-size-confirm{margin:14px 0}
 @media(max-width:400px){#sharedEANReview .ean-review-sheet{padding:20px 17px}#sharedEANReview .ean-choice{padding:13px 12px}}
-</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V64 · AUDITORIA DE 201 ETIQUETAS</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
+</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V65 · AUDITORIA DE 123 ETIQUETAS</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
 <div class="operator-topbar"><div class="operator-kicker"><span class="live-dot"></span><span id="miniSession">Conferência em andamento</span></div><button id="discardQuick" class="discard-quick hidden" type="button" aria-label="Descartar pedido atual">✕ Descartar pedido</button></div>
 <h2 class="stage-title" id="stageTitle">Leia a etiqueta do pedido</h2>
 <p class="stage-help" id="stageHelp">Aponte a câmera para o QR Code da etiqueta.</p>
@@ -834,8 +834,56 @@ function knownPhysicalPackV64(sku,variation){
  }
  return null;
 }
+// V65 — famílias e quantidades testadas contra 123 QR Codes reais.
+// Nunca converter nomes genéricos de kit em SKUs físicos por suposição.
+function repairLegacyQrTextV65(value){
+ return String(value||'').replace(/V002-VERDE\s+ﾃ；UA/gi,'V002-VERDE AGUA');
+}
+function knownPhysicalPackV65(sku,variation){
+ const id=v60SafeKey(sku),v=v60SafeKey(variation);
+ // Shopee: ausência de V: é aceitável SOMENTE se o SKU BR/n informa a quantidade.
+ // V: contraditório continua bloqueado; Q: multiplica n sem perder unidades.
+ const tape=id.match(/^WJ-211-BR-(\d{1,2})$/);
+ if(tape){
+  const n=Number(tape[1]);
+  if(n<1||n>24||(v&&v!==n+'-FITAS'&&!(n===1&&v==='1-FITA')))
+   throw Error('WJ-211: quantidade do SKU e variação divergentes.');
+  return {stockSku:'WJ-211-BRANCO',unitsPerSet:n};
+ }
+ // Mercado Livre: somente pacotes comerciais com componentes homogêneos explícitos.
+ const packs={
+  'WJ-211-KIT-3-BRANCAS':['WJ-211-BRANCO',3],
+  'WL-1445-KIT-C-2-UNID':['WL-1445',2],
+  'WJ-2146-KIT-2-UNID':['WJ-2146',2],
+  'B-13050-KIT-2-UN':['B-13050',2],
+  'WJ1847-KIT-C-3-UN':['WJ1847',3],
+  'WJ-2279-KIT-C-5-UNID':['WJ-2279',5],
+  'MC40876-KIT-30-UNID-COR-ALEATORIA':['MC40876-ALEATORIA',30]
+ };
+ if(Object.prototype.hasOwnProperty.call(packs,id)){
+  if(v&&v!=='ALEATORIA')throw Error('Kit ML: variação inesperada.');
+  const [stockSku,unitsPerSet]=packs[id];return {stockSku,unitsPerSet};
+ }
+ // Ambiguidade comprovada: WJ-211 CINZA aparece nos kits de 2 e de 3 fitas.
+ if(id==='WJ-211-CINZA'||id==='WJ-211-BRANCA')
+  throw Error('ML: SKU não informa a quantidade do kit. Gere QR com 2UN/3UN.');
+ if(id==='WJ-211-KIT-C-10-UNID')throw Error('Kit de 10 fitas sem cor física no QR.');
+ if(id==='4123-RO')throw Error('4123-RO: kit de 2 pares sem quantidade no QR.');
+ if(id==='AB-298-KIT-ROSA')throw Error('AB-298: faltam SKUs físicos dos quatro componentes escolares.');
+ if(id==='ATT-168-KIT-C-3-PARES')throw Error('ATT-168: equivalência do EAN físico ainda não confirmada.');
+ if(id==='KIT-3-FACAS-2279-2-FACAS-1610'||id==='KIT-5UN-1610')
+  throw Error('Kit de facas: referência 1610 não vinculada com segurança ao SKU de estoque.');
+ if(id==='KIT-1PAR-AZUL-MARINHO-E-1PAR-LUVACINZA-CLARO-8-A12')
+  throw Error('Kit com dois pares de luvas: faltam os SKUs individuais.');
+ if(id==='KIT-1-TOUCA-MAMAS-PRETA-1-TOUCA-MAMAS-AZUL-CNT')
+  throw Error('Kit Mamas: confirmar AZUL CNT e vincular os dois EANs físicos.');
+ if(id==='KIT-10-FACAS-PRETAS'||id==='COLORIDAS')
+  throw Error('Kit de dez faquinhas: faltam os SKUs de cada modelo/cor.');
+ return null;
+}
+
 function parseOrder(raw){
- const s=repairLegacyQrTextV62(repairLegacyQrTextV63(repairLegacyQrTextV64(raw))).replace(/\\r\\n|\\n|\\r/g,'\n').replace(/\r\n|\r/g,'\n').trim();
+ const s=repairLegacyQrTextV62(repairLegacyQrTextV63(repairLegacyQrTextV64(repairLegacyQrTextV65(raw)))).replace(/\\r\\n|\\n|\\r/g,'\n').replace(/\r\n|\r/g,'\n').trim();
  const idMatch=s.match(/(?:^|[\s;])(?:PEDIDO|P)\s*:\s*(.*?)(?=\s*(?:RASTREIO|SKU)\s*:|$)/i);
  if(!idMatch||!idMatch[1].trim())throw Error('Não encontrei o pedido (P: ou PEDIDO:) no QR Code.');
  const id=idMatch[1].trim();
@@ -855,7 +903,7 @@ function parseOrder(raw){
   if(embeddedRandom&&!variation)variation='ALEATORIA';
   // A modalidade ALEATORIA pode aparecer no SKU, no campo V:, ou em ambos.
   // O restante da descricao comercial nao deve ser acrescentado ao SKU fisico.
-  const knownPack=knownPhysicalPackV64(sku,variation)||knownPhysicalPackV63(sku,variation)||knownPhysicalPackV62(sku,variation)||knownPhysicalPackV61(sku,variation)||knownPhysicalPackV60(sku,variation)||knownPhysicalPackV59(sku,variation);
+  const knownPack=knownPhysicalPackV65(sku,variation)||knownPhysicalPackV64(sku,variation)||knownPhysicalPackV63(sku,variation)||knownPhysicalPackV62(sku,variation)||knownPhysicalPackV61(sku,variation)||knownPhysicalPackV60(sku,variation)||knownPhysicalPackV59(sku,variation);
   const components=splitKitComponents(knownPack?.stockSku||sku),isKit=components.length>1,randomColor=embeddedRandom||commercialRandom;
   const unitsPerSet=knownPack?knownPack.unitsPerSet:(!isKit?physicalUnitsPerSet(sku,variation):1);
   const physicalQty=q*unitsPerSet;
