@@ -255,7 +255,15 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
 #sharedEANReview .shared-ean-other{border-color:#eabec1;background:#fff7f7;color:#9b2630}
 #sharedEANReview .ean-size-confirm{margin:14px 0}
 @media(max-width:400px){#sharedEANReview .ean-review-sheet{padding:20px 17px}#sharedEANReview .ean-choice{padding:13px 12px}}
-</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V65 · AUDITORIA DE 123 ETIQUETAS</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
+
+/* V66 — escolha visual em um toque: nunca existe segunda confirmação. */
+#eanReview #eanSizeConfirmPanel,#eanReview #eanConfirm,
+#sharedEANReview #sharedEANCheckPanel,#sharedEANReview #sharedEANConfirm,
+#lhamaAliasReview #lhamaAliasConfirm,
+#lhamaAliasReview .ean-size-confirm:has(#lhamaModelCheck){display:none!important}
+#eanReview .ean-choice,#sharedEANReview .ean-choice{cursor:pointer;min-height:58px}
+#eanReview .ean-choice:active,#sharedEANReview .ean-choice:active{background:#eaf4ed}
+</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V66 · CÂMERA CONTÍNUA + 1 TOQUE</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
 <div class="operator-topbar"><div class="operator-kicker"><span class="live-dot"></span><span id="miniSession">Conferência em andamento</span></div><button id="discardQuick" class="discard-quick hidden" type="button" aria-label="Descartar pedido atual">✕ Descartar pedido</button></div>
 <h2 class="stage-title" id="stageTitle">Leia a etiqueta do pedido</h2>
 <p class="stage-help" id="stageHelp">Aponte a câmera para o QR Code da etiqueta.</p>
@@ -757,7 +765,7 @@ function knownPhysicalPackV64(sku,variation){
  }
  if(id==='WJ-1766'){
   if(v!=='KIT-COM-4-FORMOES-PARA-MADEIRA')throw Error('WJ-1766: descrição de kit divergente.');
-  throw Error('WJ-1766: kit de 4 formões sem SKU individual; configure os quatro componentes ou confira o kit lacrado manualmente.');
+  return {stockSku:'WJ-1766',unitsPerSet:1}; // Kit pronto/lacrado: 1 EAN cadastrado do kit completo; nunca inventa EAN para formão individual.
  }
  if(id==='WJ-168-ZE-0853'){
   if(v!=='CARREGADOR-USB')throw Error('Carregador WJ-168/ZE-0853: variação divergente.');
@@ -1190,7 +1198,7 @@ function signal(ok,detail=''){if(!ok){errorCount++;persistList();}
  $('scanSymbol').innerHTML=ok?'<svg viewBox="0 0 150 150" aria-label="Correto"><path d="M20 79 L58 115 L130 35"/></svg>':'<svg viewBox="0 0 150 150" aria-label="Errado"><path d="M30 30 L120 120 M120 30 L30 120"/></svg>';
  $('scanStatus').textContent=ok?'CORRETO':'ERRADO';
  $('scanDetail').textContent=detail||(ok?'Leitura confirmada':'Leitura rejeitada');
- clearTimeout(visualTimer);visualTimer=setTimeout(()=>{panel.className='hidden'},ok?1100:2700)
+ clearTimeout(visualTimer);visualTimer=setTimeout(()=>{panel.className='hidden'},ok?650:1600)
 }
 // V24: a leitura do EAN passa pelo catálogo. Um EAN compartilhado nunca aprova a cor sozinho.
 function check(raw,method='qr'){
@@ -1237,7 +1245,13 @@ function check(raw,method='qr'){
  persistList();render();
  showMessage(order.items.every(i=>i.read===i.qtd)?'✅ TODOS OS PRODUTOS CONFERIDOS — pode finalizar.':order.kitGroups?.length?'✅ '+item.sku+' confirmado. Falta conferir o restante do kit.':method.startsWith('visual')?'✅ Conferência visual registrada — '+item.sku:'✅ PRODUTO CORRETO — '+item.sku+' ('+item.read+'/'+item.qtd+')','success');
  $('skuInput').value='';signal(true,method.startsWith('visual')?'Validação visual · '+item.sku:item.sku+' ('+item.read+'/'+item.qtd+')');
- if(fastPaused&&order.items.every(i=>i.read===i.qtd))void closeScan();
+ if(order&&order.items.every(i=>i.read===i.qtd)){
+  const doneId=order.id;
+  if(completeOrder()){
+   showMessage('✅ Pedido '+doneId+' salvo. Leia a próxima etiqueta.','success');
+   if(scanning&&activeScanType==='product')v66SetScanPhase('order');
+  }
+ }
  return true;
 }
 function processProductCode(raw){
@@ -1249,6 +1263,30 @@ document.body.appendChild($('cameraPanel'));
 // V22: leitura estável no Safari. Não enumerar outras câmeras com o vídeo já aberto.
 let torchEnabled=false,activeVideoTrack=null,activeScanType=null,zoomTimer=null;
 let fastPaused=false,fastReleaseTimer=null;
+// V66 — câmera contínua, sem reabrir o stream após cada bipagem.
+let v66RecentValue='',v66RecentSeenAt=0,v66CooldownUntil=0,v66ReaderPaused=false;
+function v66ReviewIsOpen(){
+ return !$('eanReview').classList.contains('hidden')||!$('sharedEANReview').classList.contains('hidden')||!$('lhamaAliasReview').classList.contains('hidden');
+}
+function v66SetScanPhase(mode){
+ if(!scanning)return;
+ activeScanType=mode;
+ document.body.classList.toggle('scanning-product',mode==='product');
+ $('cameraTitle').textContent=mode==='product'?'Bipe o produto · QR ou EAN':'Leia a próxima etiqueta';
+ cameraStatus(mode==='product'?'Produto: aponte o EAN ou QR Code':'Próximo pedido: aponte o QR Code',1500);
+ v66CooldownUntil=Date.now()+500;
+}
+function v66ResumeAfterChoice(){
+ v66CooldownUntil=Date.now()+850;
+ v66RecentSeenAt=Date.now();
+ if(!v66ReaderPaused||!scanning)return;
+ const reader=scanning;v66ReaderPaused=false;
+ try{reader.resume();}catch(err){
+  // Se o navegador perdeu a permissão ou a sessão, o botão Reiniciar permanece disponível.
+  cameraStatus('Toque em ↻ se o leitor não voltar.',3500);
+ }
+}
+
 function clearFastRelease(){if(fastReleaseTimer){clearTimeout(fastReleaseTimer);fastReleaseTimer=null;}}
 async function pauseProductReader(reader,token){
  if(reader!==scanning||token!==scanGeneration)return false;
@@ -1365,7 +1403,7 @@ async function toggleTorch(){
  if(reader===scanning)button.disabled=false;
 }
 async function closeScan(){
- clearFastRelease();fastPaused=false;
+ clearFastRelease();fastPaused=false;v66ReaderPaused=false;v66RecentValue='';v66CooldownUntil=0;
  scanGeneration++;
  const wasCatalog=activeScanType==='ean-catalog';const obj=scanning;scanning=null;activeScanType=null;
  $('cameraPanel').classList.add('hidden');document.body.classList.remove('camera-open','scanning-product');
@@ -1388,12 +1426,12 @@ async function scan(type,usarLeitorPadrao=false){
  try{
   // A API videoConstraints é experimental na biblioteca e sobrepõe facingMode.
   // Não utilizar getCameras() aqui: alguns iPhones perdem a prévia ao abrir outro stream.
-  const formats=(type==='order'||type==='list')?[Html5QrcodeSupportedFormats.QR_CODE]:[Html5QrcodeSupportedFormats.QR_CODE,Html5QrcodeSupportedFormats.EAN_13,Html5QrcodeSupportedFormats.EAN_8,Html5QrcodeSupportedFormats.UPC_A,Html5QrcodeSupportedFormats.CODE_128];
+  const formats=type==='list'?[Html5QrcodeSupportedFormats.QR_CODE]:[Html5QrcodeSupportedFormats.QR_CODE,Html5QrcodeSupportedFormats.EAN_13,Html5QrcodeSupportedFormats.EAN_8,Html5QrcodeSupportedFormats.UPC_A,Html5QrcodeSupportedFormats.CODE_128];
   // V34 experimental: decodifica com ZXing WASM; falha => leitor tradicional da V33.
   const preferirWasm=!usarLeitorPadrao&&!wasmDisabledForSession&&new URLSearchParams(location.search).get('leitor')!=='padrao'
    &&!!window.BarcodeDetectionAPI?.BarcodeDetector&&!!window.LeitorWasmBipador;
   if(!preferirWasm&&!window.Html5Qrcode){showMessage('Leitor padrão indisponível. Verifique a conexão.','danger');await closeScan();return}
-  const reader=preferirWasm?new LeitorWasmBipador('reader',{mode:type})
+  const reader=preferirWasm?new LeitorWasmBipador('reader',{mode:type==='order'?'product':type})
    :new Html5Qrcode('reader',{formatsToSupport:formats,useBarCodeDetectorIfSupported:false,verbose:false});
   scanning=reader;busy=false;
   if(reader.isWasm){
@@ -1408,10 +1446,10 @@ async function scan(type,usarLeitorPadrao=false){
 
   await reader.start({facingMode:'environment'}, {
    // Evita resoluções/foco forçados: no Safari isso já causou tela preta.
-   fps:type==='product'?15:12,disableFlip:true,
+   fps:type==='list'?12:18,disableFlip:true,
    qrbox:(w,h)=>{
     const maxW=Math.max(80,Math.floor(w*.96));
-    if(type==='product'||type==='ean-catalog'){
+    if(type==='product'||type==='order'||type==='ean-catalog'){
      // Janela horizontal para EAN/UPC, suficientemente alta para QR do SKU.
      return {width:maxW,height:Math.max(80,Math.min(Math.floor(h*.82),Math.floor(maxW*.82)))};
     }
@@ -1419,20 +1457,41 @@ async function scan(type,usarLeitorPadrao=false){
     return {width:side,height:side};
    }
   },async text=>{
-   if(busy||scanning!==reader||token!==scanGeneration)return;
+   if(busy||scanning!==reader||token!==scanGeneration||v66ReviewIsOpen())return;
+   const mode=activeScanType,now=Date.now();
+   if(now<v66CooldownUntil)return;
+   // A mesma embalagem parada na câmera nunca deve contar duas vezes.
+   if(mode==='product'&&text===v66RecentValue&&now-v66RecentSeenAt<700){
+    v66RecentSeenAt=now;return;
+   }
    busy=true;
    try{
-    // Uma sessão de produtos pode manter a câmera pausada por até 20 s.
-    // Não mantém o decodificador funcionando em segundo plano.
-    let warmed=false;
-    if(type==='product')warmed=await pauseProductReader(reader,token);
-    if(!warmed)await closeScan();
-    if(type==='order')load(text);else if(type==='list')importMaster(text);else if(type==='ean-catalog'){ $('catalogEAN').value=text.trim();openCatalog();}else processProductCode(text);
-    if(warmed&&(!order||order.items.every(i=>i.read===i.qtd)))await closeScan();
+    if(mode==='order'){
+     // Um EAN solto não é um QR de pedido. Ignore sem alarme.
+     if(!/(?:^|[\s;])(?:P|PEDIDO)\s*:/i.test(text)||!/SKU\s*:/i.test(text))return;
+     const before=order?.id||null;
+     load(text);
+     if(order&&order.id!==before)v66SetScanPhase('product');
+     else v66CooldownUntil=Date.now()+700;
+    }else if(mode==='product'){
+     // O QR do pedido ainda pode estar no enquadramento durante a troca de fase.
+     if(/(?:^|[\s;])(?:P|PEDIDO)\s*:/i.test(text)&&/SKU\s*:/i.test(text))return;
+     v66RecentValue=text;v66RecentSeenAt=now;
+     processProductCode(text);
+     if(v66ReviewIsOpen()){
+      // Pausa somente o decodificador: a câmera e a prévia permanecem abertas.
+      try{if(typeof reader.pause==='function'){reader.pause(true);v66ReaderPaused=true;}}catch(e){v66ReaderPaused=false;}
+     }
+     v66CooldownUntil=Date.now()+320;
+    }else{
+     await closeScan();
+     if(mode==='list')importMaster(text);
+     else if(mode==='ean-catalog'){$('catalogEAN').value=text.trim();openCatalog();}
+    }
    }catch(e){
-    cameraStatus('Falha ao processar código. Reinicie a câmera.',3500);
-    if(type==='product')showMessage('Não foi possível processar a leitura: '+(e?.message||e),'danger');
-    await closeScan();
+    showMessage('Falha na leitura: '+(e?.message||e),'danger');
+    cameraStatus('Tente aproximar o código novamente.',2500);
+    // Manter câmera aberta para corrigir sem outro toque.
    }finally{busy=false;}
   },()=>{});
   if(token!==scanGeneration||scanning!==reader){try{await reader.stop()}catch(e){}try{reader.clear()}catch(e){}return;}
@@ -2146,10 +2205,11 @@ function openSharedEANReview(code,options){
 $('sharedEANChoices').addEventListener('change',e=>{
  if(e.target.name!=='sharedEANModel'||!sharedEANPending)return;
  sharedEANPending.selected=Number(e.target.value);
- $('sharedEANCheck').checked=false;updateSharedEANChoice();
+ $('sharedEANCheck').checked=true;updateSharedEANChoice();
+ $('sharedEANConfirm').onclick();v66ResumeAfterChoice();
 });
 $('sharedEANCheck').addEventListener('change',updateSharedEANChoice);
-$('sharedEANCancel').onclick=()=>{closeSharedEANReview();showMessage('EAN compartilhado: conferência cancelada, nenhuma unidade contabilizada.');};
+$('sharedEANCancel').onclick=()=>{closeSharedEANReview();v66ResumeAfterChoice();showMessage('EAN compartilhado: conferência cancelada, nenhuma unidade contabilizada.');};
 $('sharedEANConfirm').onclick=()=>{
  const pending=sharedEANPending;if(!pending||pending.selected<0)return;
  if(!order||order.id!==pending.orderId){closeSharedEANReview();showMessage('O pedido mudou. Faça a leitura novamente.','danger');return}
@@ -2204,10 +2264,10 @@ function openLhamaAliasReview(code,result){
  $('lhamaAliasReview').classList.remove('hidden');
 }
 $('lhamaModelCheck').addEventListener('change',updateLhamaAliasReview);
-$('lhamaColorCheck').addEventListener('change',updateLhamaAliasReview);
+$('lhamaColorCheck').addEventListener('change',()=>{$('lhamaModelCheck').checked=$('lhamaColorCheck').checked;updateLhamaAliasReview();if($('lhamaColorCheck').checked){$('lhamaAliasConfirm').onclick();v66ResumeAfterChoice();}});
 $('lhamaAliasReject').onclick=()=>{
  const code=lhamaAliasPending?.code||'';
- closeLhamaAliasReview();
+ closeLhamaAliasReview();v66ResumeAfterChoice();
  showMessage('⛔ MOCHILA NÃO CONFIRMADA — divergência entre CG9248 ROSA e CG248 SALMÃO. Nenhuma unidade contabilizada.','danger');
  logScan('EAN DIVERGENTE',code,'SEM CONFIRMAÇÃO');signal(false,'Confira modelo e cor');
 };
@@ -2292,7 +2352,7 @@ function processEAN(raw){
  if(single){const sku=result.options[0].sku;const item=order.items.find(i=>skuKey(i.sku)===skuKey(sku)||equivalentSku(i.sku,sku));if(item){check(item.sku,'ean');return}showMessage('⛔ PRODUTO ERRADO — este EAN está cadastrado para '+sku+', mas o pedido solicita outro SKU.','danger');logScan('EAN',code,'SKU DIVERGENTE');signal(false,'EAN de outra variação');return}
  openEANReview(code,result.options,order.items.filter(i=>result.families.some(f=>hasSkuPrefix(f,i.sku))),result.families);
 }
-$('eanChoices').addEventListener('change',e=>{if(e.target.name==='eanVariation')choosePendingEAN(Number(e.target.value))});
+$('eanChoices').addEventListener('change',e=>{if(e.target.name!=='eanVariation'||!eanPending)return;choosePendingEAN(Number(e.target.value));$('eanSizeConfirm').checked=true;updateEANConfirmation();$('eanConfirm').onclick();v66ResumeAfterChoice();});
 $('eanSizeConfirm').addEventListener('change',updateEANConfirmation);
 $('eanConfirm').onclick=()=>{
  const pending=eanPending;
@@ -2313,7 +2373,7 @@ $('eanConfirm').onclick=()=>{
  // ausente no cadastro, confirmação explícita do tamanho físico.
  check(matches[0].item.sku,pending.sourceKind==='QR do produto'?'visual-qr':'visual');
 };
-$('eanCancel').onclick=()=>{closeEANReview();if(order)showMessage('Conferência visual cancelada. Produto não contabilizado.');};
+$('eanCancel').onclick=()=>{closeEANReview();v66ResumeAfterChoice();if(order)showMessage('Conferência visual cancelada. Produto não contabilizado.');};
 function resetCatalogForm(){editingCatalogIndex=null;editingCatalogId=null;$('catalogEAN').value='';$('catalogSKU').value='';$('catalogName').value='';$('catalogColor').value='';$('catalogSize').value='';$('catalogVariants').value='';$('catalogRandom').checked=false;const sub=$('catalogSubmit');if(sub)sub.textContent='＋ Salvar associação';$('catalogCancelEdit')?.classList.add('hidden');}
 function startCatalogEdit(index){const r=catalog[index];if(!r)return;editingCatalogIndex=index;editingCatalogId=r.__cloudId||null;$('catalogEAN').value=r.ean||'';$('catalogSKU').value=r.sku||'';$('catalogName').value=r.produto||'';$('catalogColor').value=r.cor||'';$('catalogSize').value=r.tamanho||'';$('catalogVariants').value=r.variacoes||'';$('catalogRandom').checked=!!r.aleatoria;const sub=$('catalogSubmit');if(sub)sub.textContent='💾 Atualizar associação';$('catalogCancelEdit')?.classList.remove('hidden');$('catalogEAN').focus();}
 $('catalogForm').onsubmit=e=>{e.preventDefault();try{const payload={ean:$('catalogEAN').value,sku:$('catalogSKU').value,produto:$('catalogName').value,cor:$('catalogColor').value,tamanho:$('catalogSize').value,variacoes:$('catalogVariants').value,aleatoria:$('catalogRandom').checked};if(editingCatalogIndex===null){upsertCatalog(payload)}else{const row=safeCatalogRow(payload);const next=catalog.slice();const target=editingCatalogId?next.findIndex(r=>r.__cloudId===editingCatalogId):editingCatalogIndex;if(target<0||target>=next.length)throw Error('Este cadastro foi alterado ou excluído em outro aparelho. Atualize a listagem e tente novamente.');row.__cloudId=next[target]?.__cloudId;next[target]=row;saveCatalog(next);resetCatalogForm();$('catalogSKU').focus();}}catch(err){alert('Não foi possível cadastrar: '+err.message)}};
