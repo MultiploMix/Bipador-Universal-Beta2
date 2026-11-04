@@ -263,7 +263,14 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
 #lhamaAliasReview .ean-size-confirm:has(#lhamaModelCheck){display:none!important}
 #eanReview .ean-choice,#sharedEANReview .ean-choice{cursor:pointer;min-height:58px}
 #eanReview .ean-choice:active,#sharedEANReview .ean-choice:active{background:#eaf4ed}
-</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V67 · 266 ETIQUETAS + CORES SEGURAS</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
+
+/* V68 — confirmação discreta da ETIQUETA, não da mercadoria */
+#v68LabelCue{position:fixed;z-index:10025;top:calc(env(safe-area-inset-top,0px) + 78px);left:50%;width:min(calc(100% - 28px),430px);padding:20px 16px 19px;transform:translate(-50%,-12px);opacity:0;visibility:hidden;pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;color:#fff;background:rgba(8,102,151,.97);border:2px solid #7ae7ff;border-radius:20px;box-shadow:0 10px 35px rgba(0,0,0,.42);font:600 15px/1.25 system-ui,-apple-system,sans-serif;transition:opacity .16s ease,transform .16s ease,visibility .16s ease}
+#v68LabelCue.visible{opacity:1;visibility:visible;transform:translate(-50%,0)}
+#v68LabelCue strong{font-size:clamp(20px,5vw,26px);font-weight:900;letter-spacing:.01em}
+#v68LabelCue small{font-size:clamp(15px,4vw,19px);font-weight:750;letter-spacing:.015em}
+@media(prefers-reduced-motion:reduce){#v68LabelCue{transition:none}}
+</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V68 · SOM + SINAL AO LER ETIQUETA</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
 <div class="operator-topbar"><div class="operator-kicker"><span class="live-dot"></span><span id="miniSession">Conferência em andamento</span></div><button id="discardQuick" class="discard-quick hidden" type="button" aria-label="Descartar pedido atual">✕ Descartar pedido</button></div>
 <h2 class="stage-title" id="stageTitle">Leia a etiqueta do pedido</h2>
 <p class="stage-help" id="stageHelp">Aponte a câmera para o QR Code da etiqueta.</p>
@@ -1306,6 +1313,32 @@ let v66RecentValue='',v66RecentSeenAt=0,v66CooldownUntil=0,v66ReaderPaused=false
 function v66ReviewIsOpen(){
  return !$('eanReview').classList.contains('hidden')||!$('sharedEANReview').classList.contains('hidden')||!$('lhamaAliasReview').classList.contains('hidden');
 }
+// V68 — etiqueta válida: sinal diferente do acerto/erro do produto.
+let v68LabelCueTimer=null;
+function v68SignalLabelRead(){
+ // A transição é automática; não se exige confirmação do operador.
+ try{
+  unlockAudio();
+  const notify=()=>{
+   if(!audioCtx||audioCtx.state!=='running')return;
+   playTone(520,0,.085,'sine',.19);
+   playTone(850,.11,.12,'sine',.19);
+  };
+  if(audioCtx?.state==='running')notify();
+  else if(audioCtx?.state==='suspended')audioCtx.resume().then(notify).catch(()=>{});
+ }catch(e){}
+ try{navigator.vibrate?.(85)}catch(e){} // iOS pode ignorar; o aviso visual funciona sempre.
+ let cue=document.getElementById('v68LabelCue');
+ if(!cue){
+  cue=document.createElement('div');cue.id='v68LabelCue';
+  cue.setAttribute('role','status');cue.setAttribute('aria-live','polite');
+  cue.innerHTML='<strong>✓ ETIQUETA LIDA</strong><small>AGORA LEIA O PRODUTO</small>';
+  document.body.appendChild(cue);
+ }
+ clearTimeout(v68LabelCueTimer);
+ cue.classList.add('visible');
+ v68LabelCueTimer=setTimeout(()=>cue.classList.remove('visible'),1350);
+}
 function v66SetScanPhase(mode){
  if(!scanning)return;
  activeScanType=mode;
@@ -1509,7 +1542,7 @@ async function scan(type,usarLeitorPadrao=false){
      if(!/(?:^|[\s;])(?:P|PEDIDO)\s*:/i.test(text)||!/SKU\s*:/i.test(text))return;
      const before=order?.id||null;
      load(text);
-     if(order&&order.id!==before)v66SetScanPhase('product');
+     if(order&&order.id!==before){v66SetScanPhase('product');v68SignalLabelRead();}
      else v66CooldownUntil=Date.now()+700;
     }else if(mode==='product'){
      // O QR do pedido ainda pode estar no enquadramento durante a troca de fase.
