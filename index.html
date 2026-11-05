@@ -270,7 +270,7 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
 #v68LabelCue strong{font-size:clamp(20px,5vw,26px);font-weight:900;letter-spacing:.01em}
 #v68LabelCue small{font-size:clamp(15px,4vw,19px);font-weight:750;letter-spacing:.015em}
 @media(prefers-reduced-motion:reduce){#v68LabelCue{transition:none}}
-</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V72 · KITS E ETIQUETAS MERCADO LIVRE</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
+</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V73.1 · KITS DE FACAS MERCADO LIVRE</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
 <div class="operator-topbar"><div class="operator-kicker"><span class="live-dot"></span><span id="miniSession">Conferência em andamento</span></div><button id="discardQuick" class="discard-quick hidden" type="button" aria-label="Descartar pedido atual">✕ Descartar pedido</button></div>
 <h2 class="stage-title" id="stageTitle">Leia a etiqueta do pedido</h2>
 <p class="stage-help" id="stageHelp">Aponte a câmera para o QR Code da etiqueta.</p>
@@ -1092,8 +1092,116 @@ function knownPhysicalPackV72(sku,variation){
  if(id==='AY-0235-CZ'&&!v)return {stockSku:'AY-0235-CINZA',unitsPerSet:1};
  return null;
 }
+// V73 — Regras restritas aos produtos identificados nos 11 PDFs de 05/11/2026.
+// Nunca transforma um SKU sem cor/modelo em uma cor especifica por aproximacao.
+function v73Key(value){
+ return norm(String(value||'').normalize('NFKC')).normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+  .replace(/[^A-Z0-9]+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');
+}
+// Repara somente sequencias efetivamente encontradas nos QR Codes desta auditoria.
+function v73RepairText(raw){
+ return String(raw||'')
+  .replace(/ALEATﾃ迭IO/gi,'ALEATORIO')
+  .replace(/ALEATﾃｳRIO/gi,'ALEATORIO')
+  .replace(/ﾃ田ULOS/gi,'OCULOS')
+  .replace(/OCULOS\s+ALEATORIOS/gi,'OCULOS ALEATORIA')
+  .replace(/FORM繭ES/gi,'FORMOES')
+  .replace(/AZUL C矇U/gi,'AZUL CEU');
+}
+function knownPhysicalPackV73(sku,variation){
+ const id=v73Key(sku),v=v73Key(variation);
+ // Kit de 10 facas WL-1610: quantidade confirmada pelo SKU comercial do ML.
+ // Mantem o SKU fisico WL-1610; NAO associa automaticamente ao WJ-1610 nem ao 1610.
+ // Se o EAN nao estiver cadastrado para WL-1610, a bipagem permanece bloqueada.
+ if(id==='WL-1610-KIT-10UN'){
+  if(v)throw Error('WL-1610 10UN: a etiqueta nao informa variacao; cor/modelo adicionais precisam ser validados.');
+  return {stockSku:'WL-1610',unitsPerSet:10};
+ }
+ // Kits de meiao: quantidade comercial Q refere-se ao numero de kits, nao de pares.
+ if(id==='A8055'){
+  if(v!=='PRETO-KIT-COM-2-PARES')throw Error('A8055: kit de 2 pares PRETOS nao confirmado no QR.');
+  return {stockSku:'A8055-PRETA-LISTRADA',unitsPerSet:2};
+ }
+ if(id==='AB8055'){
+  if(v!=='KIT-C-12-COR-ALEATORIA')throw Error('AB8055: kit de 12 pares ALEATORIOS nao confirmado no QR.');
+  return {stockSku:'AB8055-ALEATORIA',unitsPerSet:12};
+ }
+ if(id==='AB8055-KIT3'){
+  if(v!=='KIT-VERMELHO-VERDE-PRETO')throw Error('AB8055-KIT3: cores dos 3 pares divergentes.');
+  return {stockSku:'AB8055-VERMELHO + AB8055-VERDE + AB8055-PRETO',unitsPerSet:1};
+ }
+ // Quantidade de oculos infantis aleatorios — so para SKUs de pacote explicitos.
+ const goggles=id.match(/^MC40876-(10|20)-ALEATORIO$/);
+ if(goggles){
+  const n=Number(goggles[1]);
+  if(v!==n+'UN-OCULOS-ALEATORIA'&&v!==n+'U-OCULOS-ALEATORIO')
+   throw Error('MC40876: quantidade do SKU e da variacao nao coincidem.');
+  return {stockSku:'MC40876-ALEATORIA',unitsPerSet:n};
+ }
+ // #MC40876 com PADRAO e sem cor continua bloqueado pela regra anterior.
+ if(id==='WJ-503'&&v==='KIT-10-FACAS-ALEATORIAS')
+  return {stockSku:'WJ-503-ALEATORIA',unitsPerSet:10};
+ if(id==='WJ-211-CZ-KIT3'){
+  if(!/^CINZA-3-FITAS-ADESIVAS-DE-VEDA/.test(v))throw Error('WJ-211-CZ: cor e quantidade nao conferem.');
+  return {stockSku:'WJ-211-CINZA',unitsPerSet:3};
+ }
+ // Iscas unitarias WJ-1731: 10/15/20 unidades exigem a mesma quantidade de bipes.
+ const bait=id.match(/^WJ-1731-(10|15|20)UN$/);
+ if(bait){const n=Number(bait[1]);if(v!==('KIT-COM-'+n+'-UNIDADES'))throw Error('WJ-1731: quantidade comercial divergente.');
+  return {stockSku:'WJ-1731',unitsPerSet:n};}
+ const tape=id.match(/^WJ-211-(1|3)UN-BR$/);
+ if(tape){const n=Number(tape[1]);
+  if(v!==(n===1?'FITAS-ADESIVAS-BRANCA-1-UNIDADE':'FITAS-ADESIVAS-BRANCA-KIT-3-UNIDADES'))
+   throw Error('WJ-211: kit BRANCO com cor ou numero de fitas divergente.');
+  return {stockSku:'WJ-211-BRANCO',unitsPerSet:n};
+ }
+ if(id==='NS-5002-6UN'){
+  if(v!=='6UN-BOLINHA-ANTI-ESTRESSE-MAPA-MUNDI')throw Error('NS-5002: etiqueta nao comprova 6 bolinhas Mapa Mundi.');
+  return {stockSku:'NS-5002',unitsPerSet:6};
+ }
+ // Variacoes contraditorias de roupa: nunca aprovar vestido M como G.
+ if(id==='V002-ROSA-BEBE-M'&&/^1UN-VEST-ROSA-BEBE-G(?:-|$)/.test(v))
+  throw Error('V002 Rosa Bebe: SKU tamanho M mas etiqueta descreve G. Corrija o anuncio/QR.');
+ // Kit de quatro pecas WL-1124 e um conjunto lacrado unico; exigir EAN do MODELO A.
+ if(id==='WL-1124'&&v==='MODELO-A-4-PECAS')
+  return {stockSku:'WL-1124-MODELO-A',unitsPerSet:1};
+ if(id==='WJ-1446-KIT01'&&v==='1-DISCO-P-VIDRO-DE-100MM')
+  return {stockSku:'WJ-1446-KIT01',unitsPerSet:1};
+ // Duas variantes do mesmo porta-passaporte, preservando a cor.
+ if(id==='WJ-1626-MARROM'&&v==='1UN-CARTEIRA-PASSAPORT-E-MARROM')
+  return {stockSku:'WJ-1626-MARROM',unitsPerSet:1};
+ if(id==='WJ-1626-ROSA'&&v==='1UN-CARTEIRA-PASSAPORT-E-ROSA')
+  return {stockSku:'WJ-1626-ROSA',unitsPerSet:1};
+ // Kits de touca e oculos: combinações reconhecidas pelo SKU e V: DESTA etiqueta.
+ const swimming={
+  '2670-TOUCA-NATACAO-ROSA-ADULTO-OCULOS-PRETO':['T-ROSA-OCULOS-PRETO-ADULTO','WJ-2670-ROSA-ADULTO + WJ-2665-PRETO'],
+  '2670-TOUCA-NATACAO-PRETO-2665-OCULOS-PRETO':['T-PRETO-OCULOS-PRETO-ADULTO','WJ-2670-PRETO-ADULTO + WJ-2665-PRETO'],
+  '2670-TOUCA-NATACAO-PRETO-2665-OCULOS-VERDE':['1UN-TOUCA-DE-NATACAO-PRETO-OCULOS-VERDE','WJ-2670-PRETO-ADULTO + WJ-2665-VERDE'],
+  '2670-TOUCA-NATACAO-PRETO-2665-OCULOS-AMARELO':['1UN-TOUCA-DE-NATACAO-PRETO-OCULOS-AMARELO','WJ-2670-PRETO-ADULTO + WJ-2665-AMARELO'],
+  '2670-TOUCA-NATACAO-ROSA-2665-OCULOS-BRANCO':['1UN-TOUCA-DE-NATACAO-ROSA-OCULOS-BRANCO','WJ-2670-ROSA-ADULTO + WJ-2665-BRANCO'],
+  '2670-TOUCA-NATACAO-ROSA-ADULTO-2665-OCULOS-PT':['1UN-TOUCA-DE-NATACAO-ROSA-OCULOS-PRETO','WJ-2670-ROSA-ADULTO + WJ-2665-PRETO']
+ };
+ if(Object.prototype.hasOwnProperty.call(swimming,id)){
+  const [expected,stockSku]=swimming[id];
+  if(v!==expected)throw Error('Kit de natacao: composicao ou cor divergente entre SKU e variacao.');
+  return {stockSku,unitsPerSet:1};
+ }
+ // Modelo Azul Caneta nunca e o mesmo que Azul nessa familia A5114.
+ const mamas={
+  '1-TOUCA-MAMAS-AZ-CANETA-1-TOUCA-MAMAS-PRETO':['1-TOUCA-MAMAS-AZ-CANETA-1-TOUCA-MAMAS-PRETO','A5114-AZUL-CANETA + A5114-PRETO'],
+  '1-TOUCA-MAMAS-AZUL-1-TOUCA-MAMAS-PRETO-1':['1-TOUCA-MAMAS-AZUL-1-TOUCA-MAMAS-PRETO','A5114-AZUL + A5114-PRETO'],
+  '1-TOUCA-MAMAS-ROSA-1-TOUCA-MAMAS-PRETO':['1-TOUCA-MAMAS-ROSA-1-TOUCA-MAMAS-PRETO','A5114-ROSA + A5114-PRETO']
+ };
+ if(Object.prototype.hasOwnProperty.call(mamas,id)){
+  const [expected,stockSku]=mamas[id];
+  if(v!==expected)throw Error('Kit Mamas Mini: cores ou modelos inconsistentes.');
+  return {stockSku,unitsPerSet:1};
+ }
+ return null;
+}
+
 function parseOrder(raw){
- const s=repairLegacyQrTextV62(repairLegacyQrTextV63(repairLegacyQrTextV64(repairLegacyQrTextV65(v72ExpandValidatedOrder(raw))))).replace(/\\r\\n|\\n|\\r/g,'\n').replace(/\r\n|\r/g,'\n').trim();
+ const s=repairLegacyQrTextV62(repairLegacyQrTextV63(repairLegacyQrTextV64(repairLegacyQrTextV65(v72ExpandValidatedOrder(v73RepairText(raw)))))).replace(/\\r\\n|\\n|\\r/g,'\n').replace(/\r\n|\r/g,'\n').trim();
  const idMatch=s.match(/(?:^|[\s;])(?:PEDIDO|P)\s*:\s*(.*?)(?=\s*(?:RASTREIO|SKU)\s*:|$)/i);
  if(!idMatch||!idMatch[1].trim())throw Error('Não encontrei o pedido (P: ou PEDIDO:) no QR Code.');
  const id=idMatch[1].trim();
@@ -1113,7 +1221,7 @@ function parseOrder(raw){
   if(embeddedRandom&&!variation)variation='ALEATORIA';
   // A modalidade ALEATORIA pode aparecer no SKU, no campo V:, ou em ambos.
   // O restante da descricao comercial nao deve ser acrescentado ao SKU fisico.
-  const knownPack=knownPhysicalPackV72(sku,variation)||knownPhysicalPackV71(sku,variation)||knownPhysicalPackV69(sku,variation)||knownPhysicalPackV67(sku,variation)||knownPhysicalPackV65(sku,variation)||knownPhysicalPackV64(sku,variation)||knownPhysicalPackV63(sku,variation)||knownPhysicalPackV62(sku,variation)||knownPhysicalPackV61(sku,variation)||knownPhysicalPackV60(sku,variation)||knownPhysicalPackV59(sku,variation);
+  const knownPack=knownPhysicalPackV73(sku,variation)||knownPhysicalPackV72(sku,variation)||knownPhysicalPackV71(sku,variation)||knownPhysicalPackV69(sku,variation)||knownPhysicalPackV67(sku,variation)||knownPhysicalPackV65(sku,variation)||knownPhysicalPackV64(sku,variation)||knownPhysicalPackV63(sku,variation)||knownPhysicalPackV62(sku,variation)||knownPhysicalPackV61(sku,variation)||knownPhysicalPackV60(sku,variation)||knownPhysicalPackV59(sku,variation);
   const components=splitKitComponents(knownPack?.stockSku||sku),isKit=components.length>1,randomColor=embeddedRandom||commercialRandom;
   const unitsPerSet=knownPack?knownPack.unitsPerSet:(!isKit?physicalUnitsPerSet(sku,variation):1);
   const physicalQty=q*unitsPerSet;
@@ -1925,7 +2033,7 @@ function eanAssociationMatchesItem(catalogSku,expectedSku){
  if(a.startsWith('WJ-1417')&&b.startsWith('WJ-1417'))return a===b;
  return equivalentSku(catalogSku,expectedSku)||hasSkuPrefix(catalogSku,expectedSku);
 }
-function hasSkuPrefix(base,full){const a=skuKey(base),b=skuKey(full);return !!a&&(a===b||b.startsWith(a+'-'))}
+function hasSkuPrefix(base,full){const a=skuKey(base),b=skuKey(full);if(a==='A5114-AZUL'&&b.startsWith('A5114-AZUL-CANETA'))return false;return !!a&&(a===b||b.startsWith(a+'-'))}
 function skuFamily(v){
  const a=skuKey(v).split('-').filter(Boolean);
  // WJ-2670-PRETO-ADULTO -> WJ-2670; VT001-PRETO-M -> VT001.
