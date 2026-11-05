@@ -270,7 +270,7 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
 #v68LabelCue strong{font-size:clamp(20px,5vw,26px);font-weight:900;letter-spacing:.01em}
 #v68LabelCue small{font-size:clamp(15px,4vw,19px);font-weight:750;letter-spacing:.015em}
 @media(prefers-reduced-motion:reduce){#v68LabelCue{transition:none}}
-</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V74 · 79 ETIQUETAS SHOPEE E KITS SEGUROS</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
+</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V75 · PRETO/PRETA EQUIVALENTES</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
 <div class="operator-topbar"><div class="operator-kicker"><span class="live-dot"></span><span id="miniSession">Conferência em andamento</span></div><button id="discardQuick" class="discard-quick hidden" type="button" aria-label="Descartar pedido atual">✕ Descartar pedido</button></div>
 <h2 class="stage-title" id="stageTitle">Leia a etiqueta do pedido</h2>
 <p class="stage-help" id="stageHelp">Aponte a câmera para o QR Code da etiqueta.</p>
@@ -1289,6 +1289,16 @@ function parseOrder(raw){
  return{id,tracking,items,kitGroups:kits,packGroups,originalLines,raw:s};
 }
 // Comparação segura: modelo obrigatório na primeira posição; atributos seguintes em qualquer ordem.
+// V75 — Equivalencia exata de genero da COR na comparacao de SKU/EAN.
+// PRETA e PRETO sao a mesma cor; nenhuma outra parte do SKU muda.
+// O cadastro original no Firebase e a informacao da etiqueta sao preservados.
+const V75_COLOR_ALIAS=Object.freeze({PRETA:'PRETO'});
+function v75EquivalentColorToken(token){return V75_COLOR_ALIAS[token]||token;}
+function v75ComparableSkuPrefix(canonicalSku){
+ const parts=String(canonicalSku||'').split('-');
+ return parts.map((token,i)=>i===0?token:v75EquivalentColorToken(token)).join('-');
+}
+
 function skuParts(value){
  // Usa a mesma forma canonica dos EANs, inclusive a equivalencia WL/WJ-1417.
  // Nao remove as variacoes -A, -B, -PRETO etc.: precisam continuar coincidindo.
@@ -1310,7 +1320,7 @@ function skuParts(value){
   if(a==='AZ'&&b==='CLARO'){filtered.push('AZULCLARO');i++;}
   else if(a==='AZUL'&&b==='CLARO'){filtered.push('AZULCLARO');i++;}
   else if(a==='VERMELHO'&&b==='PIMENTA'){filtered.push('VERMELHO');i++;}
-  else filtered.push(a==='AZ'?'AZUL':a);
+  else filtered.push(v75EquivalentColorToken(a==='AZ'?'AZUL':a));
  }
  return {model,attrs:filtered.sort(),canonical:cleaned};
 }
@@ -2054,7 +2064,13 @@ function eanAssociationMatchesItem(catalogSku,expectedSku){
  if(a.startsWith('WJ-1417')&&b.startsWith('WJ-1417'))return a===b;
  return equivalentSku(catalogSku,expectedSku)||hasSkuPrefix(catalogSku,expectedSku);
 }
-function hasSkuPrefix(base,full){const a=skuKey(base),b=skuKey(full);if(a==='A5114-AZUL'&&b.startsWith('A5114-AZUL-CANETA'))return false;return !!a&&(a===b||b.startsWith(a+'-'))}
+function hasSkuPrefix(base,full){
+ const baseKey=skuKey(base),fullKey=skuKey(full);
+ // Continua bloqueando a cor AZUL simples quando o pedido pede AZUL CANETA.
+ if(baseKey==='A5114-AZUL'&&fullKey.startsWith('A5114-AZUL-CANETA'))return false;
+ const a=v75ComparableSkuPrefix(baseKey),b=v75ComparableSkuPrefix(fullKey);
+ return !!a&&(a===b||b.startsWith(a+'-'));
+}
 function skuFamily(v){
  const a=skuKey(v).split('-').filter(Boolean);
  // WJ-2670-PRETO-ADULTO -> WJ-2670; VT001-PRETO-M -> VT001.
