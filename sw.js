@@ -1,4 +1,4 @@
-const CACHE='bipador-universal-v75-preto-preta-01';
+const CACHE='bipador-universal-v78-auditoria-347-fitas-cinza-02';
 const ASSETS=['./','./index.html','./manifest.webmanifest','./icon.svg','./logo-multiplo-mix.png','./leitor-wasm.js','./firebase-config.js','./catalog-cloud.js'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)));self.skipWaiting()});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>/^bipador-universal-v\d+/.test(k)&&k!==CACHE).map(k=>caches.delete(k)))));self.clients.claim()});
