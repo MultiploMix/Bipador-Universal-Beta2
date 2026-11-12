@@ -1,4 +1,4 @@
-const CACHE='bipador-universal-v82-20261112-selecao-um-toque-01';
+const CACHE='bipador-universal-v84-20261112-cadastro-alias-01';
 const ASSETS=['./','./index.html','./manifest.webmanifest','./icon.svg','./logo-multiplo-mix.png','./leitor-wasm.js','./firebase-config.js','./catalog-cloud.js'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)));self.skipWaiting()});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>/^bipador-universal-v\d+/.test(k)&&k!==CACHE).map(k=>caches.delete(k)))));self.clients.claim()});
