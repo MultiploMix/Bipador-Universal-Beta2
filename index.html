@@ -269,7 +269,7 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
 #v68LabelCue strong{font-size:clamp(20px,5vw,26px);font-weight:900;letter-spacing:.01em}
 #v68LabelCue small{font-size:clamp(15px,4vw,19px);font-weight:750;letter-spacing:.015em}
 @media(prefers-reduced-motion:reduce){#v68LabelCue{transition:none}}
-</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V81 · CÂMERA ESTÁVEL + ERROS VISÍVEIS</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
+#eanSizeConfirmPanel,#eanConfirm,#sharedEANCheckPanel,#sharedEANConfirm{display:none!important}#eanChoices .ean-choice,#sharedEANChoices .ean-choice{min-height:64px;cursor:pointer;touch-action:manipulation}</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V82 · CONFERÊNCIA EM UM TOQUE</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
 <div class="operator-topbar"><div class="operator-kicker"><span class="live-dot"></span><span id="miniSession">Conferência em andamento</span></div><button id="discardQuick" class="discard-quick hidden" type="button" aria-label="Descartar pedido atual">✕ Descartar pedido</button></div>
 <h2 class="stage-title" id="stageTitle">Leia a etiqueta do pedido</h2>
 <p class="stage-help" id="stageHelp">Aponte a câmera para o QR Code da etiqueta.</p>
@@ -2734,8 +2734,9 @@ function openEANReview(code,options,matches,families,sourceKind='EAN'){
  const warning=$('eanExpectedWarning');
  warning.classList.toggle('hidden',!missing.length);
  warning.textContent=missing.length?'Atenção: '+missing.map(i=>i.sku).join(', ')+' ainda não corresponde às opções cadastradas. Revise a grafia da cor e o tamanho em Gerenciar EANs e SKUs. A leitura não será aprovada com a variação errada.':'';
- if(options.some(o=>o.source==='base'&&!o.registeredSize)) $('eanReviewDescription').textContent+=' Se o cadastro não informar tamanho, confirme-o fisicamente na próxima etapa.';
- $('eanChoices').innerHTML=options.map((r,i)=>'<label class="ean-choice"><input type="radio" name="eanVariation" value="'+i+'"><span>'+escapeHtml(r.title||r.sku)+'<small>'+escapeHtml([r.produto,'SKU: '+r.sku].filter(Boolean).join(' · '))+'</small></span></label>').join('')+'<label class="ean-choice ean-wrong"><input type="radio" name="eanVariation" value="'+options.length+'"><span>OUTRA COR OU TAMANHO<small>O produto observado não está nas variações cadastradas</small></span></label>';
+ if(options.some(o=>o.source==='base'&&!o.registeredSize)) $('eanReviewDescription').textContent+=' Se o cadastro não informar tamanho, confira-o na peça e toque uma vez na opção correta.';
+ const v82OptionTitle=(r)=>{const m=eanEligibleMatches(r,matches);return (r.title||r.sku)+(m.length===1&&m[0].missingSize?' · TAMANHO '+m[0].missingSize:'');};
+ $('eanChoices').innerHTML=options.map((r,i)=>'<label class="ean-choice"><input type="radio" name="eanVariation" value="'+i+'"><span>'+escapeHtml(v82OptionTitle(r))+'<small>'+escapeHtml([r.produto,'SKU: '+r.sku].filter(Boolean).join(' · '))+'</small></span></label>').join('')+'<label class="ean-choice ean-wrong"><input type="radio" name="eanVariation" value="'+options.length+'"><span>OUTRA COR OU TAMANHO<small>O produto observado não está nas variações cadastradas</small></span></label>';
  $('eanSizeConfirm').checked=false;$('eanSizeConfirmPanel').classList.add('hidden');$('eanConfirm').disabled=true;$('eanConfirm').textContent=random?'Confirmar cor observada':options.some(o=>o.source==='pedido-visual')?'Confirmar após inspeção visual':'Confirmar variação observada';$('eanReview').classList.remove('hidden');
 }
 function closeEANReview(){eanPending=null;$('eanReview').classList.add('hidden')}
@@ -2816,7 +2817,7 @@ function updateSharedEANChoice(){
 function openSharedEANReview(code,options){
  if(!order)return;
  sharedEANPending={code,options,selected:-1,orderId:order.id};
- $('sharedEANDescription').textContent='EAN '+code+' é utilizado em '+options.length+' modelos ou variações cadastradas. O código sozinho não identifica qual está na sua mão.';
+ $('sharedEANDescription').textContent='EAN '+code+' é utilizado em '+options.length+' modelos ou variações cadastradas. O código sozinho não identifica qual está na sua mão. Toque uma vez no modelo físico correto.';
  $('sharedEANExpected').textContent=order.items.filter(i=>i.read<i.qtd).map(i=>i.randomColor?i.baseSku+' (cor aleatória)':i.sku).join(' ou ');
  $('sharedEANChoices').innerHTML=options.map((opt,i)=>
   '<label class="ean-choice"><input type="radio" name="sharedEANModel" value="'+i+'"><span><strong>'+escapeHtml(opt.title)+'</strong><small>SKU: '+escapeHtml(opt.sku)+'</small></span></label>'
@@ -2830,7 +2831,8 @@ function openSharedEANReview(code,options){
 $('sharedEANChoices').addEventListener('change',e=>{
  if(e.target.name!=='sharedEANModel'||!sharedEANPending)return;
  sharedEANPending.selected=Number(e.target.value);
- $('sharedEANCheck').checked=false;updateSharedEANChoice();
+ $('sharedEANCheck').checked=true;updateSharedEANChoice();
+ $('sharedEANConfirm').onclick();
 });
 $('sharedEANCheck').addEventListener('change',updateSharedEANChoice);
 $('sharedEANCancel').onclick=()=>{closeSharedEANReview();v66ResumeAfterChoice();showMessage('EAN compartilhado: conferência cancelada, nenhuma unidade contabilizada.');};
@@ -2857,7 +2859,7 @@ $('sharedEANConfirm').onclick=()=>{
  }
  const item=openMatches[0].item;
  const accepted=check(item.sku,'visual');
- if(accepted)logScan('EAN COMPARTILHADO',pending.code+' → '+option.sku,'MODELO CONFIRMADO VISUALMENTE');
+ if(accepted){logScan('EAN COMPARTILHADO',pending.code+' → '+option.sku,'MODELO CONFIRMADO VISUALMENTE');if(scanning)v66ResumeAfterChoice();}
 };
 // V55 — Exceção de inspeção visual ESTRITAMENTE controlada para o cadastro
 // CG248 (EAN 7899753535876) contra a etiqueta CG9248-ROSA-MOCHILA-LHAMA-ROSA.
@@ -3042,7 +3044,7 @@ function processEAN(raw){
  if(single){const sku=result.options[0].sku;const item=order.items.find(i=>skuKey(i.sku)===skuKey(sku)||equivalentSku(i.sku,sku));if(item){check(item.sku,'ean');return}showMessage('⛔ PRODUTO ERRADO — este EAN está cadastrado para '+sku+', mas o pedido solicita outro SKU.','danger');logScan('EAN',code,'SKU DIVERGENTE');signal(false,'EAN de outra variação');return}
  openEANReview(code,result.options,order.items.filter(i=>result.families.some(f=>hasSkuPrefix(f,i.sku))),result.families);
 }
-$('eanChoices').addEventListener('change',e=>{if(e.target.name!=='eanVariation'||!eanPending)return;choosePendingEAN(Number(e.target.value));});
+$('eanChoices').addEventListener('change',e=>{if(e.target.name!=='eanVariation'||!eanPending)return;choosePendingEAN(Number(e.target.value));$('eanSizeConfirm').checked=true;updateEANConfirmation();$('eanConfirm').onclick();});
 $('eanSizeConfirm').addEventListener('change',updateEANConfirmation);
 $('eanConfirm').onclick=()=>{
  const pending=eanPending;
@@ -3061,7 +3063,8 @@ $('eanConfirm').onclick=()=>{
  if(matches.length!==1){showMessage(matches.length?'⛔ VARIAÇÃO AMBÍGUA — cadastre o tamanho específico antes de conferir.':'⛔ VARIAÇÃO ERRADA — '+candidate.title+' não corresponde ao pedido.','danger');logScan('EAN VISUAL',code+' → '+candidate.sku,'ERRO');signal(false,'Variação incorreta');return}
  // Aprova o SKU COMPLETO da etiqueta após confirmação visual da cor e, se
  // ausente no cadastro, confirmação explícita do tamanho físico.
- check(matches[0].item.sku,pending.sourceKind==='QR do produto'?'visual-qr':'visual');
+ const accepted=check(matches[0].item.sku,pending.sourceKind==='QR do produto'?'visual-qr':'visual');
+ if(accepted&&scanning)v66ResumeAfterChoice();
 };
 $('eanCancel').onclick=()=>{closeEANReview();v66ResumeAfterChoice();if(order)showMessage('Conferência visual cancelada. Produto não contabilizado.');};
 function resetCatalogForm(){editingCatalogIndex=null;editingCatalogId=null;$('catalogEAN').value='';$('catalogSKU').value='';$('catalogName').value='';$('catalogColor').value='';$('catalogSize').value='';$('catalogVariants').value='';$('catalogRandom').checked=false;const sub=$('catalogSubmit');if(sub)sub.textContent='＋ Salvar associação';$('catalogCancelEdit')?.classList.add('hidden');}
