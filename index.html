@@ -269,7 +269,7 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
 #v68LabelCue strong{font-size:clamp(20px,5vw,26px);font-weight:900;letter-spacing:.01em}
 #v68LabelCue small{font-size:clamp(15px,4vw,19px);font-weight:750;letter-spacing:.015em}
 @media(prefers-reduced-motion:reduce){#v68LabelCue{transition:none}}
-</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V80 · SAÍDA IMEDIATA EM ERROS</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
+</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V81 · CÂMERA ESTÁVEL + ERROS VISÍVEIS</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
 <div class="operator-topbar"><div class="operator-kicker"><span class="live-dot"></span><span id="miniSession">Conferência em andamento</span></div><button id="discardQuick" class="discard-quick hidden" type="button" aria-label="Descartar pedido atual">✕ Descartar pedido</button></div>
 <h2 class="stage-title" id="stageTitle">Leia a etiqueta do pedido</h2>
 <p class="stage-help" id="stageHelp">Aponte a câmera para o QR Code da etiqueta.</p>
@@ -1969,14 +1969,32 @@ async function toggleTorch(){
  }
  if(reader===scanning)button.disabled=false;
 }
-async function closeScan(){
+// V81 — cada abertura espera o desligamento anterior; duas chamadas nao disputam o stream.
+let v81CameraRequest=0, v81CloseChain=Promise.resolve();
+async function closeScan(forNextOpen=false){
+ if(!forNextOpen)v81CameraRequest++; // Fechamento manual/erro cancela abertura pendente.
  if(v70WakeTimer!==null){clearTimeout(v70WakeTimer);v70WakeTimer=null;}
  clearFastRelease();fastPaused=false;v66ReaderPaused=false;v66RecentValue='';v66CooldownUntil=0;
  scanGeneration++;
- const wasCatalog=activeScanType==='ean-catalog';const obj=scanning;scanning=null;activeScanType=null;
- $('cameraPanel').classList.add('hidden');document.body.classList.remove('camera-open','scanning-product');
- if(obj){try{await obj.stop()}catch(e){}try{obj.clear()}catch(e){}}
- $('reader').innerHTML='';resetCameraControls();busy=false;if(wasCatalog)openCatalog();
+ const releaseGeneration=scanGeneration;
+ const wasCatalog=activeScanType==='ean-catalog', obj=scanning;
+ scanning=null;activeScanType=null;busy=false;
+ // Ocultar a camera de forma sincrona, antes de aguardar a API do navegador.
+ $('cameraPanel').classList.add('hidden');
+ document.body.classList.remove('camera-open','scanning-product');
+ resetCameraControls();
+ const previous=v81CloseChain;
+ const cleanup=(async()=>{
+  try{await previous}catch(e){}
+  if(obj){try{await obj.stop()}catch(e){}try{await obj.clear()}catch(e){}}
+  // Um scanner antigo nao pode limpar a previa de uma sessao mais nova.
+  if(!scanning&&scanGeneration===releaseGeneration){
+   $('reader').innerHTML='';
+   if(wasCatalog)openCatalog();
+  }
+ })();
+ v81CloseChain=cleanup.catch(()=>{});
+ await cleanup;
 }
 // V70: o motor WASM pausa após o primeiro QR/EAN.
 // Rearmar a decodificação sem encerrar o stream da câmera.
@@ -2004,11 +2022,13 @@ function v70WakeReader(reader,token,delay=65){
 
 let wasmDisabledForSession=false;
 async function scan(type,usarLeitorPadrao=false){
+ const v81Request=++v81CameraRequest;
  unlockAudio();
  if(!window.isSecureContext){showMessage('Abra o aplicativo por HTTPS no Safari.','danger');return}
  if(type==='product'&&await resumeProductReader())return;
  if(!window.Html5Qrcode&&!window.BarcodeDetectionAPI?.BarcodeDetector){showMessage('Nenhum leitor disponível. Verifique a internet e atualize a página.','danger');return}
- await closeScan();
+ await closeScan(true);
+ if(v81Request!==v81CameraRequest)return; // Um toque mais novo ou um erro cancelou esta abertura.
  const token=++scanGeneration;
  activeScanType=type;
  if(type==='ean-catalog')$('catalogPanel').classList.add('hidden');
@@ -2038,7 +2058,7 @@ async function scan(type,usarLeitorPadrao=false){
 
   await reader.start({facingMode:'environment'}, {
    // Evita resoluções/foco forçados: no Safari isso já causou tela preta.
-   fps:type==='list'?12:18,disableFlip:true,
+   fps:type==='list'?10:15,disableFlip:true,
    qrbox:(w,h)=>{
     const maxW=Math.max(80,Math.floor(w*.96));
     if(type==='product'||type==='order'||type==='ean-catalog'){
@@ -2053,7 +2073,7 @@ async function scan(type,usarLeitorPadrao=false){
    const mode=activeScanType,now=Date.now();
    if(now<v66CooldownUntil){v70WakeReader(reader,token,v66CooldownUntil-now+65);return;}
    // A mesma embalagem parada na câmera nunca deve contar duas vezes.
-   if(mode==='product'&&text===v66RecentValue&&now-v66RecentSeenAt<700){
+   if(mode==='product'&&text===v66RecentValue&&now-v66RecentSeenAt<950){
     v66RecentSeenAt=now;v70WakeReader(reader,token,180);return;
    }
    busy=true;
@@ -2074,7 +2094,7 @@ async function scan(type,usarLeitorPadrao=false){
       // Pausa somente o decodificador: a câmera e a prévia permanecem abertas.
       try{if(typeof reader.pause==='function'){reader.pause(true);v66ReaderPaused=true;}}catch(e){v66ReaderPaused=false;}
      }
-     v66CooldownUntil=Date.now()+320;
+     v66CooldownUntil=Date.now()+430;
     }else{
      await closeScan();
      if(mode==='list')importMaster(text);
