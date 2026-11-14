@@ -278,7 +278,7 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
 #v68LabelCue strong{font-size:clamp(20px,5vw,26px);font-weight:900;letter-spacing:.01em}
 #v68LabelCue small{font-size:clamp(15px,4vw,19px);font-weight:750;letter-spacing:.015em}
 @media(prefers-reduced-motion:reduce){#v68LabelCue{transition:none}}
-#eanSizeConfirmPanel,#eanConfirm,#sharedEANCheckPanel,#sharedEANConfirm{display:none!important}#eanChoices .ean-choice,#sharedEANChoices .ean-choice{min-height:64px;cursor:pointer;touch-action:manipulation}</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V86 · CORREÇÕES ML, EAN E KITS · UM TOQUE</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
+#eanSizeConfirmPanel,#eanConfirm,#sharedEANCheckPanel,#sharedEANConfirm{display:none!important}#eanChoices .ean-choice,#sharedEANChoices .ean-choice{min-height:64px;cursor:pointer;touch-action:manipulation}</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V87 · CONFERÊNCIA E TOTAIS CORRIGIDOS · UM TOQUE</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
 <div class="operator-topbar"><div class="operator-kicker"><span class="live-dot"></span><span id="miniSession">Conferência em andamento</span></div><button id="discardQuick" class="discard-quick hidden" type="button" aria-label="Descartar pedido atual">✕ Descartar pedido</button></div>
 <h2 class="stage-title" id="stageTitle">Leia a etiqueta do pedido</h2>
 <p class="stage-help" id="stageHelp">Aponte a câmera para o QR Code da etiqueta.</p>
@@ -1468,8 +1468,9 @@ function knownPhysicalPackV84(sku,variation){
  const id=v73Key(sku),v=v73Key(variation);
  // V86: novo SKU comercial ML confirmado pelo operador: 3 fitas BRANCAS.
  // Preservar quantidade física; não deduzir unidades de SKU genérico WJ211.
- if(id==='WJ211-3UN-BRANCO'||id==='WJ-211-3UN-BRANCO'){
-  if(v && v!=='3-FITAS-BRANCAS' && v!=='KIT-3-FITAS-BRANCAS')
+ if(/^WJ-?211-3UN-BRANC(?:O|A|OS|AS)$/.test(id)){
+  // V87: 'BRANCA' e 'BRANCO' descrevem as MESMAS 3 fitas. Nenhum outro tamanho/cor inferido.
+  if(v && !['3-FITAS-BRANCAS','KIT-3-FITAS-BRANCAS','3-FITAS-BRANCO','KIT-3-FITAS-BRANCO','KIT-COM-3-FITAS-BRANCO'].includes(v))
    throw Error('WJ211: SKU indica 3 BRANCAS, mas V: é diferente. Corrija a etiqueta.');
   return {stockSku:'WJ-211-BRANCO',unitsPerSet:3};
  }
@@ -1486,7 +1487,7 @@ function knownPhysicalPackV84(sku,variation){
 function parseOrder(raw){
  const s=repairLegacyQrTextV62(repairLegacyQrTextV63(repairLegacyQrTextV64(repairLegacyQrTextV65(v72ExpandValidatedOrder(v73RepairText(raw)))))).replace(/\\r\\n|\\n|\\r/g,'\n').replace(/\r\n|\r/g,'\n').trim();
  const idMatch=s.match(/(?:^|[\s;])(?:PEDIDO|P)\s*:\s*(.*?)(?=\s*(?:RASTREIO|SKU)\s*:|$)/i);
- if(!idMatch||!idMatch[1].trim())throw Error('Não encontrei o pedido (P: ou PEDIDO:) no QR Code.');
+ if(!idMatch||!idMatch[1].trim())throw Error('QR SEM DADOS DE CONFERÊNCIA: não encontrei P: ou PEDIDO:. É possível que você tenha lido o QR logístico da transportadora. Utilize o QR BipaMix com SKU e quantidade ou solicite a reimpressão da etiqueta. Nenhum produto foi contabilizado.');
  const id=idMatch[1].trim();
  const trackMatch=s.match(/(?:^|[\s;])RASTREIO\s*:\s*(.*?)(?=\s*SKU\s*:|$)/i);
  const tracking=trackMatch?trackMatch[1].trim():'';
@@ -1721,10 +1722,13 @@ function render(){
  $('orderInfo').textContent='Pedido: '+order.id+(order.tracking?' | Rastreio: '+order.tracking:'');
  const kits=order.kitGroups||[];
  const kitQty=kits.reduce((n,k)=>n+k.qtd,0);
- const kitHeader=kits.length?'<div class="kit-info"><span>📦 '+kitQty+' kit'+(kitQty===1?'':'s')+' · confira cada componente</span><strong>'+kits.reduce((n,k)=>n+k.qtd*k.componentes.length,0)+' leitura(s) necessárias</strong></div>':'';
+ const kitHeader=kits.length?'<div class="kit-info"><span>📦 '+kitQty+' kit'+(kitQty===1?'':'s')+' · conferir cada componente separadamente</span></div>':'';
  const packGroups=order.packGroups||[];
- const packHeader=packGroups.map(p=>'<div class="kit-info"><span>📦 '+p.conjuntos+' conjunto'+(p.conjuntos===1?'':'s')+' × '+p.unidadesPorConjunto+' unidades</span><strong>'+p.unidadesFisicas+' bipes obrigatórios</strong></div>').join('');
- $('items').innerHTML=kitHeader+packHeader+order.items.map(i=>'<div class="line kit-line"><span class="kit-mark '+(i.read>=i.qtd?'done':'')+'">'+(i.read>=i.qtd?'✓':'•')+'</span><div class="kit-sku"><b>'+escapeHtml(i.randomColor?i.baseSku+' · COR ALEATÓRIA'+(i.randomSize?' · '+i.randomSize:''):i.sku)+'</b>'+(kits.some(k=>k.componentes.includes(i.sku))?'<small>Produto '+(kits.flatMap(k=>k.componentes).indexOf(i.sku)+1)+' do kit</small>':'')+'</div><span>'+i.read+' / '+i.qtd+'</span></div>').join('');
+ // V87: o total correto é a soma de TODOS os produtos, incluindo itens mistos
+ // que foram desmembrados em SKUs físicos e não constam em packGroups.
+ const totalHeader=(kits.length||packGroups.length||order.items.length>1)?'<div class="kit-info"><span>📋 TOTAL DO PEDIDO</span><strong>'+total+' bipes físicos obrigatórios</strong></div>':'';
+ const packHeader=packGroups.map(p=>'<div class="kit-info"><span>📦 '+p.conjuntos+' conjunto'+(p.conjuntos===1?'':'s')+' × '+p.unidadesPorConjunto+' unidades</span><strong>'+p.unidadesFisicas+' bipes neste conjunto</strong></div>').join('');
+ $('items').innerHTML=totalHeader+kitHeader+packHeader+order.items.map(i=>'<div class="line kit-line"><span class="kit-mark '+(i.read>=i.qtd?'done':'')+'">'+(i.read>=i.qtd?'✓':'•')+'</span><div class="kit-sku"><b>'+escapeHtml(i.randomColor?i.baseSku+' · COR ALEATÓRIA'+(i.randomSize?' · '+i.randomSize:''):i.sku)+'</b>'+(kits.some(k=>k.componentes.includes(i.sku))?'<small>Produto '+(kits.flatMap(k=>k.componentes).indexOf(i.sku)+1)+' do kit</small>':'')+'</div><span>'+i.read+' / '+i.qtd+'</span></div>').join('');
  $('orderProgress').classList.remove('hidden');$('orderProgressText').textContent=read+' de '+total+(order.kitGroups?.length?' componentes':order.packGroups?.length?' unidades físicas':' itens')+' conferidos';
  $('orderProgressPercent').textContent=percent+'%';$('orderProgressFill').style.width=percent+'%';
  $('scanProduct').disabled=read===total;$('nextOrder').classList.toggle('hidden',read!==total);updateFlow();
@@ -1738,7 +1742,7 @@ function updateFlow(){
  const doneSet=new Set(listRecords.map(p=>norm(p.id)));
  const done=total?expectedOrders.filter(id=>doneSet.has(id)).length:listRecords.length;
  const txt=total?'Conferidos '+done+'/'+total+' · Pendentes '+(total-done):'Conferidos '+listRecords.length+' · Lista sem total importado';
- const active=order?(' · Pedido '+order.id+' ('+order.items.reduce((n,i)=>n+i.read,0)+'/'+order.items.reduce((n,i)=>n+i.qtd,0)+' itens)'):'';
+ const active=order?(' · Pedido '+order.id+' ('+order.items.reduce((n,i)=>n+i.read,0)+'/'+order.items.reduce((n,i)=>n+i.qtd,0)+' bipes)'):'';
  $('quickStatus').textContent=txt+active;
 }
 let legacyVariantRepair=null;
@@ -1763,8 +1767,11 @@ function load(raw){
   }
   legacyVariantRepair=null;$('legacyVariantPanel').classList.add('hidden');
   order=o;logScan('ETIQUETA',o.id,'LIDA');persistList();render();
-  const packMessage=o.packGroups.length?'📦 '+o.packGroups.map(p=>p.conjuntos+' conjunto(s) com '+p.unidadesPorConjunto+' unidades cada: '+p.unidadesFisicas+' bipes obrigatórios.').join(' '):'';
-  showMessage(packMessage|| (o.kitGroups.length?'📦 Kit detectado automaticamente: confira cada componente separadamente. Só será concluído após todas as leituras.':'Pedido carregado. Escaneie os produtos.'),'success');$('rawOrder').value='';
+  const totalFisico=o.items.reduce((count,item)=>count+item.qtd,0);
+  const parts=o.items.map(item=>item.sku+': '+item.qtd).join(' · ');
+  const hasKits=o.packGroups.length||o.kitGroups.length||o.items.length>1;
+  const msg=hasKits?'📦 TOTAL DO PEDIDO: '+totalFisico+' bipes físicos obrigatórios. '+parts+'. Confira TODOS os produtos antes de finalizar.':'Pedido carregado. Escaneie os produtos.';
+  showMessage(msg,'success');$('rawOrder').value='';
  }catch(e){
   legacyVariantRepair=e.legacy||null;
   $('legacyVariantPanel').classList.toggle('hidden',!legacyVariantRepair);
