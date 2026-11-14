@@ -35,6 +35,7 @@ button:focus-visible{outline:3px solid #234;outline-offset:2px}
 .notice{line-height:1.4}
 @media(max-width:390px){.dash-tools{flex-wrap:wrap}.btn-quiet{flex:1}.flowbar span{font-size:10px}header small{font-size:11px}}
 
+
 /* V20 — bancada primeiro; painel continua disponível logo abaixo. */
 .quick-status{background:#fff;border:1px solid #dee7ea;border-left:4px solid #16804d;border-radius:12px;padding:11px 13px;margin:0 0 11px;font-size:13px;color:#2b4055;line-height:1.45;overflow-wrap:anywhere}
 .quick-status strong{color:#176c45}
@@ -64,6 +65,7 @@ button:focus-visible{outline:3px solid #234;outline-offset:2px}
 #cameraPanel #zoomControls input{min-height:0;height:26px}
 #cameraPanel #closeCamera{width:calc(100% - 32px);margin:8px 16px calc(env(safe-area-inset-bottom,0px) + 10px);min-height:50px}
 #cameraPanel #reader{min-height:180px}
+
 
 /* V23: camera ampla, controles compactos, zoom nativo opcional */
 #cameraPanel{position:fixed!important;inset:0!important;z-index:9000!important;width:100vw!important;height:100dvh!important;max-height:100dvh!important;background:#050608!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;overflow:hidden!important;display:block!important;color:#fff}
@@ -97,6 +99,7 @@ button:focus-visible{outline:3px solid #234;outline-offset:2px}
 #cameraPanel .camera-status{position:absolute;z-index:6;bottom:calc(env(safe-area-inset-bottom,0px) + 84px);left:12px;right:12px;padding:7px 10px;text-align:center;color:#fff;font-size:12px;line-height:1.4;background:#111a25d9;border-radius:9px;pointer-events:none;min-height:0}
 #cameraPanel .camera-status:empty{display:none!important}
 @media (max-width:370px){#cameraPanel #cameraTitle{font-size:14px!important}#cameraPanel .camera-topbar{padding-left:10px;padding-right:10px}#cameraPanel .camera-bottom{left:8px;right:8px}#cameraPanel button.camera-torch{padding:0 8px;font-size:12px}}
+
 
 /* V24: cadastro EAN sem alterar o leitor existente */
 .catalog-overlay,.ean-review{position:fixed;inset:0;z-index:10500;background:#172033bc;display:flex;justify-content:center;align-items:center;padding:12px}
@@ -144,6 +147,7 @@ button:focus-visible{outline:3px solid #234;outline-offset:2px}
 /* Enquadramento visual acompanha a prioridade do código, sem cobrir a imagem. */
 body.scanning-product #cameraPanel .camera-reticle{width:min(91vw,420px);aspect-ratio:1.35/1;top:47%}
 body.scanning-product #cameraPanel .camera-reticle i{width:29px;height:29px}
+
 
 /* V33 — Modo simples para embalagem. Funcionalidades administrativas preservadas em painel recolhido. */
 :root{color:#213044;background:#f5f6f9}
@@ -218,6 +222,7 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
 #items .kit-line .kit-mark{width:23px;height:23px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:900;background:#edf1f5;color:#6f7e90;flex:none}
 #items .kit-line .kit-mark.done{background:#d9f5e6;color:#127a43}
 
+
 /* V36 — atalhos essenciais na bancada, mantendo o leitor WASM da V34/V35. */
 .operator-topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
 .operator-topbar .operator-kicker{flex:1;min-width:0;margin:0;font-size:12px}
@@ -232,6 +237,7 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
 #operatorCard .manual-entry-row input{flex:1;min-width:0;width:auto;height:46px;margin:0;padding:10px 12px;background:white;border:1px solid #cbd5e1;border-radius:10px;font-size:16px}
 #operatorCard .manual-entry-row button{flex:none;width:auto;min-height:46px;margin:0;padding:10px 14px;background:#24354c;color:white;border-radius:10px;font-size:14px;font-weight:800}
 @media(max-width:375px){#operatorCard .discard-quick{font-size:11px;padding:8px 9px}.operator-topbar .operator-kicker{font-size:11px}}
+
 
 /* V46 — Catálogo compartilhado (sem poluir a tela de embalagem) */
 .cloud-card{background:#edf5fd;border:1px solid #cbddee;border-radius:13px;padding:13px;margin:0 0 14px}
@@ -256,12 +262,15 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
 #sharedEANReview .ean-size-confirm{margin:14px 0}
 @media(max-width:400px){#sharedEANReview .ean-review-sheet{padding:20px 17px}#sharedEANReview .ean-choice{padding:13px 12px}}
 
+
 /* V66 — escolha visual em um toque: nunca existe segunda confirmação. */
+
 
 #lhamaAliasReview #lhamaAliasConfirm,
 #lhamaAliasReview .ean-size-confirm:has(#lhamaModelCheck){display:none!important}
 #eanReview .ean-choice,#sharedEANReview .ean-choice{cursor:pointer;min-height:58px}
 #eanReview .ean-choice:active,#sharedEANReview .ean-choice:active{background:#eaf4ed}
+
 
 /* V68 — confirmação discreta da ETIQUETA, não da mercadoria */
 #v68LabelCue{position:fixed;z-index:10025;top:calc(env(safe-area-inset-top,0px) + 78px);left:50%;width:min(calc(100% - 28px),430px);padding:20px 16px 19px;transform:translate(-50%,-12px);opacity:0;visibility:hidden;pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;color:#fff;background:rgba(8,102,151,.97);border:2px solid #7ae7ff;border-radius:20px;box-shadow:0 10px 35px rgba(0,0,0,.42);font:600 15px/1.25 system-ui,-apple-system,sans-serif;transition:opacity .16s ease,transform .16s ease,visibility .16s ease}
@@ -269,7 +278,7 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
 #v68LabelCue strong{font-size:clamp(20px,5vw,26px);font-weight:900;letter-spacing:.01em}
 #v68LabelCue small{font-size:clamp(15px,4vw,19px);font-weight:750;letter-spacing:.015em}
 @media(prefers-reduced-motion:reduce){#v68LabelCue{transition:none}}
-#eanSizeConfirmPanel,#eanConfirm,#sharedEANCheckPanel,#sharedEANConfirm{display:none!important}#eanChoices .ean-choice,#sharedEANChoices .ean-choice{min-height:64px;cursor:pointer;touch-action:manipulation}</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V84 · CATÁLOGO E ALIASES · UM TOQUE</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
+#eanSizeConfirmPanel,#eanConfirm,#sharedEANCheckPanel,#sharedEANConfirm{display:none!important}#eanChoices .ean-choice,#sharedEANChoices .ean-choice{min-height:64px;cursor:pointer;touch-action:manipulation}</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V86 · CORREÇÕES ML, EAN E KITS · UM TOQUE</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
 <div class="operator-topbar"><div class="operator-kicker"><span class="live-dot"></span><span id="miniSession">Conferência em andamento</span></div><button id="discardQuick" class="discard-quick hidden" type="button" aria-label="Descartar pedido atual">✕ Descartar pedido</button></div>
 <h2 class="stage-title" id="stageTitle">Leia a etiqueta do pedido</h2>
 <p class="stage-help" id="stageHelp">Aponte a câmera para o QR Code da etiqueta.</p>
@@ -904,6 +913,7 @@ function knownPhysicalPackV65(sku,variation){
  return null;
 }
 
+
 // V67: regras restritas aos formatos presentes nos seis PDFs.
 // WJ-2189 não é alterado: usuário informou que a ventosa não tem EAN.
 function v67Compact(s){return norm(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Z0-9]+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');}
@@ -985,6 +995,7 @@ function knownPhysicalPackV69(sku,variation){
  return null;
 }
 
+
 // Caso não seja possível normalizar o QR, mostrar apenas SKU/V recebidos,
 // sem expor endereço, nome, número de pedido ou rastreio no diagnóstico.
 function v69LabelDiagnostic(raw,error){
@@ -994,6 +1005,7 @@ function v69LabelDiagnostic(raw,error){
  if(!m)return msg;
  return msg+' | SKU recebido: '+m[1].trim().slice(0,45)+' | Variação recebida: '+m[2].trim().slice(0,95);
 }
+
 
 // V71 — normalizações EXCLUSIVAS dos três produtos analisados nas fotos.
 function v71Compact(value){
@@ -1206,6 +1218,7 @@ function knownPhysicalPackV73(sku,variation){
  }
  return null;
 }
+
 
 // V74 — Duas novas composições confirmadas nos PDFs Shopee de 05/11/2026.
 // As demais regras V73.1 são preservadas. Não confundir AZUL e AZUL CANETA.
@@ -1453,6 +1466,13 @@ function knownPhysicalPackV83(sku,variation){
 // V84 - variantes de fita WJ211: apenas SKU comercial com cor E quantidade explicitas.
 function knownPhysicalPackV84(sku,variation){
  const id=v73Key(sku),v=v73Key(variation);
+ // V86: novo SKU comercial ML confirmado pelo operador: 3 fitas BRANCAS.
+ // Preservar quantidade física; não deduzir unidades de SKU genérico WJ211.
+ if(id==='WJ211-3UN-BRANCO'||id==='WJ-211-3UN-BRANCO'){
+  if(v && v!=='3-FITAS-BRANCAS' && v!=='KIT-3-FITAS-BRANCAS')
+   throw Error('WJ211: SKU indica 3 BRANCAS, mas V: é diferente. Corrija a etiqueta.');
+  return {stockSku:'WJ-211-BRANCO',unitsPerSet:3};
+ }
  if(id==='WJ211'){
   const m=v.match(/^(?:KIT-)?(\d{1,2})-FITAS?-(BRANCAS?|CINZAS?)$/);
   if(!m)return null;
@@ -1461,6 +1481,7 @@ function knownPhysicalPackV84(sku,variation){
  }
  return null;
 }
+
 
 function parseOrder(raw){
  const s=repairLegacyQrTextV62(repairLegacyQrTextV63(repairLegacyQrTextV64(repairLegacyQrTextV65(v72ExpandValidatedOrder(v73RepairText(raw)))))).replace(/\\r\\n|\\n|\\r/g,'\n').replace(/\r\n|\r/g,'\n').trim();
@@ -1474,6 +1495,9 @@ function parseOrder(raw){
  while((m=rx.exec(s))!==null){
   let sku=norm(m[1]).replace(/^#+/,'');let variation=norm(m[2]||'');const q=Number(m[3]);
   if(!sku||!Number.isSafeInteger(q)||q<1||q>9999)throw Error('SKU ou quantidade inválida.');
+  // V86: não iniciar conferência de itens sem referência de estoque na origem.
+  if(['NAO-CADASTRADO','SEM-SKU'].includes(v73Key(sku)))
+   throw Error('ETIQUETA SEM SKU CADASTRADO. Corrija o vínculo no anúncio/conversor e gere novo QR de conferência.');
   // A própria descrição do SKU também pode indicar cor aleatória. Não é
   // necessário que ALEATORIA esteja no fim ou seja enviada em V:.
   const embeddedRandom=hasRandomSkuMarker(sku);
@@ -1500,7 +1524,10 @@ function parseOrder(raw){
   if(isKit)kits.push({sku,qtd:q,componentes:components,variacaoComercial:variation});
   for(const component of components){
    const base=norm(component).replace(/^#+/,'');
-   if(!variation){
+   // V86: componentes de kits com quantidade física comprovada não são
+   // "SKUs repetidos sem cor". Caso ML 48500994047: 5 x 1610 + 2 x 1610.
+   // Uma repetição verdadeira de SKU avulso sem V: continua BLOQUEADA.
+   if(!variation && !(knownPack && unitsPerSet>1)){
     const list=unqualified.get(base)||[];list.push(q);unqualified.set(base,list);
    }
    const suffix=fixedVariation.replace(/[\s_]+/g,'-');
@@ -1544,6 +1571,7 @@ function v75ComparableSkuPrefix(canonicalSku){
  const parts=String(canonicalSku||'').split('-');
  return parts.map((token,i)=>i===0?token:v75EquivalentColorToken(token)).join('-');
 }
+
 
 function skuParts(value){
  // Usa a mesma forma canonica dos EANs, inclusive a equivalencia WL/WJ-1417.
@@ -1908,6 +1936,7 @@ function v66ResumeAfterChoice(){
  }
 }
 
+
 function clearFastRelease(){if(fastReleaseTimer){clearTimeout(fastReleaseTimer);fastReleaseTimer=null;}}
 async function pauseProductReader(reader,token){
  if(reader!==scanning||token!==scanGeneration)return false;
@@ -1938,6 +1967,7 @@ async function resumeProductReader(){
   return false;
  }
 }
+
 
 function cameraStatus(message, timeout=0){
  const el=$('cameraStatus');el.textContent=message||'';
@@ -2074,6 +2104,7 @@ function v70WakeReader(reader,token,delay=65){
  },wait);
 }
 
+
 let wasmDisabledForSession=false;
 async function scan(type,usarLeitorPadrao=false){
  const v81Request=++v81CameraRequest;
@@ -2109,6 +2140,7 @@ async function scan(type,usarLeitorPadrao=false){
     void scan(activeScanType==='product'?'product':type,true);
    };
   }
+
 
   await reader.start({facingMode:'environment'}, {
    // Evita resoluções/foco forçados: no Safari isso já causou tela preta.
@@ -2193,6 +2225,7 @@ async function scan(type,usarLeitorPadrao=false){
  }
 }
 
+
 // === V24 CATÁLOGO EAN ↔ SKU ===
 const CATALOG_STORE='mm_bipador_catalog_v46_cloud_cache';const CATALOG_LIMIT=15000;
 let catalog=[],eanPending=null,editingCatalogIndex=null,editingCatalogId=null,catalogCorrections=0;
@@ -2247,6 +2280,11 @@ function skuKey(v){
   .replace(/[–—_\s]+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');
  // V71: mapa conservador para as três referências da auditoria de EAN.
  key=key.replace(/^5110(?=-|$)/,'A5110').replace(/^1610(?=-|$)/,'WJ-1610').replace(/^WJ211(?=-|$)/,'WJ-211');
+ // V86: equivalências EXCLUSIVAS da referência física identificada.
+ // AB634 e AB-634 são a mesma família (não a família AB-168).
+ if(key==='AB634')key='AB-634';
+ // Boia NS-4985: LL=LILÁS, RS=ROSA, VD=VERDE. NÃO afetar outras famílias.
+ key=key.replace(/^NS-4985-(LL|RS|VD)(?=-|$)/,(_,abbr)=>'NS-4985-'+({LL:'LILAS',RS:'ROSA',VD:'VERDE'}[abbr]));
  if(key==='WJ-1417-B-CORTE')key='WJ-1417-B';
  const v71Cap=v71CapStock(v);if(v71Cap)return v71Cap;
  const v71AY=v71AYStock(v);if(v71AY)return v71AY;
@@ -2527,6 +2565,7 @@ function processTikTokLegacyEAN(code,rows){
  openEANReview(code,options,items,[...uniqueModels].map(m=>'MODELO '+m));return true;
 }
 
+
 function resolveEANOptions(rows,items){
  const families=[...new Set(items.map(i=>skuFamily(i.sku)))];
  const anchors=rows.filter(r=>items.some(i=>eanAssociationMatchesItem(r.sku,i.sku)));
@@ -2730,6 +2769,13 @@ function eanVisualMatch(candidate,item){
  // Se o EAN identifica apenas a familia (ou cor compartilhada), exigir validacao visual.
  const legacyDetails=tiktokLegacyMatchDetails(candidate,item);
  if(legacyDetails)return {item,...legacyDetails};
+ // V86: pedido AB-634 sem cor especificada, EAN contém opção física ROSA/ÚNICO.
+ // A escolha deve ser VISUAL, 1 bip por par, e nunca aprova AB-168/outro SKU.
+ // Se o pedido pedir uma cor/tamanho específicos, esta exceção NÃO se aplica.
+ if(skuKey(item.sku)==='AB-634' &&
+    skuKey(candidate.sku)==='AB-634-ROSA-UNICO' &&
+    candidate.source==='base')
+  return {item,missingSize:null,visualOnly:true};
  // EAN cadastrado somente na família, sem cores: nunca deduzir a variação pelo código.
  // Uma escolha explícita da variação solicitada e um checkbox de inspeção física são obrigatórios.
  if(candidate.source==='pedido-visual')return equivalentSku(candidate.sku,item.sku)?{item,missingSize:null,visualOnly:true}:null;
@@ -2849,6 +2895,10 @@ function sharedEANOptions(rows){
  return result;
 }
 function sharedEANItemMatch(candidate,item){
+ // V86: AB634 sem cor/tamanho no CSV não prova que o produto físico
+ // é da cor do pedido. A opção ROTULADA ROSA/ÚNICO permanece válida
+ // somente quando ela de fato corresponde ao pedido; sem atalho por família.
+ if(skuFamily(candidate.sku)==='AB-634' && candidate.source==='familia-visual')return null;
  if(item.randomColor){
   // Nao presumir uma cor aleatoria de um EAN compartilhado entre modelos.
   // Mantem a validacao segura do fluxo de cor aleatoria existente.
@@ -3145,6 +3195,7 @@ if(cloudCatalogConfigured){
 if(restored.length===catalog.length&&cloudCatalogConfigured){alert('Nenhuma associação nova no backup.');return}
 saveCatalog(restored);alert(cloudCatalogConfigured?'Importação iniciada. Aguarde a confirmação do banco na seção Catálogo compartilhado.':'Catálogo restaurado.')}catch(err){alert('Não foi possível restaurar: '+err.message)}finally{e.target.value=''}};
 
+
 // === V46: status e ponte com Firebase — alterações locais só viram compartilhadas após confirmação ===
 function cloudDisplay(state,message){
  const pill=$('cloudPill'),desc=$('cloudDescription');if(!pill||!desc)return;
@@ -3221,6 +3272,7 @@ $('cloudImportLocal').onclick=()=>{
 };
 cloudDisplay(window.BIPADOR_FIREBASE_CONFIG?.projectId?'loading':'local',window.BIPADOR_FIREBASE_CONFIG?.projectId?'Inicializando catálogo compartilhado…':'Modo local. Para compartilhar entre aparelhos, configure o Firebase conforme o arquivo COMO_ATIVAR_NUVEM.md.');
 // === fim da integração V46 ===
+
 
 renderCatalog();
 // === FIM DO CATÁLOGO ===
@@ -3420,6 +3472,7 @@ $('reset').onclick=()=>{if(order&&!confirm('Descartar o pedido '+order.id+'? As 
 $('export').onclick=()=>{const blob=new Blob([JSON.stringify(history(),null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='backup-conferencias.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),5000)};
 $('clear').onclick=()=>{if(confirm('Apagar TODO o histórico salvo neste iPhone?')){localStorage.removeItem(STORE);renderHistory()}};
 
+
 // V33: interface simples. Reaproveita integralmente as funcoes e os identificadores da V32.
 function refreshSimpleUI(){
   const btn=$('primaryScan');if(!btn)return;
@@ -3463,8 +3516,10 @@ $('manualEntry').onsubmit=e=>{
 const _previousUpdateFlow=updateFlow;
 updateFlow=function(){_previousUpdateFlow();refreshSimpleUI()};
 
+
 renderListHistory();renderDashboard();
 // Pre-aquece o modulo WebAssembly sem interromper a primeira bipagem.
 try{const prepare=window.BarcodeDetectionAPI?.prepareZXingModule;if(typeof prepare==='function')Promise.resolve(prepare()).catch(e=>console.warn('ZXing WASM indisponível, leitor padrão será usado',e))}catch(e){}
 renderHistory();render();if(session){const saved=$('saveIndicator');if(saved)saved.textContent='● Sessão restaurada neste iPhone'}if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
 </script></body></html>
+
