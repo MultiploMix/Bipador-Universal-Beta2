@@ -278,7 +278,7 @@ button.finish-quick{background:#243148!important;color:#fff!important;border-rad
 #v68LabelCue strong{font-size:clamp(20px,5vw,26px);font-weight:900;letter-spacing:.01em}
 #v68LabelCue small{font-size:clamp(15px,4vw,19px);font-weight:750;letter-spacing:.015em}
 @media(prefers-reduced-motion:reduce){#v68LabelCue{transition:none}}
-#eanSizeConfirmPanel,#eanConfirm,#sharedEANCheckPanel,#sharedEANConfirm{display:none!important}#eanChoices .ean-choice,#sharedEANChoices .ean-choice{min-height:64px;cursor:pointer;touch-action:manipulation}</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V87 · CONFERÊNCIA E TOTAIS CORRIGIDOS · UM TOQUE</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
+#eanSizeConfirmPanel,#eanConfirm,#sharedEANCheckPanel,#sharedEANConfirm{display:none!important}#eanChoices .ean-choice,#sharedEANChoices .ean-choice{min-height:64px;cursor:pointer;touch-action:manipulation}</style></head><body><div id="scanVisual" class="hidden" role="status" aria-live="assertive"><div class="result"><div class="symbol" id="scanSymbol"></div><div class="status" id="scanStatus"></div><div class="detail" id="scanDetail"></div></div></div><header><div class="brand-head"><img src="logo-multiplo-mix.png" alt="Logo Múltiplo Mix Importados"><div>Bipador Universal<small>Conferência de pedidos</small><span class="app-version">V88 · KITS MISTOS E EAN · UM TOQUE</span></div></div></header><main><section class="card" id="identification"><h2>Iniciar conferência</h2><p class="form-sub">Preencha seus dados para começar.</p><form id="identForm"><label class="form-label" for="operatorName">Nome</label><input autocomplete="name" id="operatorName" maxlength="100" placeholder="Nome do funcionário" required=""/><label class="form-label">Data e hora automáticas</label><div aria-live="polite" class="notice date-readonly" id="automaticDateTime"></div><label class="form-label" for="accountName">Conta</label><input id="accountName" list="accounts" maxlength="100" placeholder="Selecione ou digite a conta" required=""/><datalist id="accounts"></datalist><label class="form-label" for="listName">Lista</label><input id="listName" maxlength="120" placeholder="Identificação da lista" required=""/><button type="submit">Iniciar conferência →</button></form><button class="secondary" id="openCatalogBefore" type="button">⚙ Gerenciar EANs (responsável)</button></section><div class="hidden" id="workspace"><div aria-live="polite" class="quick-status small-status" id="quickStatus" role="status"></div><section class="card operator-card" id="operatorCard">
 <div class="operator-topbar"><div class="operator-kicker"><span class="live-dot"></span><span id="miniSession">Conferência em andamento</span></div><button id="discardQuick" class="discard-quick hidden" type="button" aria-label="Descartar pedido atual">✕ Descartar pedido</button></div>
 <h2 class="stage-title" id="stageTitle">Leia a etiqueta do pedido</h2>
 <p class="stage-help" id="stageHelp">Aponte a câmera para o QR Code da etiqueta.</p>
@@ -473,7 +473,7 @@ function randomVariation(value){
 // Ex.: WJ-2670-ALEATORIA-ADULTO-1UN--T.-NATAÇÃO-ALEATÓRIA-ADUL
 function hasRandomSkuMarker(s){
  const v=norm(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'');
- return /(?:^|[^A-Z0-9])(?:ALEATORI[AO]|SORTID[AO])(?=$|[^A-Z0-9])/.test(v);
+ return /(?:^|[^A-Z0-9])(?:ALEATORI[AO]S?|SORTID[AO]S?)(?=$|[^A-Z0-9])/.test(v);
 }
 // V43: variacoes comerciais podem ser descricoes completas, nao somente V:ALEATORIA.
 // Ex.: V:1un- T. NATAÇÃO ALEATÓRIA ADUL significa cor aleatoria.
@@ -1153,7 +1153,7 @@ function knownPhysicalPackV73(sku,variation){
  const goggles=id.match(/^MC40876-(10|20)-ALEATORIO$/);
  if(goggles){
   const n=Number(goggles[1]);
-  if(v!==n+'UN-OCULOS-ALEATORIA'&&v!==n+'U-OCULOS-ALEATORIO')
+  if(![n+'UN-OCULOS-ALEATORIA',n+'UN-OCULOS-ALEATORIAS',n+'UN-OCULOS-ALEATORIOS',n+'U-OCULOS-ALEATORIO',n+'U-OCULOS-ALEATORIA',n+'U-OCULOS-ALEATORIOS'].includes(v))
    throw Error('MC40876: quantidade do SKU e da variacao nao coincidem.');
   return {stockSku:'MC40876-ALEATORIA',unitsPerSet:n};
  }
@@ -1230,7 +1230,7 @@ function knownPhysicalPackV74(sku,variation){
   return {stockSku:'A5114-PRETO + A5114-AZUL-CANETA',unitsPerSet:1};
  }
  if(id==='MC40876-30-ALEATORIO'){
-  if(v!=='30U-OCULOS-ALEATORIO'&&v!=='30U-OCULOS-ALEATORIA')
+  if(!['30U-OCULOS-ALEATORIO','30U-OCULOS-ALEATORIA','30U-OCULOS-ALEATORIOS','30UN-OCULOS-ALEATORIOS'].includes(v))
    throw Error('MC40876 kit 30: quantidade 30 e cor ALEATORIA devem coincidir em SKU e variação.');
   return {stockSku:'MC40876-ALEATORIA',unitsPerSet:30};
  }
@@ -1519,7 +1519,12 @@ function parseOrder(raw){
   // esperar MC40876-AZUL-1KT--T.AZULCLARO-Ó.AZUL em vez de MC40876-AZUL.
   // Os SKUs físicos de cada componente continuam obrigatórios e independentes.
   // Para produtos simples, o campo V: mantém o comportamento anterior.
-  const fixedVariation=variation&&!randomColor&&!isKit&&!knownPack&&!commercialOneUnitV59(sku,variation)?variation:'';
+  // V88: variacao descritiva comprovada NAO faz parte do SKU fisico.
+  // Restrito a WJ-1626 (carteira passaporte) e a cor precisa coincidir.
+  const sku1626=v73Key(sku),v1626=v73Key(variation).replace(/[^A-Z0-9]+/g,'-').replace(/^-|-$/g,'');
+  const validated1626=({'WJ-1626-PT':'PRETA','WJ-1626-AZ':'AZUL','WJ-1626-MR':'MARROM'}[sku1626]||'');
+  const descriptive1626=validated1626&&v1626==='1-CARTEIRA-P-PASSAPORTE-'+validated1626;
+  const fixedVariation=variation&&!randomColor&&!isKit&&!knownPack&&!commercialOneUnitV59(sku,variation)&&!descriptive1626?variation:'';
   originalLines.push({sku,qtd:q,variacao:variation,aleatoria:randomColor,unidadesPorConjunto:unitsPerSet,qtdFisica:physicalQty});
   if(unitsPerSet>1)packGroups.push({sku,conjuntos:q,unidadesPorConjunto:unitsPerSet,unidadesFisicas:physicalQty});
   if(isKit)kits.push({sku,qtd:q,componentes:components,variacaoComercial:variation});
@@ -1541,8 +1546,22 @@ function parseOrder(raw){
    const item=entries.get(key);
    if(item){
     if(item.unidadesPorConjunto!==unitsPerSet){
-     if(!(item.trustedPackage===true && !!knownPack && !componentRandom && !item.randomColor && skuKey(item.sku)===skuKey(full)))
-      throw Error('O mesmo SKU possui embalagens com quantidades diferentes. Confira as linhas da etiqueta.');
+     // V88: kits fisicamente diferentes da mesma familia podem coexistir no MESMO
+     // pedido. Somamos as UNIDADES FISICAS, nao os kits comerciais.
+     // Ex.: kit 5 WJ-2279 + kit misto 3 WJ-2279/2 WJ-1610 + kit 2 WJ-1610.
+     // O QR de origem precisa identificar explicitamente cada kit; duplicidades
+     // soltas sem composicao continuam bloqueadas pelo controle unqualified.
+     const sameStock=skuKey(item.sku)===skuKey(full);
+     const safeNonRandom=sameStock&&!componentRandom&&!item.randomColor&&
+      ((item.trustedPackage===true&&(!!knownPack||unitsPerSet===1))||
+       (!!knownPack&&item.unidadesPorConjunto===1));
+     // Cor aleatoria: aceitar dois tamanhos de kit somente quando AMBOS os
+     // pacotes foram validados explicitamente e familia/tamanho coincidem.
+     const safeRandom=sameStock&&componentRandom&&item.randomColor&&
+      item.trustedPackage===true&&!!knownPack&&
+      item.randomSize===(randomInfo?.size||'');
+     if(!(safeNonRandom||safeRandom))
+      throw Error('O mesmo SKU possui embalagens com quantidades diferentes e sem composicao fisica segura. Confira as linhas da etiqueta.');
      item.unidadesPorConjunto=1;
      item.mixedPackQuantities=true;
     }
@@ -2295,6 +2314,10 @@ function skuKey(v){
  if(key==='WJ-1417-B-CORTE')key='WJ-1417-B';
  const v71Cap=v71CapStock(v);if(v71Cap)return v71Cap;
  const v71AY=v71AYStock(v);if(v71AY)return v71AY;
+ // V88: alias somente quando a descricao comercial COMPLETA comprova a cor.
+ const a5114Explicit=key.replace(/'/g,'').replace(/’/g,'');
+ if(a5114Explicit==='A5114-AZ-TOUCA-MAMAS-MINI-AZUL')return 'A5114-AZUL';
+ if(a5114Explicit==='A5114-BG-TOUCA-MAMAS-MINI-BEGE')return 'A5114-BEGE';
  if(key==='A5114-PT'||key==='A5114-PRETA')return 'A5114-PRETO';
  if(key==='A5114-BRANCA')return 'A5114-BRANCO';
  // V57: abreviacao AZ CANETA e AZUL CANETA identificam a mesma COR
@@ -2313,6 +2336,8 @@ function skuKey(v){
  // V64: somente estes códigos comprovados recebem o nome da variante física.
  if(key==='A8055-PR')return 'A8055-PRETA-LISTRADA';
  if(key==='WJ-1626-AZ')return 'WJ-1626-AZUL';
+ if(key==='WJ-1626-PT')return 'WJ-1626-PRETO';
+ if(key==='WJ-1626-MR')return 'WJ-1626-MARROM';
  if(key==='WJ-1626-RS')return 'WJ-1626-ROSE';
  if(key==='A5114-OFF'||key==='A5114-OFF-WHITE')return 'A5114-BRANCO';
  if(key==='WJ-211-BR')return 'WJ-211-BRANCO';
